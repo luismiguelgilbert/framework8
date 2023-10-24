@@ -26,8 +26,6 @@ const goBack = () => {
 }
 
 const validateAndSave = async (event: FormSubmitEvent<type_security_roles_schema>) => {
-  console.log('validateAndSave');
-  console.log(event);
   state.value.isLoading = true;
   const body = {
     // profile_data: state.value.profileData,

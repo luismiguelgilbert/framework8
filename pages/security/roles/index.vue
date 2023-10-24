@@ -167,18 +167,13 @@ onMounted(() => {
         @select="goToForm">
         <!--ID-->
         <template #id-data="{ row }">
-          <UBadge
-            v-if="row.is_active"
-            class="ml-2"
-            variant="soft" 
-            color="primary"
-            :label="row.id" />
-          <UBadge
-            v-else
-            class="ml-2"
-            variant="soft" 
-            color="rose"
-            :label="row.id" />
+          <UAvatar
+            :chip-color="row.is_active ? 'primary' : 'rose'"
+            chip-text=""
+            chip-position="top-right"
+            size="sm">
+            {{ String(row.id) }}
+          </UAvatar>
         </template>
         <!--Nombre-->
         <template #name_es-data="{ row }">
