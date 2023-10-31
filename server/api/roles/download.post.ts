@@ -47,9 +47,12 @@ export default defineEventHandler( async (event) => {
     worksheet.columns = rolesColumns;
     worksheet.getRow(1).font = { size: 16, bold: true };
     worksheet.views = [{state: 'frozen', ySplit: 1}];
+    console.log('starting to generate buffer');
     worksheet.addRows(sys_profiles.array().parse(data.rows));
     // await workbook.xlsx.writeFile('Perfiles.xlsx');
+    console.log('buffer data generated');
     const filedata = workbook.xlsx.writeBuffer();
+    console.log('buffer data generated 2');
     return filedata;
   }catch(err) {
     console.error(`Error at ${event.path}. ${err}`);
