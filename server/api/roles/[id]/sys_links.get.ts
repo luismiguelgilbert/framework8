@@ -12,6 +12,7 @@ export default defineEventHandler( async (event) => {
     ,c.name_es
     ,c.icon
     ,c.comment_es
+    ,c.row_level
     ,to_char (c.created_at::timestamp at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as created_at
     ,to_char (c.updated_at::timestamp at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as updated_at
     FROM sys_profiles a

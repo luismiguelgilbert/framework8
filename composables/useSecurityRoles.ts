@@ -1,6 +1,6 @@
-import type { security_roles } from "@/typings/client/securityRoles";
+import type { type_security_roles_schema } from "@/typings/client/securityRoles";
 
-export const useSecurityRoles = () => useState<security_roles>('securityRoles', () => {
+export const useSecurityRoles = () => useState<type_security_roles_schema>('securityRoles', () => {
   return {
     isLoading: false,
     profileData: {

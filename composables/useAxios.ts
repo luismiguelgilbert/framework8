@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
+import type { AxiosInstance } from 'axios';
 export default function useAxios() {
-  let myAxios: axiosInstance = axios.create({
+  let myAxios: AxiosInstance = axios.create({
     baseURL: '/',
     withCredentials: true,
     headers: {
@@ -11,7 +12,7 @@ export default function useAxios() {
     return response;
   }, function (error: Error | AxiosError) {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
-      navigateTo('/login');
+      navigateTo('/login?error=expired');
     } else {
       throw error;
     }

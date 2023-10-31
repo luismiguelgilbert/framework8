@@ -91,7 +91,7 @@ menuSelected.value = matchingPath?.id ?? -1;
       v-for="(rootMenu, index) in menuData?.filter((m) => m.parent === null)"
       :key="index">
       <ul 
-        v-if="rootMenu.id !== 0" 
+        v-if="rootMenu.id !== 0 && menuData.filter(m => m.parent == rootMenu.id).length > 0" 
         class="pt-4 mt-4 space-y-2 font-medium border-t text-gray-400 dark:text-gray-500 border-gray-200 dark:border-gray-700">
         {{ rootMenu.name_es }}
       </ul>

@@ -1,9 +1,6 @@
 <script setup lang="ts">
-export interface LoginSSRProps {
-  error?: string | undefined,
-}
-const props = withDefaults(defineProps<LoginSSRProps>(), {
-  error: '',
+const props = defineProps({
+  error: { type: String, required: false },
 })
 </script>
 <template>
@@ -53,6 +50,22 @@ const props = withDefaults(defineProps<LoginSSRProps>(), {
             <i class="fas fa-square-up-right fa-xl"></i>
           </template>
         </UButton>
+        <UAlert
+          v-if="props.error === 'invalid'"
+          icon="fa-solid fa-building-lock"
+          color="red"
+          variant="solid"
+          title="Login incorrecto"
+          description="Intente nuevamente."
+        />
+        <UAlert
+          v-if="props.error === 'expired'"
+          icon="fa-solid fa-hourglass-end"
+          color="red"
+          variant="solid"
+          title="Sesión expirada"
+          description="Vuelva a ingresar."
+        />
       </form>
       <template #footer>
         <div class="text-sm font-medium text-gray-500 dark:text-gray-300">

@@ -5,6 +5,7 @@ const state = useSecurityRoles();
 <template>
   <div class="mx-5 py-5">
     <UFormGroup
+      size="xl"
       label="Estado del Perfil"
       name="profileData.is_active">
       <div class="flex items-center justify-start">
@@ -14,7 +15,9 @@ const state = useSecurityRoles();
       </div>
     </UFormGroup>
     <UFormGroup
+      class="py-5"
       label="Código"
+      size="xl"
       name="profileData.id">
       <UInput
         v-model:model-value="state.profileData.id"
@@ -32,6 +35,7 @@ const state = useSecurityRoles();
       </UInput>
     </UFormGroup>
     <UFormGroup
+      size="xl"
       label="Nombre del Perfil"
       name="profileData.name_es">
       <UInput

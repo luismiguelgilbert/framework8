@@ -4,6 +4,7 @@ export const sys_links = z.object({
   id: z.coerce.number().nullable(),
   parent: z.coerce.number().optional().nullable(),
   position: z.coerce.number(),
+  row_level: z.coerce.number(),
   link: z.coerce.string().nullable(),
   name_es: z.coerce.string(),
   icon: z.coerce.string().nullable(),
