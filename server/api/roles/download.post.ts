@@ -48,7 +48,7 @@ export default defineEventHandler( async (event) => {
     worksheet.getRow(1).font = { size: 16, bold: true };
     worksheet.views = [{state: 'frozen', ySplit: 1}];
     worksheet.addRows(sys_profiles.array().parse(data.rows));
-    await workbook.xlsx.writeFile('Perfiles.xlsx');
+    // await workbook.xlsx.writeFile('Perfiles.xlsx');
     const filedata = workbook.xlsx.writeBuffer();
     return filedata;
   }catch(err) {
