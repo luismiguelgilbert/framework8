@@ -22,18 +22,12 @@ const setColor = (color: string) => {
           }
         }"
         class="overflow-y-auto">
-        <URadio
-          v-for="color in state.colors"
-          :key="color"
-          :label="`&#9679 ${color}`"
-          :value="color"
+        <URadioGroup
           class="px-5 py-2"
           v-model="state.preferedColor"
-          @update:modelValue="setColor">
-          <template #label>
-            <span :class="`text-${color}-400`">{{ color }}</span>
-          </template>
-        </URadio>
+          legend="Seleccione su color preferido"
+          :options="state.colors"
+          @update:modelValue="setColor" />
     </UCard>
   </div>
 </template>

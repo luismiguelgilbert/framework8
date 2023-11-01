@@ -10,8 +10,12 @@ const error = String(route.query.error) ?? null;
 
 //HOOKS
 onMounted(async () => {
-  const response = await myAxios.post('/api/refresh-session');
-  console.log(response);
+  try{
+    const response = await myAxios.post('/api/refresh-session');
+    navigateTo('/');
+  }catch(error){
+    console.error(error);
+  }
 });
 </script>
 

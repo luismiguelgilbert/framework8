@@ -32,13 +32,11 @@ const setDarkColor = (color: string) => {
           :items="1" />
         <div v-else>
           <div>
-            <URadio
-              v-for="theme in state.themes"
-              :key="theme"
-              :label="theme"
-              :value="theme"
+            <URadioGroup
               class="px-5 py-2"
               v-model="state.theme"
+              legend="Seleccione su tema preferido"
+              :options="state.themes"
               @update:modelValue="setTheme" />
             <div v-if="state.theme === 'dark'">
               <div class="border border-neutral-100 dark:border-neutral-700" />
