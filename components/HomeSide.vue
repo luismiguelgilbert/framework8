@@ -1,64 +1,66 @@
 <script setup lang="ts">
 import { z } from 'zod';
-import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/stores/userStore';
 import { sp_system_menu } from '@/typings/server/sp_system_menu';
 import type { type_sp_system_menu } from '@/typings/server/sp_system_menu';
+import { sys_users } from "@/typings/server/sys_users";
 
 useHead({ title: 'BITT - Welcome' });
-const store = useUserStore();
 const appConfig = useAppConfig()
 const colorMode = useColorMode()
 const router = useRouter();
 const { path } = useRoute();
-const { isLoadingMenu, menuData, menuSelected } = storeToRefs(store);
-const currentRoute = computed(() => menuData?.value?.find(menu => menu.id === menuSelected?.value));
+const state = useUser();
+const currentRoute = computed(() => state.value.menuData?.find(menu => menu.id === state.value.menuSelected));
 
 const openMenu = (menu: z.infer<typeof sp_system_menu>) => {
-  if (store.menuSelected !== menu.id) { 
-    store.menuSelected = menu.id!;
+  if (state.value.menuSelected !== menu.id) { 
+    state.value.menuSelected = menu.id!;
     navigateTo(menu.link!);
   }
-  store.isMenuOpen = false;
+  state.value.isMenuOpen = false;
 };
 
 //Load User Menu Data
-store.isLoadingUser = true;
+state.value.isLoadingUser = true;
 const { data: userMenuData, error: userMenuError } = await useFetch('/api/system/userMenu');
 if (userMenuError.value?.statusCode === 401) { navigateTo('/login') }
-store.menuData = userMenuData.value!;
-store.isLoadingUser = false;
+state.value.menuData = userMenuData.value!;
+state.value.isLoadingUser = false;
 
 //Load User Data
-store.isLoadingMenu = true;
+state.value.isLoadingMenu = true;
 const { data: userData, error: userDataError } = await useFetch('/api/system/userData');
 if (userDataError.value) { navigateTo('/login') }
-store.userData = userData.value!;
-store.theme = userData.value?.dark_enabled ? 'dark' : 'light';
-colorMode.preference = store.theme;
-store.preferedColor = userData.value?.default_color ?? 'indigo';
-appConfig.ui.primary = store.preferedColor;
-store.preferedDarkColor = userData.value?.default_dark_color ?? 'cool';
-appConfig.ui.gray = store.preferedDarkColor;
-store.isLoadingMenu = false;
+state.value.userData = userData.value!;
+state.value.theme = userData.value?.dark_enabled ? 'dark' : 'light';
+colorMode.preference = state.value.theme;
+state.value.preferedColor = userData.value?.default_color ?? 'indigo';
+appConfig.ui.primary = state.value.preferedColor;
+state.value.preferedDarkColor = userData.value?.default_dark_color ?? 'cool';
+appConfig.ui.gray = state.value.preferedDarkColor;
+state.value.isLoadingMenu = false;
 
 const logout = async () => {
   await router.push('/login');
   const authCookie = useCookie('sb-access-token');
   authCookie.value = null;
-  store.resetData();
+  //Reset state
+  state.value.menuData = [];
+  state.value.userData = sys_users.parse({});
+  state.value.menuSelected = -1;
+  state.value.isMenuOpen = false;
 }
 
 //Selects the current menu item, based on matching path with longest length
 let matchingPaths: type_sp_system_menu[] = [];
 let matchingPath: type_sp_system_menu = {} as type_sp_system_menu;
-menuData.value?.forEach(menu => {
+state.value.menuData?.forEach(menu => {
   if (menu.link && path.includes(menu.link)) {
     matchingPaths.push(menu);
   }
 });
 matchingPath = matchingPaths.sort((a, b) => b.link!.length - a.link!.length)[0];
-menuSelected.value = matchingPath?.id ?? -1;
+state.value.menuSelected = matchingPath?.id ?? -1;
 </script>
 
 <template>
@@ -69,7 +71,7 @@ menuSelected.value = matchingPath?.id ?? -1;
     square
     size="xl"
     variant="ghost"
-    @click="store.isMenuOpen = true">
+    @click="state.isMenuOpen = true">
     <template #leading>
       <i class="fas fa-rectangle-list fa-xl"></i>
     </template>
@@ -82,27 +84,27 @@ menuSelected.value = matchingPath?.id ?? -1;
 <aside
   id="sidebar"
   class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform sm:translate-x-0 border-r dark:border-transparent"
-  :class="{ '-translate-x-full' : !store.isMenuOpen }"
+  :class="{ '-translate-x-full' : !state.isMenuOpen }"
   aria-label="Sidebar">
   <div
-    v-if="!isLoadingMenu"
+    v-if="!state.isLoadingMenu"
     class="h-full px-3 py-4 overflow-y-auto bg-white dark:bg-gray-900">
     <div
-      v-for="(rootMenu, index) in menuData?.filter((m) => m.parent === null)"
+      v-for="(rootMenu, index) in state.menuData?.filter((m) => m.parent === null)"
       :key="index">
       <ul 
-        v-if="rootMenu.id !== 0 && menuData.filter(m => m.parent == rootMenu.id).length > 0" 
+        v-if="rootMenu.id !== 0 && state.menuData.filter(m => m.parent == rootMenu.id).length > 0" 
         class="pt-4 mt-4 space-y-2 font-medium border-t text-gray-400 dark:text-gray-500 border-gray-200 dark:border-gray-700">
         {{ rootMenu.name_es }}
       </ul>
       <ul
-        v-for="(menu, index) in menuData?.filter((m) => m.parent === rootMenu.id)"
+        v-for="(menu, index) in state.menuData?.filter((m) => m.parent === rootMenu.id)"
         :key="index" 
         class="space-y-2 font-medium"
         @click="openMenu(menu)">
         <NuxtLink class="w-full pt-2">
           <UButton
-            v-if="menu.id === store.menuSelected"
+            v-if="menu.id === state.menuSelected"
             class="justify-start"
             truncate
             block

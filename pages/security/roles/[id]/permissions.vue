@@ -27,7 +27,8 @@ const getGrandparentNameFromId = (parentId: number) => {
 </script>
 
 <template>
-  <div class="py-5 mx-5" >
+  <div class="mx-5 py-1 sm:py-3">
+    <div class="ml-2 mb-2"><span class="font-semibold text-lg">Permisos asignados al Perfil</span></div>
     <UCard
       class="w-full"
       :ui="{
@@ -48,25 +49,5 @@ const getGrandparentNameFromId = (parentId: number) => {
         </template>
       </UTable>
     </UCard>
-    <!--<UFormGroup
-      name="profileLinks">
-      <div
-        v-for="(rootMenu, index) in allLinksRoot"
-        :key="index">
-        <h5 class="pt-2 text-md text-neutral-600 font-bold dark:text-white">
-          {{ rootMenu.name_es }}
-        </h5>
-        <div
-          v-for="(menu, index) in state.allLinks.filter(object => object.parent === rootMenu.id)"
-          :key="index"
-          class="py-2">
-          <UCheckbox
-            :label="menu.name_es!"
-            :help="menu.comment_es!"
-            v-model="state.profileLinks"
-            :value="menu" />
-        </div>
-      </div>
-    </UFormGroup>-->
   </div>
 </template>

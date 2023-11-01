@@ -12,11 +12,12 @@ const state = useSecurityRoles();
 const toast = useToast();
 const myAxios = useAxios();
 const recordID = route.params.id;
+const currenTab = ref('basic');
 
 const tabs = [
-  { slot: 'basic', label: 'Información del Perfil', icon: 'i-heroicons-identification', defaultOpen: true },
-  { slot: 'links', label: 'Permisos', icon: 'i-heroicons-lock-closed', defaultOpen: false },
-  { slot: 'users', label: 'Usuarios con este perfil', icon: 'i-heroicons-users', defaultOpen: false },
+  { slot: 'basic', value: 'basic', label: 'Información del Perfil', icon: 'i-heroicons-identification', defaultOpen: true },
+  { slot: 'links', value: 'links', label: 'Permisos', icon: 'i-heroicons-lock-closed', defaultOpen: false },
+  { slot: 'users', value: 'users',label: 'Usuarios con este perfil', icon: 'i-heroicons-users', defaultOpen: false },
 ]
 
 const goBack = () => { 
@@ -90,78 +91,62 @@ onMounted(() => {
           header: {
             padding: 'sm:px-2 px-2 py-3',
           },
+          footer: {
+            padding: 'px-0 py-0 sm:px-0'
+          }
         }"
         class="overflow-y-auto">
-        <template #header>
-          <div class="flex">
-            <div class="w-8">
-              <span class="fa-stack fa-1x content-center items-center">
-                <i class="fa fa-circle fa-stack-2x icon-background text-gray-200 dark:text-gray-800"></i>
-                <i class="fa fa-edit fa-stack-1x"></i>
-              </span>
-            </div>
-            <div>
-              <span
-                v-if="!state.isLoading"
-                class="pl-3 font-semibold text-gray-700 dark:text-gray-300 text-2xl text-ellipsis overflow-hidden">
-                {{ state.profileData.name_es }}
-              </span>
-            </div>
-          </div>
-        </template>
 
-        <div class="h-[calc(100dvh-200px)] sm:h-[calc(100dvh-176px)] overflow-y-auto">
-          <BittSkeletonList v-if="state.isLoading" class="mx-6 mt-5" :items="10" />
-          <UAccordion
-            v-if="!state.isLoading"
-            class="px-0 sm:px-0 py-0 sm:py-0"
-            :items="tabs"
-            color="primary"
-            variant="soft"
+        <div class="flex justify-between py-3 px-4">
+          <UButton
             size="xl"
-            :ui="{ 
-              default: { 
-                openIcon: 'i-heroicons-chevron-down-20-solid',
-                closeIcon: 'fas fa-search',
-                class: 'mb-0 w-full rounded-none',
-                variant: 'soft',
-                size: 'xl',
-              },
-            }">
-            <template #basic><Basic class="px-2 sm:px-4 pb-6" /></template>
-            <template #links><Permissions class="px-2 sm:px-4 pb-6" /></template>
-            <template #users><Users class="px-2 sm:px-4 pb-6" /></template>
-          </UAccordion>
+            label="Regresar" 
+            variant="ghost"
+            :disabled="state.isLoading"
+            @click="goBack">
+            <template #leading>
+              <i class="fa-solid fa-circle-chevron-left fa-xl"></i>
+            </template>
+          </UButton>
+          <div class="self-center hidden sm:flex">
+            <span
+              v-if="!state.isLoading"
+              class="pl-3 font-semibold text-gray-700 dark:text-gray-300 text-2xl text-ellipsis overflow-hidden truncate">
+              {{ state.profileData.name_es }}
+            </span>
+          </div>
+          <div>
+            <UButton
+              size="xl"
+              label="Guardar"
+              color="primary"
+              type="submit"
+              :loading="state.isLoading"
+              :disabled="state.isLoading">
+              <template #leading v-if="!state.isLoading">
+                <i class="fa-solid fa-save fa-xl"></i>
+              </template>
+            </UButton>
+          </div>
+        </div>
+        <div class="border border-neutral-100 dark:border-neutral-700" />
+        
+        <div class="h-[calc(100dvh-182px)] sm:h-[calc(100dvh-146px)] overflow-y-auto">
+          <BittSkeletonList v-if="state.isLoading" class="mx-6 mt-5" :items="10" />
+          <div v-else class="py-4">
+            <Basic v-show="currenTab === 'basic'" class="px-2 sm:px-4 pb-6" />
+            <Permissions v-show="currenTab == 'links'" class="px-2 sm:px-4 pb-6" />
+            <Users v-show="currenTab === 'users'" class="px-2 sm:px-4 pb-6" />
+          </div>
           <br /><br />
         </div>
 
         <template #footer>
-          <div class="flex justify-between">
-            <UButton
-              size="xl"
-              label="Regresar" 
-              variant="ghost"
-              :disabled="state.isLoading"
-              @click="goBack">
-              <template #leading>
-                <i class="fa-solid fa-circle-chevron-left fa-xl"></i>
-              </template>
-            </UButton>
-            <div class="px-1"></div>
-            <div>
-              <UButton
-                size="xl"
-                label="Guardar"
-                color="primary"
-                type="submit"
-                :loading="state.isLoading"
-                :disabled="state.isLoading">
-                <template #leading v-if="!state.isLoading">
-                  <i class="fa-solid fa-save fa-xl"></i>
-                </template>
-              </UButton>
-            </div>
-          </div>
+          <UButtonGroup size="xl" orientation="horizontal" :ui="{ rounded: 'rounded-none' }" class="grid grid-cols-3 text-center"> 
+            <UButton @click="currenTab = 'basic'" label="Información del Perfil" icon="i-heroicons-identification" :variant="currenTab === 'basic' ? 'solid':'soft'" size="xl" truncate class="justify-center" />
+            <UButton @click="currenTab = 'links'" label="Permisos" icon="i-heroicons-lock-closed" :variant="currenTab === 'links' ? 'solid':'soft'" size="xl" truncate class="justify-center" />
+            <UButton @click="currenTab = 'users'" label="Usuarios con este perfil" icon="i-heroicons-users" :variant="currenTab === 'users' ? 'solid':'soft'" size="xl" truncate class="justify-center" />
+          </UButtonGroup>
         </template>
       </UCard>
     </UForm>

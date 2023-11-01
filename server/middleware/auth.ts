@@ -2,7 +2,7 @@ import supabase from '@/server/utils/supabase';
 
 export default defineEventHandler(async (event) => {
   const requestedURL = await getRequestURL(event);
-  const unprotectedPaths = ['/api/login'];
+  const unprotectedPaths = ['/api/login', '/api/refresh-session'];
   const isProtectedPath = requestedURL.pathname.startsWith('/api') 
     && !unprotectedPaths.includes(requestedURL.pathname); 
   

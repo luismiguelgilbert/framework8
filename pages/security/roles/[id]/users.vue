@@ -9,10 +9,13 @@ const columns = [
 </script>
 
 <template>
-  <div class="mt-5">
+  <div class="mx-5 py-1 sm:py-3">
+    <div class="ml-2 mb-2"><span class="font-semibold text-lg">Usuarios con este Perfil</span></div>
     <UCard
-      :ui="{ body: 'px-0' }"
-      class="mx-8">
+      class="w-full"
+      :ui="{
+        body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
+      }">
       <UTable
         :columns="columns"
         :rows="state.usersData">

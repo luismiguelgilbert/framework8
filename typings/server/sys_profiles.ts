@@ -22,13 +22,13 @@ export const sys_profiles_lookup = z.object({
 export type type_sys_profiles_lookup = z.infer<typeof sys_profiles_lookup>;
 
 export const status_options = [
-  { label: 'Perfiles Activos', value: 1, sqlValue: 'true' },
-  { label: 'Perfiles Inactivos', value: 2, sqlValue: 'false' },
-  { label: 'Todos los Perfiles', value: 3, sqlValue: 'a.is_active' },
+  { label: 'Perfiles Activos', value: 1, sqlValue: 'true', icon: 'fas fa-filter', shortcuts: ['A'] },
+  { label: 'Perfiles Inactivos', value: 2, sqlValue: 'false', icon: 'fas fa-filter', shortcuts: ['I'] },
+  { label: 'Todos los Perfiles', value: 3, sqlValue: 'a.is_active', icon: 'fas fa-filter', shortcuts: ['T'] },
 ];
 
 export const sort_options = [
-  { label: 'Ordenar por Nombre', value: 1, sqlValue: 'a.name_es' },
-  { label: 'Ordenar por Estado', value: 2, sqlValue: 'a.is_active' },
-  { label: 'Ordenar por Código', value: 3, sqlValue: 'a.id' }
+  { label: 'Ordenar por Nombre', value: 1, sqlValue: 'a.name_es', icon: 'fas fa-arrow-up-short-wide', shortcuts: ['A'] },
+  { label: 'Ordenar por Estado', value: 2, sqlValue: 'a.is_active', icon: 'fas fa-arrow-up-short-wide', shortcuts: ['A'] },
+  { label: 'Ordenar por Código', value: 3, sqlValue: 'a.id', icon: 'fas fa-arrow-up-short-wide', shortcuts: ['A'] }
 ];

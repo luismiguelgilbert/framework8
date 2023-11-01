@@ -42,6 +42,12 @@ const items = [
       click: () => { downloadFile() },
     },
   ],
+  [
+    ...status_options.map((option) => { return {...option, click: () => { updateFilter(option.value) } }})
+  ],
+  [
+    ...sort_options.map((option) => { return {...option, click: () => { updateSorting(option.value) } }})
+  ]
 ];
 //QUERY ROUTER PROPERTIES
 const updateQueryState = (newQueries: Array<{parameter: filter_keys_enum, value: string}>) => {
@@ -133,9 +139,7 @@ onMounted(() => {
 
 <template>
   <div class="max-w-3xl mx-auto"><!--Required to prevent hydration mismatch-->
-    <!--class="h-[calc(100dvh-260px)] sm:h-[calc(100dvh-225px)] overflow-x-hidden"-->
     <UCard
-      
       :ui="{
         base: '',
         ring: '',
@@ -145,6 +149,7 @@ onMounted(() => {
         footer: { padding: 'p-4' },
         rounded: 'rounded-none sm:rounded-lg',
       }">
+      <!--HEADER-->
       <template #header>
         <div class="flex items-center justify-between gap-3 px-4 py-3">
           <UInput
@@ -173,26 +178,15 @@ onMounted(() => {
           </div>
         </div>
       </template>
-
-      <div class="h-[calc(100dvh-210px)] sm:h-[calc(100dvh-170px)] overflow-x-hidden">
-        <div class="flex items-center justify-between gap-3 px-4 py-3">
-          <USelect
-            v-model="payload.status"
-            :options="status_options"
-            icon="i-heroicons-funnel"
-            @update:model-value="(e) => updateFilter(e)" />
-          <USelect
-            :model-value="Number(payload.sortBy)"
-            :options="sort_options"
-            icon="i-heroicons-arrows-up-down"
-            @update:model-value="(e) => updateSorting(e)" />
-        </div>
+      <!--BODY-->
+      <div class="h-[calc(100dvh-205px)] sm:h-[calc(100dvh-170px)] overflow-x-hidden">
         <div class="border border-neutral-100 dark:border-neutral-700" />
         <UTable
           :columns="columns"
           :rows="rows"
           :loading="isLoading"
           :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }"
+          :ui="{td: { base: 'py-5'}}"
           @select="goToForm">
           <!--ID-->
           <template #id-data="{ row }">
@@ -250,8 +244,7 @@ onMounted(() => {
           </template>
         </UTable>
       </div>
-
-
+      <!--FOOTER-->
       <template #footer>
         <div class="flex justify-between items-center">
           <UPagination

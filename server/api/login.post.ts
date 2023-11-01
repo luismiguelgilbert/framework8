@@ -21,7 +21,8 @@ export default defineEventHandler( async (event) => {
     return sendRedirect(event, '/login?error=invalid');
   }
   try {
-    setCookie(event, 'sb-access-token', data.session?.access_token!, {sameSite: 'lax'})
+    setCookie(event, 'sb-access-token', data.session?.access_token!, {sameSite: 'lax'});
+    setCookie(event, 'sb-refresh-token', data.session?.refresh_token!, {sameSite: 'lax'});
     return sendRedirect(event, '/');
   }catch(err){
     console.error(error);
