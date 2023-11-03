@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { FormSubmitEvent } from '@nuxt/ui/dist/runtime/types'
 import { security_roles_schema } from '@/typings/client/securityRoles'
-import type { type_security_roles_schema } from '@/typings/client/securityRoles'
 import Basic from './basic.vue'
 import Permissions from './permissions.vue'
 import Users from './users.vue'
@@ -19,43 +17,71 @@ const tabs = [
   { slot: 'links', value: 'links', label: 'Permisos', icon: 'i-heroicons-lock-closed', defaultOpen: false },
   { slot: 'users', value: 'users',label: 'Usuarios con este perfil', icon: 'i-heroicons-users', defaultOpen: false },
 ]
+const uiCard = {
+  rounded: 'rounded-none sm:rounded-lg',
+  body: 'px-0',
+  header: {
+    padding: 'sm:px-2 px-2 py-3',
+  },
+  footer: {
+    padding: 'px-0 py-0 sm:px-0'
+  }
+}
 
 const goBack = () => { 
   const queryParams = currentRoute.value.query;
   const querystring = Object.entries(queryParams).map(([key, value]) => `${key}=${value}`).join('&');
   navigateTo(`/security/roles/${querystring ? `?${querystring}` : ''}`);
 }
-
-const validateAndSave = async (event: FormSubmitEvent<type_security_roles_schema>) => {
-  state.value.isLoading = true;
-  const body = {
-    // profile_data: state.value.profileData,
-    // profile_links: state.value.profileLinks,
-    profile_data: event.data.profileData,
-    profile_links: event.data.profileLinks,
-  }
+const validateAndSave = async () => {
   try {
-    if (recordID === 'new') {
-      const { data } = await myAxios.post(`/api/roles/${recordID}`, body);
-      navigateTo(`/security/roles/${data.id}`);
+    state.value.isLoading = true;
+    const res = security_roles_schema.safeParse(state.value);
+    if (!res.success) {
+      toast.add({ 
+        title: 'Error al guardar perfil',
+        description: res.error.issues.map((issue) => issue.message).join('\n'),
+        icon: 'i-heroicons-exclamation-triangle',
+        color: 'red',
+        timeout: 0,
+      });
+      console.error(res);
+      return;
     } else {
-      await myAxios.patch(`/api/roles/${recordID}`, body);
+      const body = {
+        profile_data: state.value.profileData,
+        profile_links: state.value.profileLinks,
+      }
+      if (recordID === 'new') {
+        const { data } = await myAxios.post(`/api/roles/${recordID}`, body);
+        navigateTo(`/security/roles/${data.id}`);
+      } else {
+        await myAxios.patch(`/api/roles/${recordID}`, body);
+      }
+      toast.add({
+        title: 'Perfil guardado',
+        icon: 'i-heroicons-check-circle',
+        color: 'primary'
+      });
     }
-    toast.add({ title: 'Perfil guardado', icon: 'i-heroicons-check-circle', color: 'primary' });
   } catch(error) {
     console.error(error);
-    toast.add({ title: 'Error al guardar perfil', icon: 'i-heroicons-exclamation-triangle', color: 'red' });
+    toast.add({ 
+      title: 'Error al guardar perfil',
+      icon: 'i-heroicons-exclamation-triangle',
+      color: 'red'
+    });
   } finally {
     state.value.isLoading = false;
   }
 }
-
-onMounted(() => {
-  // state.value.profileData = sys_profiles.parse({});
+const resetData = () => {
   state.value.usersData = [];
   state.value.profileLinks = [];
   state.value.allLinks = [];
-  
+}
+onMounted(() => {
+  resetData();
   if (!isNaN(Number(recordID))) {
     state.value.isLoading = true;
     const promise1 = myAxios.get(`/api/roles/${recordID}`);
@@ -83,20 +109,11 @@ onMounted(() => {
 
 <template>
   <div class="max-w-3xl mx-auto"><!--Required to prevent hydration mismatch-->
-    <UForm :schema="security_roles_schema" :state="state" @submit="validateAndSave">
+    <UForm :schema="security_roles_schema" :state="state">
       <UCard
-        :ui="{
-          rounded: 'rounded-none sm:rounded-lg',
-          body: 'px-0',
-          header: {
-            padding: 'sm:px-2 px-2 py-3',
-          },
-          footer: {
-            padding: 'px-0 py-0 sm:px-0'
-          }
-        }"
+        :ui="uiCard"
         class="overflow-y-auto">
-
+        <!--HEADER-->
         <div class="flex justify-between py-3 px-4">
           <UButton
             size="xl"
@@ -115,22 +132,21 @@ onMounted(() => {
               {{ state.profileData.name_es }}
             </span>
           </div>
-          <div>
-            <UButton
-              size="xl"
-              label="Guardar"
-              color="primary"
-              type="submit"
-              :loading="state.isLoading"
-              :disabled="state.isLoading">
-              <template #leading v-if="!state.isLoading">
-                <i class="fa-solid fa-save fa-xl"></i>
-              </template>
-            </UButton>
-          </div>
+          <UButton
+            size="xl"
+            label="Guardar"
+            color="primary"
+            type="submit"
+            :loading="state.isLoading"
+            :disabled="state.isLoading"
+            @click="validateAndSave">
+            <template #leading v-if="!state.isLoading">
+              <i class="fa-solid fa-save fa-xl"></i>
+            </template>
+          </UButton>
         </div>
         <div class="border border-neutral-100 dark:border-neutral-700" />
-        
+        <!--FORM-->
         <div class="h-[calc(100dvh-182px)] sm:h-[calc(100dvh-146px)] overflow-y-auto">
           <BittSkeletonList v-if="state.isLoading" class="mx-6 mt-5" :items="10" />
           <div v-else class="py-4">
@@ -140,12 +156,19 @@ onMounted(() => {
           </div>
           <br /><br />
         </div>
-
+        <!--TABS-->
         <template #footer>
           <UButtonGroup size="xl" orientation="horizontal" :ui="{ rounded: 'rounded-none' }" class="grid grid-cols-3 text-center"> 
-            <UButton @click="currenTab = 'basic'" label="Información del Perfil" icon="i-heroicons-identification" :variant="currenTab === 'basic' ? 'solid':'soft'" size="xl" truncate class="justify-center" />
-            <UButton @click="currenTab = 'links'" label="Permisos" icon="i-heroicons-lock-closed" :variant="currenTab === 'links' ? 'solid':'soft'" size="xl" truncate class="justify-center" />
-            <UButton @click="currenTab = 'users'" label="Usuarios con este perfil" icon="i-heroicons-users" :variant="currenTab === 'users' ? 'solid':'soft'" size="xl" truncate class="justify-center" />
+            <UButton
+              v-for="tab in tabs"
+              :key="tab.value"
+              :label="tab.label"
+              :icon="tab.icon"
+              :variant="currenTab === tab.value ? 'solid':'soft'"
+              size="xl"
+              truncate
+              class="justify-center"
+              @click="currenTab = tab.value" />
           </UButtonGroup>
         </template>
       </UCard>

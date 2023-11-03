@@ -6,6 +6,9 @@ const columns = [
   { key: 'user_name', name: 'user_name', field: 'user_name', label: 'Nombres' },
   { key: 'last_sign_in_at', name: 'last_sign_in_at', field: 'last_sign_in_at', label: 'Último Ingreso' },
 ]
+const uiCard = {
+  body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
+}
 </script>
 
 <template>
@@ -13,9 +16,7 @@ const columns = [
     <div class="ml-2 mb-2"><span class="font-semibold text-lg">Usuarios con este Perfil</span></div>
     <UCard
       class="w-full"
-      :ui="{
-        body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
-      }">
+      :ui="uiCard">
       <UTable
         :columns="columns"
         :rows="state.usersData">

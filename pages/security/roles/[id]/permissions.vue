@@ -2,10 +2,11 @@
 const state = useSecurityRoles();
 
 const columns = [
-  // {  key: 'id',  label: 'ID'},
-  // {  key: 'parent',  label: 'Parent'},
   {  key: 'name_es',  label: 'Permisos', sortable: false},
 ];
+const uiCard = {
+  body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
+}
 
 const allLinksRoot = computed(() => state.value.allLinks
   .filter(object => object.row_level > 0)
@@ -22,7 +23,6 @@ const getIconFromId = (id: number) => {
 const getGrandparentNameFromId = (parentId: number) => {
   const grandParentId = state.value.allLinks.find(object => object.id === parentId)?.parent;
   return grandParentId ? `${getNameFromId(grandParentId)} / ` : '';
-  //const link = state.value.allLinks.find(object => object.id === id);
 }
 </script>
 
@@ -31,9 +31,7 @@ const getGrandparentNameFromId = (parentId: number) => {
     <div class="ml-2 mb-2"><span class="font-semibold text-lg">Permisos asignados al Perfil</span></div>
     <UCard
       class="w-full"
-      :ui="{
-        body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
-      }">
+      :ui="uiCard">
       <UTable
         class="w-full"
         :columns="columns"

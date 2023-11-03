@@ -729,7 +729,7 @@
     "which" "^3.0.1"
     "ws" "^8.14.2"
 
-"@nuxt/kit@^3.5.0", "@nuxt/kit@^3.5.3", "@nuxt/kit@^3.6.5", "@nuxt/kit@^3.7.4", "@nuxt/kit@^3.8.0", "@nuxt/kit@3.8.0":
+"@nuxt/kit@^3.5.3", "@nuxt/kit@^3.6.5", "@nuxt/kit@^3.7.4", "@nuxt/kit@^3.8.0", "@nuxt/kit@3.8.0":
   "integrity" "sha512-oIthQxeMIVs4ESVP5FqLYn8tj0S1sLd+eYreh+dNYgnJ2pTi7+THR12ONBNHjk668jqEe7ErUJ8UlGwqBzgezg=="
   "resolved" "https://npm-registry.setest.net/@nuxt/kit/-/kit-3.8.0.tgz"
   "version" "3.8.0"
@@ -962,14 +962,6 @@
     "@parcel/watcher-win32-arm64" "2.3.0"
     "@parcel/watcher-win32-ia32" "2.3.0"
     "@parcel/watcher-win32-x64" "2.3.0"
-
-"@pinia/nuxt@^0.4.11":
-  "integrity" "sha512-bhuNFngJpmBCdAqWguezNJ/oJFR7wvKieqiZrmmdmPR07XjsidAw8RLXHMZE9kUm32M9E6T057OBbG/22jERTg=="
-  "resolved" "https://npm-registry.setest.net/@pinia/nuxt/-/nuxt-0.4.11.tgz"
-  "version" "0.4.11"
-  dependencies:
-    "@nuxt/kit" "^3.5.0"
-    "pinia" ">=2.1.0"
 
 "@pkgjs/parseargs@^0.11.0":
   "integrity" "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg=="
@@ -1230,6 +1222,11 @@
   "integrity" "sha512-VeiPZ9MMwXjO32/Xu7+OwflfmeoRwkE/qzndw42gGtgJwZopBnzy2gD//NN1+go1mADzkDcqf/KnFRSjTJ8xJA=="
   "resolved" "https://npm-registry.setest.net/@types/estree/-/estree-1.0.2.tgz"
   "version" "1.0.2"
+
+"@types/file-saver@^2.0.6":
+  "integrity" "sha512-Mw671DVqoMHbjw0w4v2iiOro01dlT/WhWp5uwecBa0Wg8c+bcZOjgF1ndBnlaxhtvFCgTRBtsGivSVhrK/vnag=="
+  "resolved" "https://npm-registry.setest.net/@types/file-saver/-/file-saver-2.0.6.tgz"
+  "version" "2.0.6"
 
 "@types/http-proxy@^1.17.13":
   "integrity" "sha512-GkhdWcMNiR5QSQRYnJ+/oXzu0+7JJEPC8vkWXK351BkhjraZF+1W13CUYARUvX9+NqIU2n6YHA4iwywsc/M6Sw=="
@@ -5594,14 +5591,6 @@
   "resolved" "https://npm-registry.setest.net/pify/-/pify-2.3.0.tgz"
   "version" "2.3.0"
 
-"pinia@^2.1.6", "pinia@>=2.1.0":
-  "integrity" "sha512-bIU6QuE5qZviMmct5XwCesXelb5VavdOWKWaB17ggk++NUwQWWbP5YnsONTk3b752QkW9sACiR81rorpeOMSvQ=="
-  "resolved" "https://npm-registry.setest.net/pinia/-/pinia-2.1.6.tgz"
-  "version" "2.1.6"
-  dependencies:
-    "@vue/devtools-api" "^6.5.0"
-    "vue-demi" ">=0.14.5"
-
 "pirates@^4.0.1":
   "integrity" "sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg=="
   "resolved" "https://npm-registry.setest.net/pirates/-/pirates-4.0.6.tgz"
@@ -7419,7 +7408,7 @@
   dependencies:
     "@vue/devtools-api" "^6.5.0"
 
-"vue@^2.6.14 || ^3.3.0", "vue@^2.7.0 || ^3.2.25", "vue@^3.0.0", "vue@^3.0.0-0 || ^2.6.0", "vue@^3.2.0", "vue@^3.2.25", "vue@^3.3.4", "vue@>= 3.0.0 < 4", "vue@>=2.7 || >=3", "vue@3.3.4":
+"vue@^2.7.0 || ^3.2.25", "vue@^3.0.0", "vue@^3.0.0-0 || ^2.6.0", "vue@^3.2.0", "vue@^3.2.25", "vue@^3.3.4", "vue@>= 3.0.0 < 4", "vue@>=2.7 || >=3", "vue@3.3.4":
   "integrity" "sha512-VTyEYn3yvIeY1Py0WaYGZsXnz3y5UnGi62GjVEqvEGPl6nxbOrCXbVOTQWBEJUqAyTUk2uJ5JLVnYJ6ZzGbrSw=="
   "resolved" "https://npm-registry.setest.net/vue/-/vue-3.3.4.tgz"
   "version" "3.3.4"

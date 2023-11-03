@@ -9,6 +9,15 @@ useHead({ title: 'Roles' });
 const { currentRoute, push } = useRouter();
 const myAxios = useAxios();
 const toast = useToast();
+const uiCard = {
+  base: '',
+  ring: '',
+  divide: 'divide-y divide-gray-200 dark:divide-gray-700',
+  header: { padding: 'px-0 sm:px-0 py-0' },
+  body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
+  footer: { padding: 'p-4' },
+  rounded: 'rounded-none sm:rounded-lg',
+}
 //COMMON REFS
 const isLoading = ref<boolean>(false);
 const rowsNumber = ref(0);
@@ -22,7 +31,6 @@ const payload = ref<filter_payload>(filter_payload_object.parse({
 //CUSTOM PROPERTIES
 const rows = ref<type_sys_profiles[]>([]);
 const columns = [
-  { key: 'id', name: 'id', field: 'id', label: 'Código', sortable: false },
   { key: 'name_es', name: 'name_es', field: 'name_es', label: 'Perfil', sortable: false },
   { key: 'created_at', name: 'created_at', field: 'created_at', label: 'Fecha creación', sortable: false },
   { key: 'is_active', name: 'is_active', field: 'is_active', label: 'Estado', sortable: false },
@@ -139,16 +147,7 @@ onMounted(() => {
 
 <template>
   <div class="max-w-3xl mx-auto"><!--Required to prevent hydration mismatch-->
-    <UCard
-      :ui="{
-        base: '',
-        ring: '',
-        divide: 'divide-y divide-gray-200 dark:divide-gray-700',
-        header: { padding: 'px-0 sm:px-0 py-0' },
-        body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
-        footer: { padding: 'p-4' },
-        rounded: 'rounded-none sm:rounded-lg',
-      }">
+    <UCard :ui="uiCard">
       <!--HEADER-->
       <template #header>
         <div class="flex items-center justify-between gap-3 px-4 py-3">
@@ -188,28 +187,27 @@ onMounted(() => {
           :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }"
           :ui="{td: { base: 'py-5'}}"
           @select="goToForm">
-          <!--ID-->
-          <template #id-data="{ row }">
-            <UAvatar
-              :chip-color="row.is_active ? 'primary' : 'rose'"
-              chip-text=""
-              chip-position="top-right"
-              size="sm">
-              {{ String(row.id) }}
-            </UAvatar>
-          </template>
           <!--Nombre-->
           <template #name_es-data="{ row }">
-            <div class="flex flex-col py-0">
-              <dd class="font-semibold">{{ row.name_es }}</dd>
-              <dt class="hidden sm:block">
-                <i class="fa-solid fa-user-group fa-sm text-gray-400"></i> {{ row.user_count }}
-              </dt>
-              <dt class="block sm:hidden">
-                <i class="fa-solid fa-user-group fa-sm text-gray-400"></i> {{ row.user_count }}
-                <i class="fa-regular fa-calendar fa-sm text-gray-400 pl-2 "></i>
-                {{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}
-              </dt>
+            <div class="flex items-center flex-row">
+              <UAvatar
+                :chip-color="row.is_active ? 'primary' : 'rose'"
+                chip-text=""
+                chip-position="top-right"
+                size="sm">
+                {{ String(row.id) }}
+              </UAvatar>
+              <div class="flex flex-col py-0 pl-2">
+                <dd class="font-semibold">{{ row.name_es }}</dd>
+                <dt class="hidden sm:block">
+                  <i class="fa-solid fa-user-group fa-sm text-gray-400"></i> {{ row.user_count }}
+                </dt>
+                <dt class="block sm:hidden">
+                  <i class="fa-solid fa-user-group fa-sm text-gray-400"></i> {{ row.user_count }}
+                  <i class="fa-regular fa-calendar fa-sm text-gray-400 pl-2 "></i>
+                  {{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}
+                </dt>
+              </div>
             </div>
           </template>
           <!--Fecha Creación-->

@@ -3,7 +3,8 @@ import { sys_profiles } from "@/typings/server/sys_profiles";
 import { sys_users } from "@/typings/server/sys_users";
 import { sys_links } from "@/typings/server/sys_links";
 
-export const sys_links_array = z.array(sys_links).min(1);
+export const sys_links_array = z.array(sys_links)
+  .min(1, { message: "Debe seleccionar al menos 1 permiso." });
 
 export const security_roles_schema = z.object({
   isLoading: z.boolean().default(false),
