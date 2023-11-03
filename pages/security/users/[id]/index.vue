@@ -1,21 +1,21 @@
 <script setup lang="ts">
-//import { security_roles_schema } from '@/typings/client/securityRoles'
+import { security_users_schema } from '@/typings/client/securityUsers'
 //import Basic from './basic.vue'
 //import Permissions from './permissions.vue'
 //import Users from './users.vue'
 
 const route = useRoute();
 const { currentRoute } = useRouter();
-// const state = useSecurityRoles();
+const state = useSecurityUsers();
 const toast = useToast();
 const myAxios = useAxios();
 const recordID = route.params.id;
 const currenTab = ref('basic');
 
 const tabs = [
-  { slot: 'basic', value: 'basic', label: 'Información del Perfil', icon: 'i-heroicons-identification', defaultOpen: true },
-  { slot: 'links', value: 'links', label: 'Permisos', icon: 'i-heroicons-lock-closed', defaultOpen: false },
-  { slot: 'users', value: 'users',label: 'Usuarios con este perfil', icon: 'i-heroicons-users', defaultOpen: false },
+  { slot: 'basic', value: 'basic', label: 'Información del Usuario', icon: 'i-heroicons-identification', defaultOpen: true },
+  { slot: 'companies', value: 'links', label: 'Compañías', icon: 'i-heroicons-lock-closed', defaultOpen: false },
+  //{ slot: 'users', value: 'users',label: 'Usuarios con este perfil', icon: 'i-heroicons-users', defaultOpen: false },
 ]
 const uiCard = {
   rounded: 'rounded-none sm:rounded-lg',
@@ -33,7 +33,7 @@ const goBack = () => {
   const querystring = Object.entries(queryParams).map(([key, value]) => `${key}=${value}`).join('&');
   navigateTo(`/security/users/${querystring ? `?${querystring}` : ''}`);
 }
-// const validateAndSave = async () => {
+const validateAndSave = async () => {
 //   try {
 //     state.value.isLoading = true;
 //     const res = security_roles_schema.safeParse(state.value);
@@ -74,7 +74,7 @@ const goBack = () => {
 //   } finally {
 //     state.value.isLoading = false;
 //   }
-// }
+}
 // const resetData = () => {
 //   state.value.usersData = [];
 //   state.value.profileLinks = [];
@@ -109,6 +109,70 @@ const goBack = () => {
 
 <template>
   <div class="max-w-3xl mx-auto"><!--Required to prevent hydration mismatch-->
-    Pendiente
+    <UForm>
+      <UCard
+        :ui="uiCard"
+        class="overflow-y-auto">
+        <!--HEADER-->
+        <div class="flex justify-between py-3 px-4">
+          <UButton
+            size="xl"
+            label="Regresar" 
+            variant="ghost"
+            :disabled="state.isLoading"
+            @click="goBack">
+            <template #leading>
+              <i class="fa-solid fa-circle-chevron-left fa-xl"></i>
+            </template>
+          </UButton>
+          <div class="self-center hidden sm:flex">
+            <span
+              v-if="!state.isLoading"
+              class="pl-3 font-semibold text-gray-700 dark:text-gray-300 text-2xl text-ellipsis overflow-hidden truncate">
+              {{ state.profileData.name_es }}
+            </span>
+          </div>
+          <UButton
+            size="xl"
+            label="Guardar"
+            color="primary"
+            type="submit"
+            :loading="state.isLoading"
+            :disabled="state.isLoading"
+            @click="validateAndSave">
+            <template #leading v-if="!state.isLoading">
+              <i class="fa-solid fa-save fa-xl"></i>
+            </template>
+          </UButton>
+        </div>
+        <div class="border border-neutral-100 dark:border-neutral-700" />
+        <!--FORM-->
+        <div class="h-[calc(100dvh-182px)] sm:h-[calc(100dvh-146px)] overflow-y-auto">
+          <BittSkeletonList v-if="state.isLoading" class="mx-6 mt-5" :items="10" />
+          <div v-else class="py-4">
+            Pendiente
+            <!--<Basic v-show="currenTab === 'basic'" class="px-2 sm:px-4 pb-6" />
+            <Permissions v-show="currenTab == 'links'" class="px-2 sm:px-4 pb-6" />
+            <Users v-show="currenTab === 'users'" class="px-2 sm:px-4 pb-6" />-->
+          </div>
+          <br /><br />
+        </div>
+        <!--TABS-->
+        <template #footer>
+          <UButtonGroup size="xl" orientation="horizontal" :ui="{ rounded: 'rounded-none' }" class="grid grid-cols-3 text-center"> 
+            <UButton
+              v-for="tab in tabs"
+              :key="tab.value"
+              :label="tab.label"
+              :icon="tab.icon"
+              :variant="currenTab === tab.value ? 'solid':'soft'"
+              size="xl"
+              truncate
+              class="justify-center"
+              @click="currenTab = tab.value" />
+          </UButtonGroup>
+        </template>
+      </UCard>
+    </UForm>
   </div>
 </template>

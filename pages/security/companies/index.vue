@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import FileSaver from 'file-saver';
-import type { type_sys_users } from '@/typings/server/sys_users'
-import { sort_options, status_options} from '@/typings/server/sys_users'
+import type { type_sys_companies } from '@/typings/server/sys_companies'
+import { sort_options, status_options} from '@/typings/server/sys_profiles'
 import type { filter_payload } from '@/typings/server/filter_payload'
 import { filter_payload_object, filter_keys_enum } from '@/typings/server/filter_payload'
 
-useHead({ title: 'Usuarios' });
+useHead({ title: 'Perfiles' });
 const { currentRoute, push } = useRouter();
 const myAxios = useAxios();
 const toast = useToast();
@@ -29,10 +29,11 @@ const payload = ref<filter_payload>(filter_payload_object.parse({
   filter: '1',
 }));
 //CUSTOM PROPERTIES
-const rows = ref<type_sys_users[]>([]);
+const rows = ref<type_sys_companies[]>([]);
 const columns = [
-  { key: 'id', name: 'id', field: 'id', label: 'Usuario', sortable: false },
-  { key: 'sys_profile_id', name: 'sys_profile_id', field: 'sys_profile_id', label: 'Perfil', sortable: false },
+  { key: 'name_es', name: 'name_es', field: 'name_es', label: 'Compañía', sortable: false },
+  { key: 'created_at', name: 'created_at', field: 'created_at', label: 'Info', sortable: false },
+  { key: 'is_active', name: 'is_active', field: 'is_active', label: 'Estado', sortable: false },
 ]
 const items = [
   [
@@ -109,7 +110,7 @@ const updatePage = (newPage: number) => {
 const loadData = async() => {
   try {
     isLoading.value = true;
-    const response = await myAxios.post('/api/users', payload.value);
+    const response = await myAxios.post('/api/companies', payload.value);
     const { data } = response;
     rows.value = data;
     rowsNumber.value = data[0]?.row_count ?? 0;
@@ -120,18 +121,18 @@ const loadData = async() => {
     isLoading.value = false;
   }
 };
-const goToForm = (row?: type_sys_users) => {
+const goToForm = (row?: type_sys_companies) => {
   const queryParams = currentRoute.value.query;
   const querystring = Object.entries(queryParams).map(([key, value]) => `${key}=${value}`).join('&');
   if(row && row.id) {
-    navigateTo(`/security/users/${row.id}${querystring ? `?${querystring}` : ''}`);
+    navigateTo(`/security/companies/${row.id}${querystring ? `?${querystring}` : ''}`);
   } else {
-    navigateTo(`/security/users/new${querystring ? `?${querystring}` : ''}`);
+    navigateTo(`/security/companies/new${querystring ? `?${querystring}` : ''}`);
   }
 };
 const downloadFile = async() => {
   isLoading.value = true;
-  const { data } = await myAxios.post('/api/users/download', payload.value, { responseType: 'blob' });
+  const { data } = await myAxios.post('/api/companies/download', payload.value, { responseType: 'blob' });
   FileSaver.saveAs(data, "Perfiles.xlsx");
   isLoading.value = false;
 };
@@ -184,18 +185,25 @@ onMounted(() => {
           :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }"
           :ui="{td: { base: 'py-5'}}"
           @select="goToForm">
-          <!--ID-->
-          <template #id-data="{ row }">
+          <!--Nombre-->
+          <template #name_es-data="{ row }">
             <div class="flex items-center flex-row">
-              <UAvatar
-                :src="row.avatar_url"
-                size="sm" />
-                <!--class="flex flex-col py-0"-->
+              <!--<UAvatar
+                :chip-color="row.is_active ? 'primary' : 'rose'"
+                chip-text=""
+                chip-position="top-right"
+                size="sm">
+                {{ String(row.id) }}
+              </UAvatar>-->
               <dl class="pl-2">
-                <dd class="font-semibold">{{ `${row.user_lastname} ${row.user_name}` }}</dd>
+                <dd class="font-semibold">{{ row.name_es_short }}</dd>
                 <div class="flex-row">
-                  <i class="fas fa-envelope fa-sm text-gray-400"></i>
-                  {{ row.email }}
+                  <i class="fas fa-building fa-sm text-gray-400"></i>
+                  {{ row.name_es }}
+                </div>
+                <div class="flex-row">
+                  <i class="fas fa-hashtag fa-sm text-gray-400"></i>
+                  {{ row.company_number }}
                 </div>
 
                 <!--Mobile-->
@@ -205,21 +213,42 @@ onMounted(() => {
                 </div>
                 <div class="flex-row items-center flex sm:hidden">
                   <i class="fas fa-door-open text-gray-400"></i>
-                  <span class="pl-1">{{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.last_sign_in_at)) }}</span>
+                  <!--<span class="pl-1">{{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.last_sign_in_at)) }}</span>-->
                 </div>
               </dl>
             </div>
           </template>
-          <!--Perfil-->
-          <template #sys_profile_id-data="{ row }">
-            <div class="flex-row items-center hidden sm:flex">
-              <i class="fas fa-user-circle text-gray-400"></i>
-              <span class="font-semibold pl-1">{{ `${row.sys_profile_name}` }}</span>
+          <!--Info-->
+          <template #created_at-data="{ row }">
+            <div class="flex items-center flex-row">
+              <dl class="pl-2">
+                <dd class="font-semibold">{{ row.billing_address }}</dd>
+                <div class="flex-row">
+                  <i class="fas fa-hashtag fa-sm text-gray-400"></i>
+                  {{ row.billing_phone }}
+                </div>
+              </dl>
             </div>
-            <div class="flex-row items-center hidden sm:flex">
-              <i class="fas fa-door-open text-gray-400"></i>
-              <span class="pl-1">{{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.last_sign_in_at)) }}</span>
-            </div>
+          </template>
+          <!--Estado-->
+          <template #is_active-header>
+            <span class="hidden sm:block">Activo?</span>
+          </template>
+          <template #is_active-data="{ row }">
+            <span class="hidden sm:block">
+            <UBadge
+              v-if="row.is_active"
+              class="ml-2"
+              variant="soft"
+              color="primary"
+              label="&#9679; Activo" />
+            <UBadge
+              v-else
+              class="ml-2"
+              variant="soft" 
+              color="rose"
+              label="&#9679; Inactivo" />
+            </span>
           </template>
         </UTable>
       </div>

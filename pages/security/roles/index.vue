@@ -5,7 +5,7 @@ import { sort_options, status_options} from '@/typings/server/sys_profiles'
 import type { filter_payload } from '@/typings/server/filter_payload'
 import { filter_payload_object, filter_keys_enum } from '@/typings/server/filter_payload'
 
-useHead({ title: 'Roles' });
+useHead({ title: 'Perfiles' });
 const { currentRoute, push } = useRouter();
 const myAxios = useAxios();
 const toast = useToast();
@@ -40,13 +40,11 @@ const items = [
     {
       label: 'Nuevo',
       icon: 'fas fa-plus-circle',
-      shortcuts: ['N'],
       click: () => { goToForm() },
     },
     {
       label: 'Descargar',
       icon: 'fas fa-file-excel',
-      shortcuts: ['D'],
       click: () => { downloadFile() },
     },
   ],
