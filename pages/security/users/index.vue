@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import FileSaver from 'file-saver';
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import type { type_sys_users } from '@/typings/server/sys_users'
 import { sort_options, status_options} from '@/typings/server/sys_users'
 import type { filter_payload } from '@/typings/server/filter_payload'
@@ -9,15 +10,27 @@ useHead({ title: 'Usuarios' });
 const { currentRoute, push } = useRouter();
 const myAxios = useAxios();
 const toast = useToast();
-const uiCard = {
-  base: '',
-  ring: '',
-  divide: 'divide-y divide-gray-200 dark:divide-gray-700',
-  header: { padding: 'px-0 sm:px-0 py-0' },
-  body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
-  footer: { padding: 'p-4' },
-  rounded: 'rounded-none sm:rounded-lg',
-}
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const smAndLarger = breakpoints.greaterOrEqual('sm');
+
+const uiCard = computed(() => {
+  return {
+    base: '',
+    ring: '',
+    divide: smAndLarger.value ? 'divide-y divide-gray-200 dark:divide-gray-700' : 'divide-y divide-white dark:divide-gray-900',
+    header: { padding: 'px-0 sm:px-0 py-0' },
+    body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
+    footer: { padding: 'p-4' },
+    rounded: 'rounded-none sm:rounded-lg',
+  }
+});
+const uiTable = computed(() => {
+  return {
+    td: { base: 'py-5 pl-4'},
+    divide: smAndLarger.value ? 'divide-y divide-gray-300 dark:divide-gray-700' : 'divide-y divide-white dark:divide-gray-900',
+    tbody: smAndLarger.value ? 'divide-y divide-gray-200 dark:divide-gray-800' : 'divide-y divide-white dark:divide-gray-900',
+  }
+});
 //COMMON REFS
 const isLoading = ref<boolean>(false);
 const rowsNumber = ref(0);
@@ -151,11 +164,12 @@ onMounted(() => {
           <UInput
             :model-value="payload.searchString"
             :loading="isLoading"
+            :variant="smAndLarger ? 'outline' : 'none'"
             size="xl"
             placeholder="Buscar..."
             @input="(event: InputEvent) => updateSearchString((event.target as HTMLInputElement).value)">
             <template #trailing>
-              <i class="fas fa-search fa-xl text-gray-500"></i>
+              <i v-if="smAndLarger" class="fas fa-search fa-xl text-gray-500"></i>
             </template>
           </UInput>
           <div class="px-1"></div>
@@ -182,7 +196,7 @@ onMounted(() => {
           :rows="rows"
           :loading="isLoading"
           :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }"
-          :ui="{td: { base: 'py-5'}}"
+          :ui="uiTable"
           @select="goToForm">
           <!--ID-->
           <template #id-data="{ row }">
