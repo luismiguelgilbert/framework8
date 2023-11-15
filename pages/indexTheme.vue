@@ -39,7 +39,8 @@ const setDarkColor = (color: string) => {
               :options="state.themes"
               @update:modelValue="setTheme" />
             <div v-if="state.theme === 'dark'">
-              <div class="border border-neutral-100 dark:border-neutral-700" />
+              <!--<div class="border border-neutral-100 dark:border-neutral-700" />-->
+              <UDivider />
               <URadio
                 v-for="color in state.darkColors"
                 :key="color"

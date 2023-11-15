@@ -5,25 +5,16 @@ import type { type_sys_profiles } from '@/typings/server/sys_profiles'
 import { sort_options, status_options} from '@/typings/server/sys_profiles'
 import type { filter_payload } from '@/typings/server/filter_payload'
 import { filter_payload_object, filter_keys_enum } from '@/typings/server/filter_payload'
+import EditForm from './[id]/index.vue'
 
 useHead({ title: 'Perfiles' });
+const mainState = useUser();
 const { currentRoute, push } = useRouter();
 const myAxios = useAxios();
 const toast = useToast();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const smAndLarger = breakpoints.greaterOrEqual('sm');
 
-const uiCard = computed(() => {
-  return {
-    base: '',
-    ring: '',
-    divide: smAndLarger.value ? 'divide-y divide-gray-200 dark:divide-gray-700' : 'divide-y divide-white dark:divide-gray-900',
-    header: { padding: 'px-0 sm:px-0 py-0' },
-    body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
-    footer: { padding: 'p-4' },
-    rounded: 'rounded-none sm:rounded-lg',
-  }
-});
 const uiTable = computed(() => {
   return {
     td: { base: 'py-5 pl-4'},
@@ -41,6 +32,12 @@ const payload = ref<filter_payload>(filter_payload_object.parse({
   sortBy: '1',
   filter: '1',
 }));
+const selectedFilter = computed(() => status_options.find(option => String(option.value) === payload.value.status));
+const selectedSort = computed(() => sort_options.find(option => String(option.value) === payload.value.sortBy));
+const isSideOpen = computed(() => {
+  const queryParams = currentRoute.value.query;
+  return queryParams['id'] ? true : false;
+});
 //CUSTOM PROPERTIES
 const rows = ref<type_sys_profiles[]>([]);
 const columns = [
@@ -48,7 +45,7 @@ const columns = [
   { key: 'created_at', name: 'created_at', field: 'created_at', label: 'Fecha creación', sortable: false },
   { key: 'is_active', name: 'is_active', field: 'is_active', label: 'Estado', sortable: false },
 ]
-const items = [
+const dropdownOptions = [
   [
     {
       label: 'Nuevo',
@@ -87,36 +84,34 @@ const updateSearchString = useDebounceFn((newString: string) => {
   payload.value.searchString = newString;
   payload.value.page = '1';
   const newQueries = [
-    { parameter: filter_keys_enum.PAGE, value: '1'},
     { parameter: filter_keys_enum.SEARCH, value: newString},
   ]
   updateQueryState(newQueries);
+  rows.value = [];
   loadData();
 }, 1000);
 const updateFilter = (newStatus: number) => {
   payload.value.status = String(newStatus);
   payload.value.page = '1';
   const newQueries = [
-    { parameter: filter_keys_enum.PAGE, value: '1'},
     { parameter: filter_keys_enum.STATUS, value: String(newStatus)},
   ]
   updateQueryState(newQueries);
+  rows.value = [];
   loadData();
 };
 const updateSorting = (newSorting: number) => {
   payload.value.sortBy = String(newSorting);
+  payload.value.page = '1';
   const newQueries = [
     { parameter: filter_keys_enum.SORT, value: String(newSorting)},
   ]
   updateQueryState(newQueries);
+  rows.value = [];
   loadData();
 };
 const updatePage = (newPage: number) => {
   payload.value.page = String(newPage);
-  const newQueries = [
-    { parameter: filter_keys_enum.PAGE, value: String(newPage)},
-  ]
-  updateQueryState(newQueries);
   loadData();
 };
 //ACTIONS
@@ -125,7 +120,8 @@ const loadData = async() => {
     isLoading.value = true;
     const response = await myAxios.post('/api/roles', payload.value);
     const { data } = response;
-    rows.value = data;
+    //rows.value += data;
+    rows.value = rows.value.concat(data);
     rowsNumber.value = data[0]?.row_count ?? 0;
   } catch(error) {
     console.error(error);
@@ -135,19 +131,28 @@ const loadData = async() => {
   }
 };
 const goToForm = (row?: type_sys_profiles) => {
-  const queryParams = currentRoute.value.query;
-  const querystring = Object.entries(queryParams).map(([key, value]) => `${key}=${value}`).join('&');
-  if(row && row.id) {
-    navigateTo(`/security/roles/${row.id}${querystring ? `?${querystring}` : ''}`);
-  } else {
-    navigateTo(`/security/roles/new${querystring ? `?${querystring}` : ''}`);
-  }
+  const rowValue = row?.id ? String(row?.id) : 'new';
+  const newQueries = [
+    { parameter: filter_keys_enum.ID, value: rowValue },
+  ]
+  updateQueryState(newQueries);
 };
 const downloadFile = async() => {
   isLoading.value = true;
   const { data } = await myAxios.post('/api/roles/download', payload.value, { responseType: 'blob' });
   FileSaver.saveAs(data, "Perfiles.xlsx");
   isLoading.value = false;
+};
+const scrolltemp = (event: UIEvent) => {
+  const eventTarget = event.target as HTMLElement;
+  const { scrollTop, clientHeight, scrollHeight } = eventTarget;
+  const offset = 100;
+  const isBottom = scrollTop + clientHeight + offset >= scrollHeight;
+  const isMoreDataAvailable = rowsNumber.value > rows.value.length;
+  if (isBottom && isMoreDataAvailable && !isLoading.value) {
+    const newPage = payload.value.page ? Number(Number(payload.value.page)+1) : 1;
+    updatePage(newPage);
+  }
 };
 //HOOKS
 onMounted(() => {
@@ -157,118 +162,145 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="max-w-3xl mx-auto"><!--Required to prevent hydration mismatch-->
-    <UCard :ui="uiCard">
-      <!--HEADER-->
-      <template #header>
-        <div class="flex items-center justify-between gap-3 px-4 py-3">
+  <div><!--Required to prevent hydration mismatch-->
+    <UCard
+      :ui="{ 
+        body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
+        rounded: 'rounded-none',
+      }" >
+      <div
+        class="w-full bg-white"
+        :class="smAndLarger ? 'dark:bg-gray-900' : 'dark:bg-gray-900'">
+        <div class="flex items-center justify-between gap-3 px-0 py-0 sm:px-4 sm:py-3">
+          <UButton
+            v-if="!smAndLarger"
+            variant="solid"
+            icon="i-heroicons-bars-4"
+            size="xl"
+            :ui="{ rounded: 'rounded-none'}"
+            @click="mainState.isMenuOpen = true" />
           <UInput
             :model-value="payload.searchString"
-            :loading="isLoading"
             :variant="smAndLarger ? 'outline' : 'none'"
             size="xl"
-            placeholder="Buscar..."
+            icon="i-heroicons-magnifying-glass-20-solid"
+            placeholder="Buscar Perfiles..."
             @input="(event: InputEvent) => updateSearchString((event.target as HTMLInputElement).value)">
-            <template #trailing>
-              <i v-if="smAndLarger" class="fas fa-search fa-xl text-gray-500"></i>
-            </template>
           </UInput>
           <div class="px-1"></div>
           <div>
             <UDropdown
-              :items="items"
+              :items="dropdownOptions"
               :popper="{ placement: 'bottom-start' }">
               <UButton
                 variant="solid"
-                icon="i-heroicons-bars-3"
+                icon="i-heroicons-cog"
                 size="xl"
+                :ui="{ rounded: 'rounded-none sm:rounded-lg'}"
                 :loading="isLoading"
-                label="Opciones"
-                trailing-icon="i-heroicons-chevron-down-20-solid" />
+                :label="smAndLarger ? 'Opciones' : ''"
+                :trailing-icon="smAndLarger ? 'i-heroicons-chevron-down-20-solid' : ''" />
             </UDropdown>
           </div>
         </div>
-      </template>
-      <!--BODY-->
-      <div class="h-[calc(100dvh-205px)] sm:h-[calc(100dvh-170px)] overflow-x-hidden">
-        <div class="border border-neutral-100 dark:border-neutral-700" />
-        <UTable
-          :columns="columns"
-          :rows="rows"
-          :loading="isLoading"
-          :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }"
-          :ui="uiTable"
-          @select="goToForm">
-          <!--Nombre-->
-          <template #name_es-data="{ row }">
-            <div class="flex items-center flex-row">
-              <UAvatar
-                :chip-color="row.is_active ? 'primary' : 'rose'"
-                chip-text=""
-                chip-position="top-right"
-                size="sm">
-                {{ String(row.id) }}
-              </UAvatar>
-              <div class="flex flex-col py-0 pl-2">
-                <dd class="font-semibold">{{ row.name_es }}</dd>
-                <dt class="hidden sm:block">
-                  <i class="fa-solid fa-user-group fa-sm text-gray-400"></i> {{ row.user_count }}
-                </dt>
-                <dt class="block sm:hidden">
-                  <i class="fa-solid fa-user-group fa-sm text-gray-400"></i> {{ row.user_count }}
-                  <i class="fa-regular fa-calendar fa-sm text-gray-400 pl-2 "></i>
-                  {{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}
-                </dt>
-              </div>
-            </div>
-          </template>
-          <!--Fecha Creación-->
-          <template #created_at-header>
-            <span class="hidden sm:block">Fecha Creación</span>
-          </template>
-          <template #created_at-data="{ row }">
-            <div class="flex items-center">
-              <i class="hidden sm:block fa-regular fa-calendar text-gray-400 pr-2"></i>
-              <span class="hidden sm:block">{{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</span>
-            </div>
-          </template>
-          <!--Estado-->
-          <template #is_active-header>
-            <span class="hidden sm:block">Activo?</span>
-          </template>
-          <template #is_active-data="{ row }">
-            <span class="hidden sm:block">
-            <UBadge
-              v-if="row.is_active"
-              class="ml-2"
-              variant="soft"
-              color="primary"
-              label="&#9679; Activo" />
-            <UBadge
-              v-else
-              class="ml-2"
-              variant="soft" 
-              color="rose"
-              label="&#9679; Inactivo" />
-            </span>
-          </template>
-        </UTable>
       </div>
-      <!--FOOTER-->
-      <template #footer>
-        <div class="flex justify-between items-center">
-          <UPagination
-            :model-value="Number(payload.page)"
-            :page-count="Number(payload.rowsPerPage)"
-            :total="rowsNumber"
-            :max="4"
-            size="md"
-            @update:model-value="(e) => updatePage(e)" />
-          <div>
-            <span>{{ rowsNumber }}</span>
-          </div>
-        </div>
-      </template>
     </UCard>
+    <div v-if="smAndLarger" class="h-2">
+      <UProgress v-if="isLoading" animation="carousel" />
+    </div>
+    <div class="max-w-3xl mx-auto mt-0 sm:mt-3">
+      <UCard
+        :ui="{ 
+          rounded: 'rounded-none sm:rounded-lg',
+          header: { padding: 'px-1 sm:px-4 py-2' },
+          body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
+        }" >
+        <!--HEADER-->
+        <template #header>
+          <div class="flex items-center justify-between gap-3">
+            <span>
+              <UIcon name="pl-1 fas fa-filter text-gray-400" />
+              <span class="pl-2 font-bold">{{ selectedFilter?.label }}</span>
+              <UIcon v-if="smAndLarger" name="pl-6 fas fa-arrow-up-short-wide text-gray-500" />
+              <span v-if="smAndLarger" class="pl-2 font-bold">{{ selectedSort?.label }}</span>
+            </span>
+            <span class="font-semibold pr-1">{{ rowsNumber }} registros</span>
+          </div>
+        </template>
+        <div class="h-[calc(100dvh-90px)] sm:h-[calc(100dvh-170px)] overflow-x-hidden" @scroll="scrolltemp">
+          <UTable
+            :columns="columns"
+            :rows="rows"
+            :ui="uiTable"
+            :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No hay datos.' }"
+            @scroll="scrolltemp"
+            @select="goToForm">
+            <!--Nombre-->
+            <template #name_es-data="{ row }">
+              <div class="flex items-center flex-row">
+                <UAvatar
+                  :chip-color="row.is_active ? 'primary' : 'rose'"
+                  chip-text=""
+                  chip-position="top-right"
+                  size="sm">
+                  {{ String(row.id) }}
+                </UAvatar>
+                <div class="flex flex-col py-0 pl-2">
+                  <dd class="font-semibold">{{ row.name_es }}</dd>
+                  <dt class="hidden sm:block">
+                    <i class="fa-solid fa-user-group fa-sm text-gray-400"></i> {{ row.user_count }}
+                  </dt>
+                  <dt class="block sm:hidden">
+                    <i class="fa-solid fa-user-group fa-sm text-gray-400"></i> {{ row.user_count }}
+                    <i class="fa-regular fa-calendar fa-sm text-gray-400 pl-2 "></i>
+                    {{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}
+                  </dt>
+                </div>
+              </div>
+            </template>
+            <!--Fecha Creación-->
+            <template #created_at-header>
+              <span class="hidden sm:block">Fecha Creación</span>
+            </template>
+            <template #created_at-data="{ row }">
+              <div class="flex items-center">
+                <i class="hidden sm:block fa-regular fa-calendar text-gray-400 pr-2"></i>
+                <span class="hidden sm:block">{{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</span>
+              </div>
+            </template>
+            <!--Estado-->
+            <template #is_active-header>
+              <span class="hidden sm:block">Activo?</span>
+            </template>
+            <template #is_active-data="{ row }">
+              <span class="hidden sm:block">
+              <UBadge
+                v-if="row.is_active"
+                class="ml-2"
+                variant="soft"
+                color="primary"
+                label="&#9679; Activo" />
+              <UBadge
+                v-else
+                class="ml-2"
+                variant="soft" 
+                color="rose"
+                label="&#9679; Inactivo" />
+              </span>
+            </template>
+          </UTable>
+        </div>
+      </UCard>
+    </div>
+    
+    <div v-if="!smAndLarger" class="h-2">
+      <UProgress v-if="isLoading" animation="carousel" />
+    </div>
+    <USlideover
+      :ui="{width: 'w-screen max-w-lg'}"
+      v-model="isSideOpen"
+      prevent-close>
+      <EditForm />
+    </USlideover>
   </div>
 </template>

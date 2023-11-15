@@ -6,6 +6,7 @@ export enum filter_keys_enum {
   SEARCH = "searchString",
   SORT = "sortBy",
   STATUS = "status",
+  ID = "id",
 }
 
 export type filter_payload = Partial<Record<filter_keys_enum, string>>;
@@ -16,4 +17,5 @@ export const filter_payload_object = z.object({
   [filter_keys_enum.SEARCH]: z.coerce.string().default(''),
   [filter_keys_enum.SORT]: z.coerce.string().default('1'),
   [filter_keys_enum.STATUS]: z.coerce.string().default('1'),
+  [filter_keys_enum.ID]: z.coerce.string(),
 });

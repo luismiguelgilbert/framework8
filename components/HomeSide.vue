@@ -65,7 +65,7 @@ state.value.menuSelected = matchingPath?.id ?? -1;
 
 <template>
 
-<nav class="inline-flex w-screen items-center border-b-2 bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-700 text-sm text-gray-500 sm:hidden focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:focus:ring-gray-600">
+<!--<nav class="inline-flex w-screen items-center border-b-2 bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-700 text-sm text-gray-500 sm:hidden focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:focus:ring-gray-600">
   <UButton
     class="h-fit py-8 pl-4 pr-5 rounded-none"
     square
@@ -79,7 +79,7 @@ state.value.menuSelected = matchingPath?.id ?? -1;
   <div class="inline-flex w-screen items-center justify-start">
     <span class="pl-2 text-xl font-semibold text-gray-800 dark:text-gray-400">{{ currentRoute?.name_es }}</span>
   </div>
-</nav>
+</nav>-->
 
 <aside
   id="sidebar"

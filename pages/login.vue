@@ -8,11 +8,19 @@ const route = useRoute();
 const myAxios = useAxios();
 const error = String(route.query.error) ?? null;
 
+const refreshSessionFromCookies = async () => {
+  try {
+    await myAxios.post('/api/refresh-session');
+    navigateTo('/');
+  } catch(error) {
+    console.error(error);
+  }
+}
 //HOOKS
 onMounted(async () => {
   try{
-    const response = await myAxios.post('/api/refresh-session');
-    navigateTo('/');
+    const cat = localStorage.getItem("myCat");
+    await refreshSessionFromCookies();
   }catch(error){
     console.error(error);
   }
