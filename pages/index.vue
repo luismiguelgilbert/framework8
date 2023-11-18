@@ -30,7 +30,7 @@ const tabs = [
         <div class="flex items-center px-0 sm:px-4 py-0 sm:py-3">
           <UButton
             v-if="!smAndLarger"
-            variant="solid"
+            variant="ghost"
             icon="i-heroicons-bars-4"
             size="xl"
             :ui="{ rounded: 'rounded-none'}"
@@ -41,7 +41,8 @@ const tabs = [
               v-if="state.userData?.avatar_url"
               :src="state.userData?.avatar_url!"
               :alt="state.userData.user_name!"
-              size="md" />
+              size="md"
+              class="scale-75" />
             <span class="text-2xl font-bold pl-1">
               Bievenido {{state.userData?.user_name}}!
             </span>

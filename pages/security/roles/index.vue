@@ -17,6 +17,7 @@ const smAndLarger = breakpoints.greaterOrEqual('sm');
 
 const uiTable = computed(() => {
   return {
+    thead: smAndLarger.value ? 'visible' : 'hidden',
     td: { base: 'py-5 pl-4'},
     divide: smAndLarger.value ? 'divide-y divide-gray-300 dark:divide-gray-700' : 'divide-y divide-white dark:divide-gray-900',
     tbody: smAndLarger.value ? 'divide-y divide-gray-200 dark:divide-gray-800' : 'divide-y divide-white dark:divide-gray-900',
@@ -174,7 +175,7 @@ onMounted(() => {
         <div class="flex items-center justify-between gap-3 px-0 py-0 sm:px-4 sm:py-3">
           <UButton
             v-if="!smAndLarger"
-            variant="solid"
+            variant="ghost"
             icon="i-heroicons-bars-4"
             size="xl"
             :ui="{ rounded: 'rounded-none'}"
@@ -193,7 +194,7 @@ onMounted(() => {
               :items="dropdownOptions"
               :popper="{ placement: 'bottom-start' }">
               <UButton
-                variant="solid"
+                :variant="smAndLarger ? 'solid' : 'ghost'"
                 icon="i-heroicons-cog"
                 size="xl"
                 :ui="{ rounded: 'rounded-none sm:rounded-lg'}"
@@ -227,6 +228,7 @@ onMounted(() => {
             <span class="font-semibold pr-1">{{ rowsNumber }} registros</span>
           </div>
         </template>
+        <!--BODY-->
         <div class="h-[calc(100dvh-90px)] sm:h-[calc(100dvh-170px)] overflow-x-hidden" @scroll="scrolltemp">
           <UTable
             :columns="columns"
@@ -236,15 +238,44 @@ onMounted(() => {
             @scroll="scrolltemp"
             @select="goToForm">
             <!--Nombre-->
+            <template #name_es-header>
+              <span class="hidden sm:block">Perfil</span>
+            </template>
             <template #name_es-data="{ row }">
-              <div class="flex items-center flex-row">
-                <UAvatar
-                  :chip-color="row.is_active ? 'primary' : 'rose'"
-                  chip-text=""
-                  chip-position="top-right"
-                  size="sm">
-                  {{ String(row.id) }}
-                </UAvatar>
+              <!--Desktop-->
+              <div v-if="smAndLarger">
+                <div class="flex items-center flex-row">
+                  <UAvatar
+                    :chip-color="row.is_active ? 'primary' : 'rose'"
+                    chip-text=""
+                    chip-position="top-right"
+                    size="sm">
+                    {{ row.name_es[0] }}
+                  </UAvatar>
+                  <div class="ps-3">
+                    <div class="text-base font-semibold">{{ row.name_es }}</div>
+                    <div class="font-normal text-gray-500">{{ `${row.user_count} usuarios` }}</div>
+                  </div>
+                </div>
+              </div>
+              <!--Mobile-->
+              <div v-if="!smAndLarger" style="width: calc(80vw); overflow-x: hidden; text-overflow: ellipsis;">
+                <div class="flex items-center flex-row break-words">
+                  <UAvatar
+                    :chip-color="row.is_active ? 'primary' : 'rose'"
+                    chip-text=""
+                    chip-position="top-right"
+                    size="sm">
+                    {{ row.name_es[0] }}
+                  </UAvatar>
+                  <div class="ps-3">
+                    <div class="text-base font-semibold">{{ row.name_es }}</div>
+                    <div class="font-normal text-gray-500">{{ `${row.user_count} usuarios` }}</div>
+                    <div class="font-normal text-gray-500">{{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</div>
+                  </div>
+                </div>
+              </div>
+              <!--<div class="flex items-center flex-row">
                 <div class="flex flex-col py-0 pl-2">
                   <dd class="font-semibold">{{ row.name_es }}</dd>
                   <dt class="hidden sm:block">
@@ -256,7 +287,7 @@ onMounted(() => {
                     {{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}
                   </dt>
                 </div>
-              </div>
+              </div>-->
             </template>
             <!--Fecha Creación-->
             <template #created_at-header>

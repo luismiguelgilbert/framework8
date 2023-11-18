@@ -203,7 +203,8 @@ onMounted(() => {
             <div class="flex items-center flex-row">
               <UAvatar
                 :src="row.avatar_url"
-                size="sm" />
+                size="sm"
+                class="scale-75" />
                 <!--class="flex flex-col py-0"-->
               <dl class="pl-2">
                 <dd class="font-semibold">{{ `${row.user_lastname} ${row.user_name}` }}</dd>
