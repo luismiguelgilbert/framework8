@@ -33,6 +33,7 @@ const tabs = [
             variant="ghost"
             icon="i-heroicons-bars-4"
             size="xl"
+            class="px-4 py-4"
             :ui="{ rounded: 'rounded-none'}"
             @click="state.isMenuOpen = true" />
           <BittSkeletonTitle v-if="state.isLoadingUser" />
@@ -43,7 +44,7 @@ const tabs = [
               :alt="state.userData.user_name!"
               size="md"
               class="scale-75" />
-            <span class="text-2xl font-bold pl-1">
+            <span class="text-xl truncate font-bold pl-1">
               Bievenido {{state.userData?.user_name}}!
             </span>
           </div>
@@ -69,7 +70,7 @@ const tabs = [
           }"
           class="w-full" />
           {{  }}
-        <div class="h-[calc(100dvh-95px)] sm:h-[calc(100dvh-160px)] overflow-y-auto">
+        <div class="h-[calc(100dvh-100px)] sm:h-[calc(100dvh-160px)] overflow-y-auto">
           <BittSkeletonList v-if="state.isLoadingUser" class="mx-6 mt-5" :items="1" />
           <div v-else>
             <User v-show="currenTab === 0" class="px-2 sm:px-4 pb-6" />
@@ -79,17 +80,5 @@ const tabs = [
         </div>
       </UCard>
     </div>
-
-
-      <!--HEADER-->
-      <!--<template #footer>-->
-        <!--
-        <UButtonGroup size="xl" orientation="horizontal" :ui="{ rounded: 'rounded-none' }" class="grid grid-cols-3 text-center"> 
-          <UButton @click="currenTab = 'user'" label="Usuario" icon="" :variant="currenTab === 'user' ? 'solid':'soft'" size="xl" truncate class="justify-center" />
-          <UButton @click="currenTab = 'theme'" label="Tema" icon="" :variant="currenTab === 'theme' ? 'solid':'soft'" size="xl" truncate class="justify-center" />
-          <UButton @click="currenTab = 'colors'" label="Color" icon="" :variant="currenTab === 'colors' ? 'solid':'soft'" size="xl" truncate class="justify-center" />
-        </UButtonGroup>-->
-      <!--</template>-->
-
   </div>
 </template>

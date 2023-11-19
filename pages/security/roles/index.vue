@@ -41,11 +41,14 @@ const isSideOpen = computed(() => {
 });
 //CUSTOM PROPERTIES
 const rows = ref<type_sys_profiles[]>([]);
-const columns = [
-  { key: 'name_es', name: 'name_es', field: 'name_es', label: 'Perfil', sortable: false },
-  { key: 'created_at', name: 'created_at', field: 'created_at', label: 'Fecha creación', sortable: false },
-  { key: 'is_active', name: 'is_active', field: 'is_active', label: 'Estado', sortable: false },
-]
+const columns = computed(() => {
+  const visibleAlways = { key: 'name_es', name: 'name_es', field: 'name_es', label: 'Perfil', sortable: false };
+  const visibleDesktop = [
+    { key: 'created_at', name: 'created_at', field: 'created_at', label: 'Fecha creación', sortable: false },
+    { key: 'is_active', name: 'is_active', field: 'is_active', label: 'Estado', sortable: false },
+  ];
+  return smAndLarger.value ? [visibleAlways, ...visibleDesktop] : [visibleAlways];
+});
 const dropdownOptions = [
   [
     {
@@ -144,7 +147,7 @@ const downloadFile = async() => {
   FileSaver.saveAs(data, "Perfiles.xlsx");
   isLoading.value = false;
 };
-const scrolltemp = (event: UIEvent) => {
+const loadOnScroll = (event: UIEvent) => {
   const eventTarget = event.target as HTMLElement;
   const { scrollTop, clientHeight, scrollHeight } = eventTarget;
   const offset = 100;
@@ -178,7 +181,8 @@ onMounted(() => {
             variant="ghost"
             icon="i-heroicons-bars-4"
             size="xl"
-            :ui="{ rounded: 'rounded-none'}"
+            class="px-4 py-4"
+            :ui="{ rounded: 'rounded-none' }"
             @click="mainState.isMenuOpen = true" />
           <UInput
             :model-value="payload.searchString"
@@ -197,6 +201,7 @@ onMounted(() => {
                 :variant="smAndLarger ? 'solid' : 'ghost'"
                 icon="i-heroicons-cog"
                 size="xl"
+                class="px-4 py-4"
                 :ui="{ rounded: 'rounded-none sm:rounded-lg'}"
                 :loading="isLoading"
                 :label="smAndLarger ? 'Opciones' : ''"
@@ -229,13 +234,12 @@ onMounted(() => {
           </div>
         </template>
         <!--BODY-->
-        <div class="h-[calc(100dvh-90px)] sm:h-[calc(100dvh-170px)] overflow-x-hidden" @scroll="scrolltemp">
+        <div class="h-[calc(100dvh-100px)] sm:h-[calc(100dvh-170px)] overflow-x-hidden" @scroll="loadOnScroll">
           <UTable
             :columns="columns"
             :rows="rows"
             :ui="uiTable"
             :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No hay datos.' }"
-            @scroll="scrolltemp"
             @select="goToForm">
             <!--Nombre-->
             <template #name_es-header>
@@ -259,8 +263,8 @@ onMounted(() => {
                 </div>
               </div>
               <!--Mobile-->
-              <div v-if="!smAndLarger" style="width: calc(80vw); overflow-x: hidden; text-overflow: ellipsis;">
-                <div class="flex items-center flex-row break-words">
+              <div v-if="!smAndLarger" style="width: calc(90vw); overflow-x: hidden; text-overflow: ellipsis;">
+                <div class="flex flex-row items-center">
                   <UAvatar
                     :chip-color="row.is_active ? 'primary' : 'rose'"
                     chip-text=""
@@ -269,25 +273,12 @@ onMounted(() => {
                     {{ row.name_es[0] }}
                   </UAvatar>
                   <div class="ps-3">
-                    <div class="text-base font-semibold">{{ row.name_es }}</div>
+                    <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
                     <div class="font-normal text-gray-500">{{ `${row.user_count} usuarios` }}</div>
-                    <div class="font-normal text-gray-500">{{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</div>
+                    <div class="font-normal text-gray-500">Creado el {{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</div>
                   </div>
                 </div>
               </div>
-              <!--<div class="flex items-center flex-row">
-                <div class="flex flex-col py-0 pl-2">
-                  <dd class="font-semibold">{{ row.name_es }}</dd>
-                  <dt class="hidden sm:block">
-                    <i class="fa-solid fa-user-group fa-sm text-gray-400"></i> {{ row.user_count }}
-                  </dt>
-                  <dt class="block sm:hidden">
-                    <i class="fa-solid fa-user-group fa-sm text-gray-400"></i> {{ row.user_count }}
-                    <i class="fa-regular fa-calendar fa-sm text-gray-400 pl-2 "></i>
-                    {{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}
-                  </dt>
-                </div>
-              </div>-->
             </template>
             <!--Fecha Creación-->
             <template #created_at-header>
