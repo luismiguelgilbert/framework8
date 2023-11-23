@@ -217,7 +217,7 @@ onMounted(() => {
       <UCard
         :ui="{ 
           rounded: 'rounded-none sm:rounded-lg',
-          header: { padding: 'px-1 sm:px-4 py-2' },
+          header: { padding: 'px-1 sm:px-4 py-2', background: 'bg-gray-100 dark:bg-gray-800' },
           body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
         }" >
         <!--HEADER-->

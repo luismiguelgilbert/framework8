@@ -64,26 +64,10 @@ state.value.menuSelected = matchingPath?.id ?? -1;
 </script>
 
 <template>
-
-<!--<nav class="inline-flex w-screen items-center border-b-2 bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-700 text-sm text-gray-500 sm:hidden focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:focus:ring-gray-600">
-  <UButton
-    class="h-fit py-8 pl-4 pr-5 rounded-none"
-    square
-    size="xl"
-    variant="ghost"
-    @click="state.isMenuOpen = true">
-    <template #leading>
-      <i class="fas fa-rectangle-list fa-xl"></i>
-    </template>
-  </UButton>
-  <div class="inline-flex w-screen items-center justify-start">
-    <span class="pl-2 text-xl font-semibold text-gray-800 dark:text-gray-400">{{ currentRoute?.name_es }}</span>
-  </div>
-</nav>-->
-
+<!--class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform sm:translate-x-0 border-r dark:border-transparent"-->
 <aside
   id="sidebar"
-  class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform sm:translate-x-0 border-r dark:border-transparent"
+  class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform sm:translate-x-0 border-r dark:border-gray-800"
   :class="{ '-translate-x-full' : !state.isMenuOpen }"
   aria-label="Sidebar">
   <div
@@ -94,7 +78,7 @@ state.value.menuSelected = matchingPath?.id ?? -1;
       :key="index">
       <ul 
         v-if="rootMenu.id !== 0 && state.menuData.filter(m => m.parent == rootMenu.id).length > 0" 
-        class="pt-4 mt-4 space-y-2 font-medium border-t text-gray-400 dark:text-gray-500 border-gray-200 dark:border-gray-700">
+        class="pt-4 mt-4 space-y-2 font-medium  text-gray-400 dark:text-gray-500 border-gray-200">
         {{ rootMenu.name_es }}
       </ul>
       <ul

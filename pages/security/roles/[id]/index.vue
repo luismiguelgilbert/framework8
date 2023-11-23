@@ -157,11 +157,11 @@ onMounted(() => {
     <template #footer>
       <UAlert
         v-if="alertVisible"
-        :close-button="{ icon: 'i-heroicons-x-mark-20-solid', color: 'gray', variant: 'link', padded: false }"
+        :close-button="{ icon: 'i-heroicons-x-mark-20-solid', color: 'white', variant: 'link', padded: false }"
         :icon="alertIcon"
         :color="alertColor"
         :title="alertMessage"
-        variant="soft"
+        variant="solid"
         @close="alertVisible = false" />
       <UButton
         v-if="!alertVisible"
