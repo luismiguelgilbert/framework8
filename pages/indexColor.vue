@@ -29,5 +29,6 @@ const setColor = (color: string) => {
           :options="state.colors"
           @update:modelValue="setColor" />
     </UCard>
+    <br /><br />
   </div>
 </template>

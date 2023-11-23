@@ -13,13 +13,8 @@ export default defineNuxtConfig({
     //'~/assets/scss/variables.css',
     // '@/assets/main.css',
   ],
-  modules: [
-    //'@nuxtjs/supabase' <= This module is making an automatic redirect to login
-    '@nuxt/ui',
-    '@nuxtjs/color-mode',
-    '@nuxtjs/tailwindcss',
-    '@vueuse/nuxt',
-  ],
+  modules: [// <= This module is making an automatic redirect to login
+  '@nuxtjs/supabase', '@nuxt/ui', '@nuxtjs/color-mode', '@nuxtjs/tailwindcss', '@vueuse/nuxt', "@nuxt/image"],
   tailwindcss: {
     configPath: 'tailwind.config',
   },

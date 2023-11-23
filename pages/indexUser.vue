@@ -7,6 +7,7 @@ const state = useUser();
     <div class="ml-2 mb-2"><span class="font-semibold text-lg">Datos del Usuario</span></div>
     <UCard>
       <UFormGroup
+        class="px-2 py-2"
         label="Código"
         size="xl"
         name="profileData.id">
@@ -25,7 +26,7 @@ const state = useUser();
         </UInput>
       </UFormGroup>
       <UFormGroup
-        class="pb-5"
+        class="px-2 py-2"
         size="xl"
         label="Mail"
         name="profileData.name_es">
@@ -43,7 +44,7 @@ const state = useUser();
         </UInput>
       </UFormGroup>
       <UFormGroup
-        class="pb-5"
+        class="px-2 py-2"
         size="xl"
         label="Nombres"
         name="profileData.name_es">
@@ -61,7 +62,7 @@ const state = useUser();
         </UInput>
       </UFormGroup>
       <UFormGroup
-        class="pb-5"
+        class="px-2 py-2"
         size="xl"
         label="Apellidos"
         name="profileData.name_es">
@@ -79,7 +80,7 @@ const state = useUser();
         </UInput>
       </UFormGroup>
       <UFormGroup
-        class="pb-5"
+        class="px-2 py-2"
         size="xl"
         label="Perfil"
         name="profileData.sys_profile_name">
@@ -97,7 +98,7 @@ const state = useUser();
         </UInput>
       </UFormGroup>
       <UFormGroup
-        class="pb-5"
+        class="px-2 py-2"
         size="xl"
         label="Último Ingreso"
         name="profileData.last_sign_in_at">
@@ -115,7 +116,7 @@ const state = useUser();
         </UInput>
       </UFormGroup>
       <UFormGroup
-        class="pb-5"
+        class="px-2 py-2"
         size="xl"
         label="Fecha de creación"
         name="profileData.created_at">
@@ -133,7 +134,7 @@ const state = useUser();
         </UInput>
       </UFormGroup>
       <UFormGroup
-        class="pb-5"
+        class="px-2 py-2"
         size="xl"
         label="Fecha de actualización"
         name="profileData.updated_at">
@@ -151,5 +152,6 @@ const state = useUser();
         </UInput>
       </UFormGroup>
     </UCard>
+    <br /><br />
   </div>
 </template>

@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
-import { security_roles_schema } from '@/typings/client/securityRoles'
+import { security_roles_schema, type type_security_roles_schema } from '@/typings/client/securityRoles'
+import { sys_profiles } from "@/typings/server/sys_profiles";
 import Basic from './basic.vue'
 import Permissions from './permissions.vue'
 import Users from './users.vue'
 
-const route = useRoute();
 const { currentRoute, push } = useRouter();
 const state = useSecurityRoles();
-const toast = useToast();
 const myAxios = useAxios();
 const recordID = currentRoute.value.query.id;
 const editModeLabel = computed<string>(() => recordID === 'new' ? 'Crear' : 'Editar' );
@@ -17,9 +15,7 @@ const alertVisible = ref<boolean>(false);
 const alertColor = ref<'rose'|'green'>('rose');
 const alertMessage = ref<string>('');
 const alertIcon = ref<string>('');
-const breakpoints = useBreakpoints(breakpointsTailwind);
-//const smAndLarger = breakpoints.greaterOrEqual('sm');
-const emit = defineEmits(['close']);
+const body = ref<type_security_roles_schema>();
 
 const tabs = [
   { slot: 'basic', value: 'basic', label: 'Información del Perfil', icon: 'i-heroicons-identification', defaultOpen: true },
@@ -51,15 +47,23 @@ const validateAndSave = async () => {
       console.error(res);
       return;
     } else {
-      const body = {
-        profile_data: state.value.profileData,
-        profile_links: state.value.profileLinks,
-      }
+      body.value = {
+        isLoading: false,
+        profileData: state.value.profileData,
+        profileLinks: state.value.profileLinks,
+        usersData: [],
+        allLinks: [],
+      };
       if (recordID === 'new') {
-        const { data } = await myAxios.post(`/api/roles/${recordID}`, body);
-        navigateTo(`/security/roles/${data.id}`);
+        const { data } = await myAxios.post(`/api/roles/${recordID}`, body.value);
+        body.value.id = data.id;
+        state.value.profileData.id = data.id;
+        state.value.id = data.id;
+        const newQuery = { ...currentRoute.value.query, id: data.id }
+        push({ query: newQuery });
       } else {
-        await myAxios.patch(`/api/roles/${recordID}`, body);
+        body.value.id = Number(recordID);
+        await myAxios.patch(`/api/roles/${recordID}`, body.value);
       }
       alertColor.value = 'green';
       alertMessage.value = 'Perfil guardado';
@@ -77,6 +81,9 @@ const validateAndSave = async () => {
   }
 }
 const resetData = () => {
+  state.value.profileData.id = 0;
+  state.value.profileData.name_es = 'Nuevo Perfil';
+  state.value.profileData.is_active = true;
   state.value.usersData = [];
   state.value.profileLinks = [];
   state.value.allLinks = [];
@@ -101,6 +108,7 @@ onMounted(() => {
     const promise1 = myAxios.get(`/api/lookups/sys_links`);
     Promise.all([promise1]).then((values) => {
       state.value.allLinks = values[0].data;
+      state.value.profileData.id = 0;
       state.value.profileData.name_es = 'Nuevo Perfil';
       state.value.isLoading = false;
     });
@@ -136,7 +144,8 @@ onMounted(() => {
       <div class="h-[calc(100dvh-180px)] sm:h-[calc(100dvh-179px)] overflow-y-auto">
         <BittSkeletonList v-if="state.isLoading" class="mx-6 mt-5" :items="1" />
         <div v-else>
-          <UForm :schema="security_roles_schema" :state="state">
+          <!--:schema="security_roles_schema"-->
+          <UForm :state="state">
             <Basic v-show="currenTab === 0" class="px-2 sm:px-4 pb-6" />
             <Permissions v-show="currenTab === 1" class="px-2 sm:px-4 pb-6" />
             <Users v-show="currenTab === 2" class="px-2 sm:px-4 pb-6" />

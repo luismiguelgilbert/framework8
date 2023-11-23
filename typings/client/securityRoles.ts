@@ -7,6 +7,7 @@ export const sys_links_array = z.array(sys_links)
   .min(1, { message: "Debe seleccionar al menos 1 permiso." });
 
 export const security_roles_schema = z.object({
+  id: z.number().optional(),
   isLoading: z.boolean().default(false),
   profileData: sys_profiles,
   profileLinks: sys_links_array,

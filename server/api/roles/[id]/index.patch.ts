@@ -1,13 +1,13 @@
 import serverDB from '@/server/utils/db';
 import { type_sys_profiles } from '@/typings/server/sys_profiles';
 import { type_sys_links } from '@/typings/server/sys_links';
-
+import { type type_security_roles_schema } from '@/typings/client/securityRoles'
 export default defineEventHandler( async (event) => {
   try{
-    const payload = await readBody(event);
+    const payload: type_security_roles_schema = await readBody(event);
     const id = (event.context.params?.id);
-    const profile_data: type_sys_profiles = payload.profile_data;
-    const profile_links: type_sys_links[] = payload.profile_links;
+    const profile_data: type_sys_profiles = payload.profileData;
+    const profile_links: type_sys_links[] = payload.profileLinks;
 
     await serverDB.query('BEGIN');
 

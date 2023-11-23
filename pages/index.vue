@@ -27,7 +27,7 @@ const tabs = [
       }">
       <!--HEADER-->
       <template #header>
-        <div class="flex items-center px-0 sm:px-4 py-0 sm:py-3">
+        <div class="flex items-center px-0 sm:px-4 py-0 sm:py-6">
           <UButton
             v-if="!smAndLarger"
             variant="ghost"
@@ -38,14 +38,13 @@ const tabs = [
             @click="state.isMenuOpen = true" />
           <BittSkeletonTitle v-if="state.isLoadingUser" />
           <div v-else class="flex items-center pl-1">
-            <UAvatar
-              v-if="state.userData?.avatar_url"
+            <NuxtImg 
               :src="state.userData?.avatar_url!"
-              :alt="state.userData.user_name!"
-              size="md"
-              class="scale-75" />
-            <span class="text-xl truncate font-bold pl-1">
-              Bievenido {{state.userData?.user_name}}!
+              width="20"
+              height="20"
+              class="rounded" />
+            <span class="text-xl truncate font-bold pl-2">
+              Bienvenido {{state.userData?.user_name}}!
             </span>
           </div>
         </div>
@@ -63,10 +62,14 @@ const tabs = [
           body: { padding: '', base: '' } ,
         }" >
         <UTabs
+          color="red"
           v-model="currenTab"
           :items="tabs"
           :ui="{
-            list: { rounded: 'rounded-none', padding: `${state.theme === 'dark' ? 'px-0' : 'p1'}` },
+            list: {
+              rounded: 'rounded-none',
+              //padding: `${state.theme === 'dark' ? 'px-0' : 'p1'}`
+            },
           }"
           class="w-full" />
           {{  }}

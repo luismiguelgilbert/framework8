@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import FileSaver from 'file-saver';
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
-import type { type_sys_profiles } from '@/typings/server/sys_profiles'
 import { sort_options, status_options} from '@/typings/server/sys_profiles'
-import type { filter_payload } from '@/typings/server/filter_payload'
 import { filter_payload_object, filter_keys_enum } from '@/typings/server/filter_payload'
+import type { type_sys_profiles } from '@/typings/server/sys_profiles'
+import type { filter_payload } from '@/typings/server/filter_payload'
 import EditForm from './[id]/index.vue'
 
 useHead({ title: 'Perfiles' });
@@ -124,7 +124,6 @@ const loadData = async() => {
     isLoading.value = true;
     const response = await myAxios.post('/api/roles', payload.value);
     const { data } = response;
-    //rows.value += data;
     rows.value = rows.value.concat(data);
     rowsNumber.value = data[0]?.row_count ?? 0;
   } catch(error) {
@@ -249,13 +248,13 @@ onMounted(() => {
               <!--Desktop-->
               <div v-if="smAndLarger">
                 <div class="flex items-center flex-row">
-                  <UAvatar
-                    :chip-color="row.is_active ? 'primary' : 'rose'"
-                    chip-text=""
-                    chip-position="top-right"
-                    size="sm">
-                    {{ row.name_es[0] }}
-                  </UAvatar>
+                  <UChip
+                    inset
+                    :color="row.is_active ? 'primary' : 'rose'" >
+                    <UAvatar size="sm">
+                      {{ row.name_es[0] }}
+                    </UAvatar>
+                  </UChip>
                   <div class="ps-3">
                     <div class="text-base font-semibold">{{ row.name_es }}</div>
                     <div class="font-normal text-gray-500">{{ `${row.user_count} usuarios` }}</div>
@@ -265,13 +264,13 @@ onMounted(() => {
               <!--Mobile-->
               <div v-if="!smAndLarger" style="width: calc(90vw); overflow-x: hidden; text-overflow: ellipsis;">
                 <div class="flex flex-row items-center">
-                  <UAvatar
-                    :chip-color="row.is_active ? 'primary' : 'rose'"
-                    chip-text=""
-                    chip-position="top-right"
-                    size="sm">
-                    {{ row.name_es[0] }}
-                  </UAvatar>
+                  <UChip
+                    inset
+                    :color="row.is_active ? 'primary' : 'rose'" >
+                    <UAvatar size="sm">
+                      {{ row.name_es[0] }}
+                    </UAvatar>
+                  </UChip>
                   <div class="ps-3">
                     <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
                     <div class="font-normal text-gray-500">{{ `${row.user_count} usuarios` }}</div>

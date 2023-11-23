@@ -57,5 +57,6 @@ const setDarkColor = (color: string) => {
           </div>
         </div>
     </UCard>
+    <br /><br />
   </div>
 </template>
