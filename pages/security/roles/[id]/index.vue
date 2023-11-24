@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { security_roles_schema, type type_security_roles_schema } from '@/typings/client/securityRoles'
-import { sys_profiles } from "@/typings/server/sys_profiles";
 import Basic from './basic.vue'
 import Permissions from './permissions.vue'
 import Users from './users.vue'
+import { PermissionsList } from '@/typings/client/permissionsEnum'
 
 const { currentRoute, push } = useRouter();
+const userState = useUser();
 const state = useSecurityRoles();
 const myAxios = useAxios();
 const recordID = currentRoute.value.query.id;
 const editModeLabel = computed<string>(() => recordID === 'new' ? 'Crear' : 'Editar' );
+const allowCreate = computed(() => userState.value.menuData.find((item) => item.id === PermissionsList.ROLES_CREATE));
+const allowEdit = computed(() => userState.value.menuData.find((item) => item.id === PermissionsList.ROLES_EDIT));
+const isSaveButtonVisible = computed(() => recordID === 'new' ? allowCreate.value : allowEdit.value);
 const currenTab = ref(0);
 const alertVisible = ref<boolean>(false);
 const alertColor = ref<'rose'|'green'>('rose');
@@ -18,7 +22,7 @@ const alertIcon = ref<string>('');
 const body = ref<type_security_roles_schema>();
 
 const tabs = [
-  { slot: 'basic', value: 'basic', label: 'Información del Perfil', icon: 'i-heroicons-identification', defaultOpen: true },
+  { slot: 'basic', value: 'basic', label: 'Información', icon: 'i-heroicons-identification', defaultOpen: true },
   { slot: 'links', value: 'links', label: 'Permisos', icon: 'i-heroicons-lock-closed', defaultOpen: false },
   { slot: 'users', value: 'users',label: 'Usuarios', icon: 'i-heroicons-users', defaultOpen: false },
 ]
@@ -156,26 +160,34 @@ onMounted(() => {
     <!--FOOTER-->   
     <template #footer>
       <UAlert
-        v-if="alertVisible"
-        :close-button="{ icon: 'i-heroicons-x-mark-20-solid', color: 'white', variant: 'link', padded: false }"
-        :icon="alertIcon"
-        :color="alertColor"
-        :title="alertMessage"
-        variant="solid"
-        @close="alertVisible = false" />
-      <UButton
-        v-if="!alertVisible"
-        :disabled="state.isLoading"
-        :loading="state.isLoading"
-        block
-        size="xl"
-        label="Guardar" 
-        variant="solid"
-        @click="validateAndSave">
-        <template #leading v-if="!state.isLoading">
-          <i class="fa-solid fa-save fa-xl"></i>
-        </template>
-      </UButton>
+        v-if="!isSaveButtonVisible"
+        icon="i-heroicons-information-circle"
+        color="yellow"
+        title="No tiene permisos para guardar cambios"
+        variant="solid" />
+      <div v-else>
+        <UAlert
+          v-if="alertVisible"
+          :close-button="{ icon: 'i-heroicons-x-mark-20-solid', color: 'white', variant: 'link', padded: false }"
+          :icon="alertIcon"
+          :color="alertColor"
+          :title="alertMessage"
+          variant="solid"
+          @close="alertVisible = false" />
+        <UButton
+          v-if="!alertVisible"
+          :disabled="state.isLoading"
+          :loading="state.isLoading"
+          block
+          size="xl"
+          label="Guardar" 
+          variant="solid"
+          @click="validateAndSave">
+          <template #leading v-if="!state.isLoading">
+            <i class="fa-solid fa-save fa-xl"></i>
+          </template>
+        </UButton>
+      </div>
     </template>
   </UCard>
 </template>

@@ -6,13 +6,11 @@ export default defineEventHandler( async (event) => {
   try{
     const filter = await readBody(event) as filter_payload;
     const sortById = Number(filter.sortBy);
-    const filterById = Number(filter.status);
     const page: number = Number(filter.page);
     const rowsPerPage: number = Number(filter.rowsPerPage);
     const search_string = filter.searchString!.trim();
     const offset: number = rowsPerPage * (page - 1);
     const sortBy: string = sort_options.find(x => x.value === sortById)?.sqlValue!;
-    const filterBy: string = status_options.find(x => x.value === filterById)?.sqlValue!;
 
     const text = `
       select

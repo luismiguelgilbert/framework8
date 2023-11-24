@@ -39,6 +39,7 @@ const tabs = [
           <BittSkeletonTitle v-if="state.isLoadingUser" />
           <div v-else class="flex items-center pl-1">
             <NuxtImg 
+              v-if="state.userData?.avatar_url"
               :src="state.userData?.avatar_url!"
               width="20"
               height="20"

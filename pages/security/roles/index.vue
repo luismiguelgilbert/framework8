@@ -6,6 +6,7 @@ import { filter_payload_object, filter_keys_enum } from '@/typings/server/filter
 import type { type_sys_profiles } from '@/typings/server/sys_profiles'
 import type { filter_payload } from '@/typings/server/filter_payload'
 import EditForm from './[id]/index.vue'
+import { PermissionsList } from '@/typings/client/permissionsEnum'
 
 useHead({ title: 'Perfiles' });
 const mainState = useUser();
@@ -49,19 +50,7 @@ const columns = computed(() => {
   ];
   return smAndLarger.value ? [visibleAlways, ...visibleDesktop] : [visibleAlways];
 });
-const dropdownOptions = [
-  [
-    {
-      label: 'Nuevo',
-      icon: 'fas fa-plus-circle',
-      click: () => { goToForm() },
-    },
-    {
-      label: 'Descargar',
-      icon: 'fas fa-file-excel',
-      click: () => { downloadFile() },
-    },
-  ],
+const fixedOptions = [
   [
     ...status_options.map((option) => { return {...option, click: () => { updateFilter(option.value) } }})
   ],
@@ -69,6 +58,16 @@ const dropdownOptions = [
     ...sort_options.map((option) => { return {...option, click: () => { updateSorting(option.value) } }})
   ]
 ];
+const dropdownOptions = computed(() => {
+  let dynamicOptions = [];
+  const allowCreate = mainState.value?.menuData.find((item) => item.id === PermissionsList.ROLES_CREATE);
+  const allowExport = mainState.value?.menuData.find((item) => item.id === PermissionsList.ROLES_EXPORT);
+  if (allowCreate) { dynamicOptions.push({ label: 'Nuevo', icon: 'fas fa-plus-circle', click: () => { goToForm() } }) };
+  if (allowExport) { dynamicOptions.push({ label: 'Descargar', icon: 'fas fa-file-excel', click: () => { downloadFile() } }) };
+  return dynamicOptions.length > 0
+    ? [ ...[dynamicOptions], ...fixedOptions ]
+    : [ ...fixedOptions ];
+})
 //QUERY ROUTER PROPERTIES
 const updateQueryState = (newQueries: Array<{parameter: filter_keys_enum, value: string}>) => {
   const newQuery = { ...currentRoute.value.query }
