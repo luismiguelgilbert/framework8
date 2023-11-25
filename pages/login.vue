@@ -25,12 +25,27 @@ const login = async () => {
     error && (loginError.value = error);
     if (!error) {
       navigateTo('/');
+    } else {
+      loading.value = false;
     }
   } catch(error) {
     loading.value = false;
     console.error(error);
-  } finally {
+  }
+}
+
+const loginFromCookies = async () => {
+  try {
+    loading.value = true;
+    const { data, error } = await supabase.auth.refreshSession();
+    if (!error) {
+      navigateTo('/');
+    } else{
+      loading.value = false;
+    }
+  } catch(error) {
     loading.value = false;
+    console.error(error);
   }
 }
 
@@ -40,6 +55,7 @@ const resetLoginError = () => {
 
 onMounted(async () => {
   resetLoginError();
+  await loginFromCookies();
 });
 </script>
 
@@ -54,6 +70,7 @@ onMounted(async () => {
       <UFormGroup class="px-2 py-0" label="Email" name="email" required>
         <UInput
           v-model:model-value="credentials.email"
+          :disabled="loading"
           required
           label="Correo electrónico"
           size="xl"
@@ -67,6 +84,7 @@ onMounted(async () => {
       <UFormGroup class="px-2 py-2" label="Contraseña" name="password" required>
         <UInput
           v-model:model-value="credentials.password"
+          :disabled="loading"
           required
           label="Correo electrónico"
           size="xl"
@@ -89,10 +107,10 @@ onMounted(async () => {
         <UAlert
           v-if="loginError.status !== 0"
           :close-button="{ icon: 'i-heroicons-x-mark-20-solid', color: 'white', variant: 'link', padded: false }"
+          :title="loginError.message"
           icon="i-heroicons-shield-exclamation"
           color="red"
           variant="soft"
-          :title="loginError.message"
           @close="resetLoginError" />
       </UFormGroup>
     </UCard>

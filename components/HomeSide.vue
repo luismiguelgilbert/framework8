@@ -10,6 +10,7 @@ const colorMode = useColorMode()
 const router = useRouter();
 const { path } = useRoute();
 const state = useUser();
+const supabase = useSupabaseClient();
 const currentRoute = computed(() => state.value.menuData?.find(menu => menu.id === state.value.menuSelected));
 
 const openMenu = (menu: z.infer<typeof sp_system_menu>) => {
@@ -41,9 +42,8 @@ appConfig.ui.gray = state.value.preferedDarkColor;
 state.value.isLoadingMenu = false;
 
 const logout = async () => {
+  await supabase.auth.signOut();
   await router.push('/login');
-  const authCookie = useCookie('sb-access-token');
-  authCookie.value = null;
   //Reset state
   state.value.menuData = [];
   state.value.userData = sys_users.parse({});
