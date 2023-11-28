@@ -3,17 +3,18 @@ import { security_roles_schema, type type_security_roles_schema } from '@/typing
 import Basic from './basic.vue'
 import Permissions from './permissions.vue'
 import Users from './users.vue'
-import { PermissionsList } from '@/typings/client/permissionsEnum'
+
+const props = defineProps({
+  allowCreate: { type: Boolean, required: true },
+  allowEdit: { type: Boolean, required: true },
+})
 
 const { currentRoute, push } = useRouter();
-const userState = useUser();
 const state = useSecurityRoles();
 const myAxios = useAxios();
 const recordID = currentRoute.value.query.id;
 const editModeLabel = computed<string>(() => recordID === 'new' ? 'Crear' : 'Editar' );
-const allowCreate = computed(() => userState.value.menuData.find((item) => item.id === PermissionsList.ROLES_CREATE));
-const allowEdit = computed(() => userState.value.menuData.find((item) => item.id === PermissionsList.ROLES_EDIT));
-const isSaveButtonVisible = computed(() => recordID === 'new' ? allowCreate.value : allowEdit.value);
+const isSaveButtonVisible = computed(() => recordID === 'new' ? props.allowCreate : props.allowEdit);
 const currenTab = ref(0);
 const alertVisible = ref<boolean>(false);
 const alertColor = ref<'rose'|'green'>('rose');
@@ -121,73 +122,74 @@ onMounted(() => {
 </script>
 
 <template>
-  <!--<div class="max-w-3xl mx-auto">--><!--Required to prevent hydration mismatch-->
-  <UCard
-    :ui="uiCard">
-    <!--HEADER-->
-    <template #header>
-      <div class="flex items-center">
-        <UButton
-          color="gray"
-          variant="link"
-          :padded="false"
-          icon="i-heroicons-x-circle"
-          @click="goBack" />
-        <span class="font-semibold text-xl pl-2"> {{`${editModeLabel} Perfil`}} </span>
-      </div>
-    </template>
-    <!--BODY-->
-    <div>
-      <UTabs
-        v-model="currenTab"
-        :items="tabs"
-        :ui="{
-          list: { rounded: 'rounded-none' }
-        }"
-        class="w-full" />
-      <div class="h-[calc(100dvh-180px)] sm:h-[calc(100dvh-179px)] overflow-y-auto">
-        <BittSkeletonList v-if="state.isLoading" class="mx-6 mt-5" :items="1" />
-        <div v-else>
-          <!--:schema="security_roles_schema"-->
-          <UForm :state="state">
-            <Basic v-show="currenTab === 0" class="px-2 sm:px-4 pb-6" />
-            <Permissions v-show="currenTab === 1" class="px-2 sm:px-4 pb-6" />
-            <Users v-show="currenTab === 2" class="px-2 sm:px-4 pb-6" />
-          </UForm>
+  <div><!--Required to prevent hydration mismatch-->
+    <UCard
+      :ui="uiCard">
+      <!--HEADER-->
+      <template #header>
+        <div class="flex items-center">
+          <UButton
+            color="gray"
+            variant="link"
+            :padded="false"
+            icon="i-heroicons-x-circle"
+            @click="goBack" />
+          <span class="font-semibold text-xl pl-2"> {{`${editModeLabel} Perfil`}} </span>
+        </div>
+      </template>
+      <!--BODY-->
+      <div>
+        <UTabs
+          v-model="currenTab"
+          :items="tabs"
+          :ui="{
+            list: { rounded: 'rounded-none' }
+          }"
+          class="w-full" />
+        <div class="h-[calc(100dvh-180px)] sm:h-[calc(100dvh-179px)] overflow-y-auto">
+          <BittSkeletonList v-if="state.isLoading" class="mx-6 mt-5" :items="1" />
+          <div v-else>
+            <!--:schema="security_roles_schema"-->
+            <UForm :state="state">
+              <Basic v-show="currenTab === 0" class="px-2 sm:px-4 pb-6" />
+              <Permissions v-show="currenTab === 1" class="px-2 sm:px-4 pb-6" />
+              <Users v-show="currenTab === 2" class="px-2 sm:px-4 pb-6" />
+            </UForm>
+          </div>
         </div>
       </div>
-    </div>
-    <!--FOOTER-->   
-    <template #footer>
-      <UAlert
-        v-if="!isSaveButtonVisible"
-        icon="i-heroicons-information-circle"
-        color="yellow"
-        title="No tiene permisos para guardar cambios"
-        variant="solid" />
-      <div v-else>
+      <!--FOOTER-->   
+      <template #footer>
         <UAlert
-          v-if="alertVisible"
-          :close-button="{ icon: 'i-heroicons-x-mark-20-solid', color: 'white', variant: 'link', padded: false }"
-          :icon="alertIcon"
-          :color="alertColor"
-          :title="alertMessage"
-          variant="solid"
-          @close="alertVisible = false" />
-        <UButton
-          v-if="!alertVisible"
-          :disabled="state.isLoading"
-          :loading="state.isLoading"
-          block
-          size="xl"
-          label="Guardar" 
-          variant="solid"
-          @click="validateAndSave">
-          <template #leading v-if="!state.isLoading">
-            <i class="fa-solid fa-save fa-xl"></i>
-          </template>
-        </UButton>
-      </div>
-    </template>
-  </UCard>
+          v-if="!isSaveButtonVisible"
+          icon="i-heroicons-information-circle"
+          color="yellow"
+          title="No tiene permisos para guardar cambios"
+          variant="solid" />
+        <div v-else>
+          <UAlert
+            v-if="alertVisible"
+            :close-button="{ icon: 'i-heroicons-x-mark-20-solid', color: 'white', variant: 'link', padded: false }"
+            :icon="alertIcon"
+            :color="alertColor"
+            :title="alertMessage"
+            variant="solid"
+            @close="alertVisible = false" />
+          <UButton
+            v-if="!alertVisible"
+            :disabled="state.isLoading"
+            :loading="state.isLoading"
+            block
+            size="xl"
+            label="Guardar" 
+            variant="solid"
+            @click="validateAndSave">
+            <template #leading v-if="!state.isLoading">
+              <i class="fa-solid fa-save fa-xl"></i>
+            </template>
+          </UButton>
+        </div>
+      </template>
+    </UCard>
+  </div>
 </template>

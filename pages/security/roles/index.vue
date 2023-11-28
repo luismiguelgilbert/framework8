@@ -36,12 +36,15 @@ const payload = ref<filter_payload>(filter_payload_object.parse({
 }));
 const selectedFilter = computed(() => status_options.find(option => String(option.value) === payload.value.status));
 const selectedSort = computed(() => sort_options.find(option => String(option.value) === payload.value.sortBy));
-const isSideOpen = computed(() => {
+const isSideOpen = computed<boolean>(() => {
   const queryParams = currentRoute.value.query;
   return queryParams['id'] ? true : false;
 });
-//CUSTOM PROPERTIES
+//CUSTOM PROPERTIES & PERMISSIONS
 const rows = ref<type_sys_profiles[]>([]);
+const allowCreate = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_CREATE));
+const allowEdit = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_EDIT));
+const allowExport = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_EXPORT));
 const columns = computed(() => {
   const visibleAlways = { key: 'name_es', name: 'name_es', field: 'name_es', label: 'Perfil', sortable: false };
   const visibleDesktop = [
@@ -60,10 +63,8 @@ const fixedOptions = [
 ];
 const dropdownOptions = computed(() => {
   let dynamicOptions = [];
-  const allowCreate = mainState.value?.menuData.find((item) => item.id === PermissionsList.ROLES_CREATE);
-  const allowExport = mainState.value?.menuData.find((item) => item.id === PermissionsList.ROLES_EXPORT);
-  if (allowCreate) { dynamicOptions.push({ label: 'Nuevo', icon: 'fas fa-plus-circle', click: () => { goToForm() } }) };
-  if (allowExport) { dynamicOptions.push({ label: 'Descargar', icon: 'fas fa-file-excel', click: () => { downloadFile() } }) };
+  if (allowCreate.value) { dynamicOptions.push({ label: 'Nuevo', icon: 'fas fa-plus-circle', click: () => { goToForm() } }) };
+  if (allowExport.value) { dynamicOptions.push({ label: 'Descargar', icon: 'fas fa-file-excel', click: () => { downloadFile() } }) };
   return dynamicOptions.length > 0
     ? [ ...[dynamicOptions], ...fixedOptions ]
     : [ ...fixedOptions ];
@@ -312,7 +313,6 @@ onMounted(() => {
         </div>
       </UCard>
     </div>
-    
     <div v-if="!smAndLarger" class="h-2">
       <UProgress v-if="isLoading" animation="carousel" />
     </div>
@@ -320,7 +320,9 @@ onMounted(() => {
       :ui="{width: 'w-screen max-w-lg'}"
       v-model="isSideOpen"
       prevent-close>
-      <EditForm />
+      <EditForm
+        :allow-create="allowCreate"
+        :allow-edit="allowEdit" />
     </USlideover>
   </div>
 </template>
