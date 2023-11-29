@@ -1,7 +1,8 @@
 import serverDB from '@/server/utils/db';
 import { type_sys_profiles } from '@/typings/server/sys_profiles';
 import { type_sys_links } from '@/typings/server/sys_links';
-import { type type_security_roles_schema } from '@/typings/client/securityRoles'
+import { type type_security_roles_schema } from '@/typings/client/securityRoles';
+import { PermissionsList } from '@/typings/client/permissionsEnum';
 export default defineEventHandler( async (event) => {
   try{
     const payload: type_security_roles_schema = await readBody(event);
@@ -9,6 +10,24 @@ export default defineEventHandler( async (event) => {
     const profile_data: type_sys_profiles = payload.profileData;
     const profile_links: type_sys_links[] = payload.profileLinks;
 
+    //Check Permissions
+    const userId = event.context.user.id;
+    const isUserAllowed = `select * 
+      from sys_users a
+      inner join sys_profiles_users b on a.id = b.user_id
+      inner join sys_profiles c on c.id = b.id
+      inner join sys_profiles_links d on d.sys_profile_id = c.id
+      where a.id = '${userId}'
+      and d.sys_link_id = ${PermissionsList.ROLES_EDIT}`;
+    const isUserAllowedResult = (await serverDB.query(isUserAllowed)).rowCount;
+    if (isUserAllowedResult === 0) {
+      throw createError({
+        statusCode: 403,
+        statusMessage: 'Forbidden',
+      });
+    }
+
+    //Process
     await serverDB.query('BEGIN');
 
     const sqlSysProfiles = `update sys_profiles set
@@ -35,7 +54,7 @@ export default defineEventHandler( async (event) => {
     console.error(`Error at ${event.path}. ${err}`);
     throw createError({
       statusCode: 500,
-      statusMessage: 'Unhandled exception',
+      statusMessage: `${err ?? 'Unhandled exception'}`,
     });
   }
 });

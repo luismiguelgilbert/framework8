@@ -36,10 +36,7 @@ const payload = ref<filter_payload>(filter_payload_object.parse({
 }));
 const selectedFilter = computed(() => status_options.find(option => String(option.value) === payload.value.status));
 const selectedSort = computed(() => sort_options.find(option => String(option.value) === payload.value.sortBy));
-const isSideOpen = computed<boolean>(() => {
-  const queryParams = currentRoute.value.query;
-  return queryParams['id'] ? true : false;
-});
+const isSideOpen = ref(false);
 //CUSTOM PROPERTIES & PERMISSIONS
 const rows = ref<type_sys_profiles[]>([]);
 const allowCreate = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_CREATE));
@@ -139,6 +136,13 @@ const goToForm = (row?: type_sys_profiles) => {
     { parameter: filter_keys_enum.ID, value: rowValue },
   ]
   updateQueryState(newQueries);
+  isSideOpen.value = true;
+};
+const shouldOpenSide = () => {
+  const queryParams = currentRoute.value.query;
+  if (queryParams.id) {
+    isSideOpen.value = true;
+  }
 };
 const downloadFile = async() => {
   isLoading.value = true;
@@ -158,9 +162,10 @@ const loadOnScroll = (event: UIEvent) => {
   }
 };
 //HOOKS
-onMounted(() => {
+onMounted(async () => {
   initialQueryStateIntoRefs();
-  loadData();
+  await loadData();
+  shouldOpenSide();
 });
 </script>
 
@@ -322,7 +327,8 @@ onMounted(() => {
       prevent-close>
       <EditForm
         :allow-create="allowCreate"
-        :allow-edit="allowEdit" />
+        :allow-edit="allowEdit"
+        @closed="isSideOpen = false" />
     </USlideover>
   </div>
 </template>

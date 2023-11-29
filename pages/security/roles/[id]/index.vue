@@ -3,11 +3,13 @@ import { security_roles_schema, type type_security_roles_schema } from '@/typing
 import Basic from './basic.vue'
 import Permissions from './permissions.vue'
 import Users from './users.vue'
+import { AxiosError } from 'axios';
 
 const props = defineProps({
   allowCreate: { type: Boolean, required: true },
   allowEdit: { type: Boolean, required: true },
 })
+const emit = defineEmits(['closed']);
 
 const { currentRoute, push } = useRouter();
 const state = useSecurityRoles();
@@ -19,6 +21,7 @@ const currenTab = ref(0);
 const alertVisible = ref<boolean>(false);
 const alertColor = ref<'rose'|'green'>('rose');
 const alertMessage = ref<string>('');
+const alertDescription = ref<string>('');
 const alertIcon = ref<string>('');
 const body = ref<type_security_roles_schema>();
 
@@ -39,6 +42,7 @@ const goBack = () => {
   const newQuery = { ...currentRoute.value.query }
   delete newQuery.id;
   push({ query: newQuery });
+  emit('closed');
 }
 const validateAndSave = async () => {
   try {
@@ -48,6 +52,7 @@ const validateAndSave = async () => {
       alertColor.value = 'rose';
       alertMessage.value = res.error.issues.map((issue) => issue.message).join('\n');
       alertVisible.value = true;
+      alertDescription.value = '';
       alertIcon.value = 'i-heroicons-exclamation-circle';
       console.error(res);
       return;
@@ -72,6 +77,7 @@ const validateAndSave = async () => {
       }
       alertColor.value = 'green';
       alertMessage.value = 'Perfil guardado';
+      alertDescription.value = '';
       alertVisible.value = true;
       alertIcon.value = 'i-heroicons-check-circle';
     }
@@ -80,6 +86,7 @@ const validateAndSave = async () => {
     alertColor.value = 'rose';
     alertMessage.value = 'Error al guardar perfil';
     alertVisible.value = true;
+    alertDescription.value = (error as AxiosError).response?.statusText ?? '';
     alertIcon.value = 'i-heroicons-exclamation-circle';
   } finally {
     state.value.isLoading = false;
@@ -169,10 +176,12 @@ onMounted(() => {
         <div v-else>
           <UAlert
             v-if="alertVisible"
+            :ui="{ title: 'text-xs', description: 'text-xs' }"
             :close-button="{ icon: 'i-heroicons-x-mark-20-solid', color: 'white', variant: 'link', padded: false }"
             :icon="alertIcon"
             :color="alertColor"
             :title="alertMessage"
+            :description="alertDescription"
             variant="solid"
             @close="alertVisible = false" />
           <UButton
