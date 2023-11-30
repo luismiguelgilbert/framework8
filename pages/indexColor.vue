@@ -1,10 +1,16 @@
 <script setup lang="ts">
 const state = useUser();
 const appConfig = useAppConfig();
+const myAxios = useAxios();
 
 const setColor = (color: string) => {
   appConfig.ui.primary = color;
   state.value.preferedColor = color;
+  try {
+    myAxios.patch(`/api/users/${state.value.userData.id}`, { default_color: color });
+  } catch (error) {
+    console.error(error);
+  }
 }
 </script>
 

@@ -2,14 +2,25 @@
 const state = useUser();
 const appConfig = useAppConfig();
 const colorMode = useColorMode();
+const myAxios = useAxios();
 
 const setTheme = (color: 'light' | 'dark') => {
   colorMode.preference = color;
   state.value.theme = color;
+  try {
+    myAxios.patch(`/api/users/${state.value.userData.id}`, { dark_enabled: color === 'dark' });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 const setDarkColor = (color: string) => {
   appConfig.ui.gray = color;
+  try {
+    myAxios.patch(`/api/users/${state.value.userData.id}`, { default_dark_color: color });
+  } catch (error) {
+    console.error(error);
+  }
 }
 </script>
 
