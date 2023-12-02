@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import FileSaver from 'file-saver';
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
-import { sort_options, status_options} from '@/typings/server/sys_profiles'
-import { filter_payload_object, filter_keys_enum } from '@/typings/server/filter_payload'
-import type { type_sys_profiles } from '@/typings/server/sys_profiles'
-import type { filter_payload } from '@/typings/server/filter_payload'
-import EditForm from './[id]/index.vue'
-import { PermissionsList } from '@/typings/client/permissionsEnum'
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
+import { sort_options, status_options} from '@/typings/server/sys_profiles';
+import { filter_payload_object, filter_keys_enum } from '@/typings/server/filter_payload';
+import type { type_sys_profiles } from '@/typings/server/sys_profiles';
+import type { filter_payload } from '@/typings/server/filter_payload';
+import EditForm from './[id]/index.vue';
+import { PermissionsList } from '@/typings/client/permissionsEnum';
 
 useHead({ title: 'Perfiles' });
 const mainState = useUser();
@@ -24,6 +24,18 @@ const uiTable = computed(() => {
     tbody: smAndLarger.value ? 'divide-y divide-gray-200 dark:divide-gray-800' : 'divide-y divide-white dark:divide-gray-900',
   }
 });
+const uiMainCard = { 
+  body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
+  rounded: 'rounded-none',
+};
+const uiMobileButton = { rounded: 'rounded-none' };
+const uiOptions = { rounded: 'rounded-none sm:rounded-lg'};
+const uiTableContainer = { 
+  rounded: 'rounded-none sm:rounded-lg',
+  header: { padding: 'px-1 sm:px-4 py-2', background: 'bg-gray-100 dark:bg-gray-800' },
+  body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
+};
+const uiSlide = {width: 'w-screen max-w-lg'};
 //COMMON REFS
 const isLoading = ref<boolean>(false);
 const rowsNumber = ref(0);
@@ -171,22 +183,18 @@ onMounted(async () => {
 
 <template>
   <div><!--Required to prevent hydration mismatch-->
-    <UCard
-      :ui="{ 
-        body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
-        rounded: 'rounded-none',
-      }" >
+    <UCard :ui="uiMainCard">
       <div
         class="w-full bg-white"
         :class="smAndLarger ? 'dark:bg-gray-900' : 'dark:bg-gray-900'">
         <div class="flex items-center justify-between gap-3 px-0 py-0 sm:px-4 sm:py-3">
           <UButton
             v-if="!smAndLarger"
+            :ui="uiMobileButton"
             variant="ghost"
             icon="i-heroicons-bars-4"
             size="xl"
             class="px-4 py-4"
-            :ui="{ rounded: 'rounded-none' }"
             @click="mainState.isMenuOpen = true" />
           <UInput
             :model-value="payload.searchString"
@@ -203,13 +211,13 @@ onMounted(async () => {
               :popper="{ placement: 'bottom-start' }">
               <UButton
                 :variant="smAndLarger ? 'solid' : 'ghost'"
-                icon="i-heroicons-cog"
-                size="xl"
-                class="px-4 py-4"
-                :ui="{ rounded: 'rounded-none sm:rounded-lg'}"
+                :ui="uiOptions"
                 :loading="isLoading"
                 :label="smAndLarger ? 'Opciones' : ''"
-                :trailing-icon="smAndLarger ? 'i-heroicons-chevron-down-20-solid' : ''" />
+                :trailing-icon="smAndLarger ? 'i-heroicons-chevron-down-20-solid' : ''"
+                icon="i-heroicons-cog"
+                size="xl"
+                class="px-4 py-4" />
             </UDropdown>
           </div>
         </div>
@@ -219,12 +227,7 @@ onMounted(async () => {
       <UProgress v-if="isLoading" animation="carousel" />
     </div>
     <div class="max-w-3xl mx-auto mt-0 sm:mt-3">
-      <UCard
-        :ui="{ 
-          rounded: 'rounded-none sm:rounded-lg',
-          header: { padding: 'px-1 sm:px-4 py-2', background: 'bg-gray-100 dark:bg-gray-800' },
-          body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
-        }" >
+      <UCard :ui="uiTableContainer">
         <!--HEADER-->
         <template #header>
           <div class="flex items-center justify-between gap-3">
@@ -322,7 +325,7 @@ onMounted(async () => {
       <UProgress v-if="isLoading" animation="carousel" />
     </div>
     <USlideover
-      :ui="{width: 'w-screen max-w-lg'}"
+      :ui="uiSlide"
       v-model="isSideOpen"
       prevent-close>
       <EditForm

@@ -1,36 +1,41 @@
 <script setup lang="ts">
 import FileSaver from 'file-saver';
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
-import type { type_sys_companies } from '@/typings/server/sys_companies'
-import { sort_options, status_options} from '@/typings/server/sys_profiles'
-import type { filter_payload } from '@/typings/server/filter_payload'
-import { filter_payload_object, filter_keys_enum } from '@/typings/server/filter_payload'
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
+import { sort_options, status_options} from '@/typings/server/sys_companies';
+import { filter_payload_object, filter_keys_enum } from '@/typings/server/filter_payload';
+import type { type_sys_profiles } from '@/typings/server/sys_profiles';
+import type { filter_payload } from '@/typings/server/filter_payload';
+import EditForm from './[id]/index.vue';
+import { PermissionsList } from '@/typings/client/permissionsEnum';
 
-useHead({ title: 'Perfiles' });
+useHead({ title: 'Compañías' });
+const mainState = useUser();
 const { currentRoute, push } = useRouter();
 const myAxios = useAxios();
 const toast = useToast();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const smAndLarger = breakpoints.greaterOrEqual('sm');
 
-const uiCard = computed(() => {
-  return {
-    base: '',
-    ring: '',
-    divide: smAndLarger.value ? 'divide-y divide-gray-200 dark:divide-gray-700' : 'divide-y divide-white dark:divide-gray-900',
-    header: { padding: 'px-0 sm:px-0 py-0' },
-    body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
-    footer: { padding: 'p-4' },
-    rounded: 'rounded-none sm:rounded-lg',
-  }
-});
 const uiTable = computed(() => {
   return {
+    thead: smAndLarger.value ? 'visible' : 'hidden',
     td: { base: 'py-5 pl-4'},
     divide: smAndLarger.value ? 'divide-y divide-gray-300 dark:divide-gray-700' : 'divide-y divide-white dark:divide-gray-900',
     tbody: smAndLarger.value ? 'divide-y divide-gray-200 dark:divide-gray-800' : 'divide-y divide-white dark:divide-gray-900',
   }
 });
+const uiMainCard = { 
+  body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
+  rounded: 'rounded-none',
+};
+const uiMobileButton = { rounded: 'rounded-none' };
+const uiOptions = { rounded: 'rounded-none sm:rounded-lg'};
+const uiTableContainer = { 
+  rounded: 'rounded-none sm:rounded-lg',
+  header: { padding: 'px-1 sm:px-4 py-2', background: 'bg-gray-100 dark:bg-gray-800' },
+  body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
+};
+const uiSlide = {width: 'w-screen max-w-lg'};
 //COMMON REFS
 const isLoading = ref<boolean>(false);
 const rowsNumber = ref(0);
@@ -41,26 +46,23 @@ const payload = ref<filter_payload>(filter_payload_object.parse({
   sortBy: '1',
   filter: '1',
 }));
-//CUSTOM PROPERTIES
-const rows = ref<type_sys_companies[]>([]);
-const columns = [
-  { key: 'name_es', name: 'name_es', field: 'name_es', label: 'Compañía', sortable: false },
-  { key: 'created_at', name: 'created_at', field: 'created_at', label: 'Info', sortable: false },
-  { key: 'is_active', name: 'is_active', field: 'is_active', label: 'Estado', sortable: false },
-]
-const items = [
-  [
-    {
-      label: 'Nuevo',
-      icon: 'fas fa-plus-circle',
-      click: () => { goToForm() },
-    },
-    {
-      label: 'Descargar',
-      icon: 'fas fa-file-excel',
-      click: () => { downloadFile() },
-    },
-  ],
+const selectedFilter = computed(() => status_options.find(option => String(option.value) === payload.value.status));
+const selectedSort = computed(() => sort_options.find(option => String(option.value) === payload.value.sortBy));
+const isSideOpen = ref(false);
+//CUSTOM PROPERTIES & PERMISSIONS
+const rows = ref<type_sys_profiles[]>([]);
+const allowCreate = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_CREATE));
+const allowEdit = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_EDIT));
+const allowExport = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_EXPORT));
+const columns = computed(() => {
+  const visibleAlways = { key: 'name_es', name: 'name_es', field: 'name_es', label: 'Perfil', sortable: false };
+  const visibleDesktop = [
+    { key: 'created_at', name: 'created_at', field: 'created_at', label: 'Fecha creación', sortable: false },
+    { key: 'is_active', name: 'is_active', field: 'is_active', label: 'Estado', sortable: false },
+  ];
+  return smAndLarger.value ? [visibleAlways, ...visibleDesktop] : [visibleAlways];
+});
+const fixedOptions = [
   [
     ...status_options.map((option) => { return {...option, click: () => { updateFilter(option.value) } }})
   ],
@@ -68,6 +70,14 @@ const items = [
     ...sort_options.map((option) => { return {...option, click: () => { updateSorting(option.value) } }})
   ]
 ];
+const dropdownOptions = computed(() => {
+  let dynamicOptions = [];
+  if (allowCreate.value) { dynamicOptions.push({ label: 'Nuevo', icon: 'fas fa-plus-circle', click: () => { goToForm() } }) };
+  if (allowExport.value) { dynamicOptions.push({ label: 'Descargar', icon: 'fas fa-file-excel', click: () => { downloadFile() } }) };
+  return dynamicOptions.length > 0
+    ? [ ...[dynamicOptions], ...fixedOptions ]
+    : [ ...fixedOptions ];
+})
 //QUERY ROUTER PROPERTIES
 const updateQueryState = (newQueries: Array<{parameter: filter_keys_enum, value: string}>) => {
   const newQuery = { ...currentRoute.value.query }
@@ -87,36 +97,34 @@ const updateSearchString = useDebounceFn((newString: string) => {
   payload.value.searchString = newString;
   payload.value.page = '1';
   const newQueries = [
-    { parameter: filter_keys_enum.PAGE, value: '1'},
     { parameter: filter_keys_enum.SEARCH, value: newString},
   ]
   updateQueryState(newQueries);
+  rows.value = [];
   loadData();
 }, 1000);
 const updateFilter = (newStatus: number) => {
   payload.value.status = String(newStatus);
   payload.value.page = '1';
   const newQueries = [
-    { parameter: filter_keys_enum.PAGE, value: '1'},
     { parameter: filter_keys_enum.STATUS, value: String(newStatus)},
   ]
   updateQueryState(newQueries);
+  rows.value = [];
   loadData();
 };
 const updateSorting = (newSorting: number) => {
   payload.value.sortBy = String(newSorting);
+  payload.value.page = '1';
   const newQueries = [
     { parameter: filter_keys_enum.SORT, value: String(newSorting)},
   ]
   updateQueryState(newQueries);
+  rows.value = [];
   loadData();
 };
 const updatePage = (newPage: number) => {
   payload.value.page = String(newPage);
-  const newQueries = [
-    { parameter: filter_keys_enum.PAGE, value: String(newPage)},
-  ]
-  updateQueryState(newQueries);
   loadData();
 };
 //ACTIONS
@@ -125,7 +133,7 @@ const loadData = async() => {
     isLoading.value = true;
     const response = await myAxios.post('/api/companies', payload.value);
     const { data } = response;
-    rows.value = data;
+    rows.value = rows.value.concat(data);
     rowsNumber.value = data[0]?.row_count ?? 0;
   } catch(error) {
     console.error(error);
@@ -134,153 +142,196 @@ const loadData = async() => {
     isLoading.value = false;
   }
 };
-const goToForm = (row?: type_sys_companies) => {
+const goToForm = (row?: type_sys_profiles) => {
+  const rowValue = row?.id ? String(row?.id) : 'new';
+  const newQueries = [
+    { parameter: filter_keys_enum.ID, value: rowValue },
+  ]
+  updateQueryState(newQueries);
+  isSideOpen.value = true;
+};
+const shouldOpenSide = () => {
   const queryParams = currentRoute.value.query;
-  const querystring = Object.entries(queryParams).map(([key, value]) => `${key}=${value}`).join('&');
-  if(row && row.id) {
-    navigateTo(`/security/companies/${row.id}${querystring ? `?${querystring}` : ''}`);
-  } else {
-    navigateTo(`/security/companies/new${querystring ? `?${querystring}` : ''}`);
+  if (queryParams.id) {
+    isSideOpen.value = true;
   }
 };
 const downloadFile = async() => {
   isLoading.value = true;
-  const { data } = await myAxios.post('/api/companies/download', payload.value, { responseType: 'blob' });
+  const { data } = await myAxios.post('/api/roles/download', payload.value, { responseType: 'blob' });
   FileSaver.saveAs(data, "Perfiles.xlsx");
   isLoading.value = false;
 };
+const loadOnScroll = (event: UIEvent) => {
+  const eventTarget = event.target as HTMLElement;
+  const { scrollTop, clientHeight, scrollHeight } = eventTarget;
+  const offset = 100;
+  const isBottom = scrollTop + clientHeight + offset >= scrollHeight;
+  const isMoreDataAvailable = rowsNumber.value > rows.value.length;
+  if (isBottom && isMoreDataAvailable && !isLoading.value) {
+    const newPage = payload.value.page ? Number(Number(payload.value.page)+1) : 1;
+    updatePage(newPage);
+  }
+};
 //HOOKS
-onMounted(() => {
+onMounted(async () => {
   initialQueryStateIntoRefs();
-  loadData();
+  await loadData();
+  shouldOpenSide();
 });
 </script>
 
 <template>
-  <div class="max-w-3xl mx-auto"><!--Required to prevent hydration mismatch-->
-    <UCard :ui="uiCard">
-      <!--HEADER-->
-      <template #header>
-        <div class="flex items-center justify-between gap-3 px-4 py-3">
+  <div><!--Required to prevent hydration mismatch-->
+    <UCard :ui="uiMainCard">
+      <div
+        class="w-full bg-white"
+        :class="smAndLarger ? 'dark:bg-gray-900' : 'dark:bg-gray-900'">
+        <div class="flex items-center justify-between gap-3 px-0 py-0 sm:px-4 sm:py-3">
+          <UButton
+            v-if="!smAndLarger"
+            :ui="uiMobileButton"
+            variant="ghost"
+            icon="i-heroicons-bars-4"
+            size="xl"
+            class="px-4 py-4"
+            @click="mainState.isMenuOpen = true" />
           <UInput
             :model-value="payload.searchString"
-            :loading="isLoading"
             :variant="smAndLarger ? 'outline' : 'none'"
             size="xl"
-            placeholder="Buscar..."
+            icon="i-heroicons-magnifying-glass-20-solid"
+            placeholder="Buscar Perfiles..."
             @input="(event: InputEvent) => updateSearchString((event.target as HTMLInputElement).value)">
-            <template #trailing>
-              <i v-if="smAndLarger" class="fas fa-search fa-xl text-gray-500"></i>
-            </template>
           </UInput>
           <div class="px-1"></div>
           <div>
             <UDropdown
-              :items="items"
+              :items="dropdownOptions"
               :popper="{ placement: 'bottom-start' }">
               <UButton
-                variant="solid"
-                icon="i-heroicons-bars-3"
-                size="xl"
+                :variant="smAndLarger ? 'solid' : 'ghost'"
+                :ui="uiOptions"
                 :loading="isLoading"
-                label="Opciones"
-                trailing-icon="i-heroicons-chevron-down-20-solid" />
+                :label="smAndLarger ? 'Opciones' : ''"
+                :trailing-icon="smAndLarger ? 'i-heroicons-chevron-down-20-solid' : ''"
+                icon="i-heroicons-cog"
+                size="xl"
+                class="px-4 py-4" />
             </UDropdown>
           </div>
         </div>
-      </template>
-      <!--BODY-->
-      <div class="h-[calc(100dvh-205px)] sm:h-[calc(100dvh-170px)] overflow-x-hidden">
-        <div class="border border-neutral-100 dark:border-neutral-700" />
-        <UTable
-          :columns="columns"
-          :rows="rows"
-          :loading="isLoading"
-          :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }"
-          :ui="uiTable"
-          @select="goToForm">
-          <!--Nombre-->
-          <template #name_es-data="{ row }">
-            <div class="flex items-center flex-row">
-              <!--<UAvatar
-                :chip-color="row.is_active ? 'primary' : 'rose'"
-                chip-text=""
-                chip-position="top-right"
-                size="sm">
-                {{ String(row.id) }}
-              </UAvatar>-->
-              <dl class="pl-2">
-                <dd class="font-semibold">{{ row.name_es_short }}</dd>
-                <div class="flex-row">
-                  <i class="fas fa-building fa-sm text-gray-400"></i>
-                  {{ row.name_es }}
-                </div>
-                <div class="flex-row">
-                  <i class="fas fa-hashtag fa-sm text-gray-400"></i>
-                  {{ row.company_number }}
-                </div>
-
-                <!--Mobile-->
-                <div class="flex-row items-center flex sm:hidden">
-                  <i class="fas fa-user-circle text-gray-400"></i>
-                  <span class="font-semibold pl-1">{{ `${row.sys_profile_name}` }}</span>
-                </div>
-                <div class="flex-row items-center flex sm:hidden">
-                  <i class="fas fa-door-open text-gray-400"></i>
-                  <!--<span class="pl-1">{{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.last_sign_in_at)) }}</span>-->
-                </div>
-              </dl>
-            </div>
-          </template>
-          <!--Info-->
-          <template #created_at-data="{ row }">
-            <div class="flex items-center flex-row">
-              <dl class="pl-2">
-                <dd class="font-semibold">{{ row.billing_address }}</dd>
-                <div class="flex-row">
-                  <i class="fas fa-hashtag fa-sm text-gray-400"></i>
-                  {{ row.billing_phone }}
-                </div>
-              </dl>
-            </div>
-          </template>
-          <!--Estado-->
-          <template #is_active-header>
-            <span class="hidden sm:block">Activo?</span>
-          </template>
-          <template #is_active-data="{ row }">
-            <span class="hidden sm:block">
-            <UBadge
-              v-if="row.is_active"
-              class="ml-2"
-              variant="soft"
-              color="primary"
-              label="&#9679; Activo" />
-            <UBadge
-              v-else
-              class="ml-2"
-              variant="soft" 
-              color="rose"
-              label="&#9679; Inactivo" />
-            </span>
-          </template>
-        </UTable>
       </div>
-      <!--FOOTER-->
-      <template #footer>
-        <div class="flex justify-between items-center">
-          <UPagination
-            :model-value="Number(payload.page)"
-            :page-count="Number(payload.rowsPerPage)"
-            :total="rowsNumber"
-            :max="4"
-            size="md"
-            @update:model-value="(e) => updatePage(e)" />
-          <div>
-            <span>{{ rowsNumber }}</span>
-          </div>
-        </div>
-      </template>
     </UCard>
+    <div v-if="smAndLarger" class="h-2">
+      <UProgress v-if="isLoading" animation="carousel" />
+    </div>
+    <div class="max-w-3xl mx-auto mt-0 sm:mt-3">
+      <UCard :ui="uiTableContainer">
+        <!--HEADER-->
+        <template #header>
+          <div class="flex items-center justify-between gap-3">
+            <span>
+              <UIcon name="pl-1 fas fa-filter text-gray-400" />
+              <span class="pl-2 font-bold">{{ selectedFilter?.label }}</span>
+              <UIcon v-if="smAndLarger" name="pl-6 fas fa-arrow-up-short-wide text-gray-500" />
+              <span v-if="smAndLarger" class="pl-2 font-bold">{{ selectedSort?.label }}</span>
+            </span>
+            <span class="font-semibold pr-1">{{ rowsNumber }} registros</span>
+          </div>
+        </template>
+        <!--BODY-->
+        <div class="h-[calc(100dvh-100px)] sm:h-[calc(100dvh-170px)] overflow-x-hidden" @scroll="loadOnScroll">
+          <UTable
+            :columns="columns"
+            :rows="rows"
+            :ui="uiTable"
+            :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No hay datos.' }"
+            @select="goToForm">
+            <!--Nombre-->
+            <template #name_es-header>
+              <span class="hidden sm:block">Perfil</span>
+            </template>
+            <template #name_es-data="{ row }">
+              <!--Desktop-->
+              <div v-if="smAndLarger">
+                <div class="flex items-center flex-row">
+                  <UChip
+                    inset
+                    :color="row.is_active ? 'primary' : 'rose'" >
+                    <UAvatar size="sm">
+                      {{ row.name_es[0] }}
+                    </UAvatar>
+                  </UChip>
+                  <div class="ps-3">
+                    <div class="text-base font-semibold">{{ row.name_es }}</div>
+                    <div class="font-normal text-gray-500">{{ `${row.user_count} usuarios` }}</div>
+                  </div>
+                </div>
+              </div>
+              <!--Mobile-->
+              <div v-if="!smAndLarger" style="width: calc(90vw); overflow-x: hidden; text-overflow: ellipsis;">
+                <div class="flex flex-row items-center">
+                  <UChip
+                    inset
+                    :color="row.is_active ? 'primary' : 'rose'" >
+                    <UAvatar size="sm">
+                      {{ row.name_es[0] }}
+                    </UAvatar>
+                  </UChip>
+                  <div class="ps-3">
+                    <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
+                    <div class="font-normal text-gray-500">{{ `${row.user_count} usuarios` }}</div>
+                    <div class="font-normal text-gray-500">Creado el {{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</div>
+                  </div>
+                </div>
+              </div>
+            </template>
+            <!--Fecha Creación-->
+            <template #created_at-header>
+              <span class="hidden sm:block">Fecha Creación</span>
+            </template>
+            <template #created_at-data="{ row }">
+              <div class="flex items-center">
+                <i class="hidden sm:block fa-regular fa-calendar text-gray-400 pr-2"></i>
+                <span class="hidden sm:block">{{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</span>
+              </div>
+            </template>
+            <!--Estado-->
+            <template #is_active-header>
+              <span class="hidden sm:block">Activo?</span>
+            </template>
+            <template #is_active-data="{ row }">
+              <span class="hidden sm:block">
+              <UBadge
+                v-if="row.is_active"
+                class="ml-2"
+                variant="soft"
+                color="primary"
+                label="&#9679; Activo" />
+              <UBadge
+                v-else
+                class="ml-2"
+                variant="soft" 
+                color="rose"
+                label="&#9679; Inactivo" />
+              </span>
+            </template>
+          </UTable>
+        </div>
+      </UCard>
+    </div>
+    <div v-if="!smAndLarger" class="h-2">
+      <UProgress v-if="isLoading" animation="carousel" />
+    </div>
+    <USlideover
+      :ui="uiSlide"
+      v-model="isSideOpen"
+      prevent-close>
+      <EditForm
+        :allow-create="allowCreate"
+        :allow-edit="allowEdit"
+        @closed="isSideOpen = false" />
+    </USlideover>
   </div>
 </template>
