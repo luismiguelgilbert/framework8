@@ -202,7 +202,7 @@ onMounted(async () => {
             :variant="smAndLarger ? 'outline' : 'none'"
             size="xl"
             icon="i-heroicons-magnifying-glass-20-solid"
-            placeholder="Buscar Compañias..."
+            placeholder="Buscar Compañías..."
             @input="(event: InputEvent) => updateSearchString((event.target as HTMLInputElement).value)">
           </UInput>
           <div class="px-1"></div>
@@ -304,22 +304,7 @@ onMounted(async () => {
                   <div class="font-normal text-gray-500 ">{{ `${row.billing_address}` }}</div>
                 </div>
               </div>
-              <!-- <div class="flex items-center">
-                <i class="hidden sm:block fa-regular fa-calendar text-gray-400 pr-2"></i>
-                <span class="hidden sm:block">{{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</span>
-              </div> -->
             </template>
-            <!--Fecha Creación-->
-            <!-- <template #created_at-header>
-              <span class="hidden sm:block">Fecha Creación</span>
-            </template>
-            <template #created_at-data="{ row }">
-              <div class="flex items-center">
-                <i class="hidden sm:block fa-regular fa-calendar text-gray-400 pr-2"></i>
-                <span class="hidden sm:block">{{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</span>
-              </div>
-            </template> -->
-            <!--Estado-->
             <template #is_active-header>
               <span class="hidden sm:block">Activo?</span>
             </template>
