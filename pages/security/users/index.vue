@@ -249,12 +249,11 @@ onMounted(async () => {
             :ui="uiTable"
             :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No hay datos.' }"
             @select="goToForm">
-            <!--RazónSocial-->
+            <!--Nombre-->
             <template #user_name-header>
               <span class="hidden sm:block">Usuario</span>
             </template>
             <template #user_name-data="{ row }">
-              <!--Desktop-->
               <div v-if="smAndLarger">
                 <div class="flex items-center flex-row">
                   <UAvatar size="sm">
@@ -269,17 +268,13 @@ onMounted(async () => {
               <!--Mobile-->
               <div v-if="!smAndLarger" style="width: calc(90vw); overflow-x: hidden; text-overflow: ellipsis;">
                 <div class="flex flex-row items-center">
-                  <UChip
-                    inset
-                    :color="row.is_active ? 'primary' : 'rose'" >
-                    <UAvatar size="sm">
-                      {{ row.name_es[0] }}
-                    </UAvatar>
-                  </UChip>
+                  <UAvatar size="sm">
+                    {{ row.user_name[0] }}
+                  </UAvatar>
                   <div class="ps-3">
-                    <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ String(row.name_es_short).replaceAll('_', ' ') }}</div>
-                    <div class="font-normal text-gray-500">{{ `${row.name_es}` }}</div>
-                    <div class="font-normal text-gray-500">{{ `${row.company_number}` }}</div>
+                    <div class="text-base font-semibold">{{ `${row.user_name} ${row.user_lastname}` }}</div>
+                    <div class="font-normal text-gray-500">{{ row.email }}</div>
+                    <div class="font-normal text-gray-500">{{ row.sys_profile_name }}</div>
                   </div>
                 </div>
               </div>
