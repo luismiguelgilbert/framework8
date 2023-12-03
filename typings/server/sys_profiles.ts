@@ -3,7 +3,7 @@ import { z } from "zod"
 export const sys_profiles = z.object({
   id: z.coerce.number().default(0),
   name_es: z.string()
-    .min(3, { message: "Nombre debe incluir 3 o más letras." })
+    .min(3, { message: "Nombre debe incluir 3 o más caracteres." })
     .default(''),
   is_active: z.boolean().default(true),
   created_at: z.coerce.string().optional().nullable().default(new Date().toISOString()),

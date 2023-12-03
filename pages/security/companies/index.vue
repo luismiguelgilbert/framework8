@@ -3,7 +3,7 @@ import FileSaver from 'file-saver';
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import { sort_options, status_options} from '@/typings/server/sys_companies';
 import { filter_payload_object, filter_keys_enum } from '@/typings/server/filter_payload';
-import type { type_sys_profiles } from '@/typings/server/sys_profiles';
+import type { type_sys_companies } from '@/typings/server/sys_companies';
 import type { filter_payload } from '@/typings/server/filter_payload';
 import EditForm from './[id]/index.vue';
 import { PermissionsList } from '@/typings/client/permissionsEnum';
@@ -50,14 +50,15 @@ const selectedFilter = computed(() => status_options.find(option => String(optio
 const selectedSort = computed(() => sort_options.find(option => String(option.value) === payload.value.sortBy));
 const isSideOpen = ref(false);
 //CUSTOM PROPERTIES & PERMISSIONS
-const rows = ref<type_sys_profiles[]>([]);
-const allowCreate = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_CREATE));
-const allowEdit = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_EDIT));
-const allowExport = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_EXPORT));
+const rows = ref<type_sys_companies[]>([]);
+const allowCreate = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.COMPANIES_CREATE));
+const allowEdit = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.COMPANIES_EDIT));
+const allowExport = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.COMPANIES_EXPORT));
 const columns = computed(() => {
-  const visibleAlways = { key: 'name_es', name: 'name_es', field: 'name_es', label: 'Perfil', sortable: false };
+  const visibleAlways = { key: 'name_es', name: 'name_es', field: 'name_es', label: 'Compañía', sortable: false };
   const visibleDesktop = [
-    { key: 'created_at', name: 'created_at', field: 'created_at', label: 'Fecha creación', sortable: false },
+    { key: 'name_es_short', name: 'name_es_short', field: 'name_es_short', label: 'Nombre', sortable: false },
+    // { key: 'created_at', name: 'created_at', field: 'created_at', label: 'Fecha creación', sortable: false },
     { key: 'is_active', name: 'is_active', field: 'is_active', label: 'Estado', sortable: false },
   ];
   return smAndLarger.value ? [visibleAlways, ...visibleDesktop] : [visibleAlways];
@@ -142,7 +143,7 @@ const loadData = async() => {
     isLoading.value = false;
   }
 };
-const goToForm = (row?: type_sys_profiles) => {
+const goToForm = (row?: type_sys_companies) => {
   const rowValue = row?.id ? String(row?.id) : 'new';
   const newQueries = [
     { parameter: filter_keys_enum.ID, value: rowValue },
@@ -158,8 +159,8 @@ const shouldOpenSide = () => {
 };
 const downloadFile = async() => {
   isLoading.value = true;
-  const { data } = await myAxios.post('/api/roles/download', payload.value, { responseType: 'blob' });
-  FileSaver.saveAs(data, "Perfiles.xlsx");
+  const { data } = await myAxios.post('/api/companies/download', payload.value, { responseType: 'blob' });
+  FileSaver.saveAs(data, "Companias.xlsx");
   isLoading.value = false;
 };
 const loadOnScroll = (event: UIEvent) => {
@@ -201,7 +202,7 @@ onMounted(async () => {
             :variant="smAndLarger ? 'outline' : 'none'"
             size="xl"
             icon="i-heroicons-magnifying-glass-20-solid"
-            placeholder="Buscar Perfiles..."
+            placeholder="Buscar Compañias..."
             @input="(event: InputEvent) => updateSearchString((event.target as HTMLInputElement).value)">
           </UInput>
           <div class="px-1"></div>
@@ -248,9 +249,9 @@ onMounted(async () => {
             :ui="uiTable"
             :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No hay datos.' }"
             @select="goToForm">
-            <!--Nombre-->
+            <!--RazónSocial-->
             <template #name_es-header>
-              <span class="hidden sm:block">Perfil</span>
+              <span class="hidden sm:block">Compañía</span>
             </template>
             <template #name_es-data="{ row }">
               <!--Desktop-->
@@ -264,8 +265,9 @@ onMounted(async () => {
                     </UAvatar>
                   </UChip>
                   <div class="ps-3">
-                    <div class="text-base font-semibold">{{ row.name_es }}</div>
-                    <div class="font-normal text-gray-500">{{ `${row.user_count} usuarios` }}</div>
+                    <div class="text-base font-semibold">{{ row.name_es_short }}</div>
+                    <div class="font-normal text-gray-500">{{ row.name_es }}</div>
+                    <div class="font-normal text-gray-500">{{ `RUC: ${row.company_number}` }}</div>
                   </div>
                 </div>
               </div>
@@ -280,15 +282,35 @@ onMounted(async () => {
                     </UAvatar>
                   </UChip>
                   <div class="ps-3">
-                    <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
-                    <div class="font-normal text-gray-500">{{ `${row.user_count} usuarios` }}</div>
-                    <div class="font-normal text-gray-500">Creado el {{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</div>
+                    <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ String(row.name_es_short).replaceAll('_', ' ') }}</div>
+                    <div class="font-normal text-gray-500">{{ `${row.name_es}` }}</div>
+                    <div class="font-normal text-gray-500">{{ `${row.company_number}` }}</div>
                   </div>
                 </div>
               </div>
             </template>
+            <!--Nombre-->
+            <template #name_es_short-header>
+              <span class="hidden sm:block">Nombre</span>
+            </template>
+            <template #name_es_short-data="{ row }">
+              <div class="ps-3">
+                <div class="flex items-center">
+                  <i class="hidden sm:block fa-solid fa-phone text-gray-400 pr-2"></i>
+                  <div class="font-normal text-gray-500">{{ `${row.billing_phone}` }}</div>
+                </div>
+                <div class="flex items-center w-15 whitespace-break-spaces">
+                  <i class="hidden sm:block fa-solid fa-location-pin text-gray-400 pr-2"></i>
+                  <div class="font-normal text-gray-500 ">{{ `${row.billing_address}` }}</div>
+                </div>
+              </div>
+              <!-- <div class="flex items-center">
+                <i class="hidden sm:block fa-regular fa-calendar text-gray-400 pr-2"></i>
+                <span class="hidden sm:block">{{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</span>
+              </div> -->
+            </template>
             <!--Fecha Creación-->
-            <template #created_at-header>
+            <!-- <template #created_at-header>
               <span class="hidden sm:block">Fecha Creación</span>
             </template>
             <template #created_at-data="{ row }">
@@ -296,7 +318,7 @@ onMounted(async () => {
                 <i class="hidden sm:block fa-regular fa-calendar text-gray-400 pr-2"></i>
                 <span class="hidden sm:block">{{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</span>
               </div>
-            </template>
+            </template> -->
             <!--Estado-->
             <template #is_active-header>
               <span class="hidden sm:block">Activo?</span>

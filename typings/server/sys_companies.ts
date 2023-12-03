@@ -1,15 +1,16 @@
 import { z } from "zod"
 
 export const sys_companies = z.object({
-  id: z.coerce.string().uuid(),
+  id: z.coerce.string(),
   company_number: z.string()
-    .min(3, { message: "RUC debe incluir 3 o más letras." })
+    .min(3, { message: "RUC debe incluir 3 o más caracteres." })
+    .max(13, { message: "RUC debe incluir máximo 13 caracteres." })
     .default(''),
   name_es: z.string()
-    .min(3, { message: "Razón Social debe incluir 3 o más letras." })
+    .min(3, { message: "Razón Social debe incluir 3 o más caracteres." })
     .default(''),
   name_es_short: z.string()
-    .min(3, { message: "Nombre debe incluir 3 o más letras." })
+    .min(3, { message: "Nombre debe incluir 3 o más caracteres." })
     .default(''),
   billing_phone: z.string().optional().default(''),
   billing_address: z.string().optional().default(''),

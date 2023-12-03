@@ -10,6 +10,7 @@ export const sys_links = z.object({
   icon: z.coerce.string().nullable(),
   comment_es: z.coerce.string().nullable(),
   created_at: z.coerce.string().optional().nullable().default(new Date().toISOString()),
-  updated_at: z.coerce.string().optional().nullable().default(new Date().toISOString())
+  updated_at: z.coerce.string().optional().nullable().default(new Date().toISOString()),
+  path: z.coerce.string().optional().nullable(),
 });
 export type type_sys_links = z.infer<typeof sys_links>;

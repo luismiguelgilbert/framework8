@@ -8,10 +8,9 @@ const uiCard = {
   body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
 }
 
-const allLinksRoot = computed(() => state.value.allLinks
-  .filter(object => object.row_level > 0)
-  .sort((a, b) => b.parent! - a.parent! )
-);
+const allLinksRoot = computed(() => {
+  return state.value.allLinks.filter(x => x.row_level > 0)
+});
 const getNameFromId = (id: number) => {
   const link = state.value.allLinks.find(object => object.id === id);
   return link ? link.name_es : '';
@@ -20,7 +19,7 @@ const getIconFromId = (id: number) => {
   const link = state.value.allLinks.find(object => object.id === id);
   return link ? link.icon! : '';
 }
-const getGrandparentNameFromId = (parentId: number) => {
+const getGrandparentNameFromId = (parentId: number | null | undefined) => {
   const grandParentId = state.value.allLinks.find(object => object.id === parentId)?.parent;
   return grandParentId ? `${getNameFromId(grandParentId)} / ` : '';
 }
@@ -36,7 +35,7 @@ const getGrandparentNameFromId = (parentId: number) => {
         class="w-full"
         :columns="columns"
         v-model="state.profileLinks"
-        :sort="{ column: 'name_es', direction: 'desc' }"
+        :sort="{ column: 'path', direction: 'desc' }"
         :rows="allLinksRoot">
         <template #name_es-data="{ row }">
           <UIcon v-if="row.row_level === 1" :name="row.icon" class="pl-4" />

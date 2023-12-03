@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { type LocationQueryValue } from '#vue-router'
 import { security_roles_schema, type type_security_roles_schema } from '@/typings/client/securityRoles'
 import Basic from './basic.vue'
 import Permissions from './permissions.vue'
@@ -14,9 +15,7 @@ const emit = defineEmits(['closed']);
 const { currentRoute, push } = useRouter();
 const state = useSecurityRoles();
 const myAxios = useAxios();
-const recordID = currentRoute.value.query.id;
-const editModeLabel = computed<string>(() => recordID === 'new' ? 'Crear' : 'Editar' );
-const isSaveButtonVisible = computed(() => recordID === 'new' ? props.allowCreate : props.allowEdit);
+const recordID = ref<LocationQueryValue>(currentRoute.value.query.id as LocationQueryValue);
 const currenTab = ref(0);
 const alertVisible = ref<boolean>(false);
 const alertColor = ref<'rose'|'green'>('rose');
@@ -24,6 +23,9 @@ const alertMessage = ref<string>('');
 const alertDescription = ref<string>('');
 const alertIcon = ref<string>('');
 const body = ref<type_security_roles_schema>();
+
+const editModeLabel = computed<string>(() => recordID.value === 'new' ? 'Crear' : 'Editar' );
+const isSaveButtonVisible = computed(() => recordID.value === 'new' ? props.allowCreate : props.allowEdit);
 
 const tabs = [
   { slot: 'basic', value: 'basic', label: 'Información', icon: 'i-heroicons-identification', defaultOpen: true },
@@ -64,7 +66,7 @@ const validateAndSave = async () => {
         usersData: [],
         allLinks: [],
       };
-      if (recordID === 'new') {
+      if (recordID.value === 'new') {
         const { data } = await myAxios.post(`/api/roles/${recordID}`, body.value);
         body.value.id = data.id;
         state.value.profileData.id = data.id;
@@ -72,8 +74,8 @@ const validateAndSave = async () => {
         const newQuery = { ...currentRoute.value.query, id: data.id }
         push({ query: newQuery });
       } else {
-        body.value.id = Number(recordID);
-        await myAxios.patch(`/api/roles/${recordID}`, body.value);
+        body.value.id = Number(recordID.value);
+        await myAxios.patch(`/api/roles/${recordID.value}`, body.value);
       }
       alertColor.value = 'green';
       alertMessage.value = 'Perfil guardado';
@@ -100,9 +102,18 @@ const resetData = () => {
   state.value.profileLinks = [];
   state.value.allLinks = [];
 }
-onMounted(() => {
+const loadRecordData = (recordID: LocationQueryValue) => {
   resetData();
-  if (!isNaN(Number(recordID))) {
+  if (recordID && recordID === 'new') {
+    state.value.isLoading = true;
+    const promise1 = myAxios.get(`/api/lookups/sys_links`);
+    Promise.all([promise1]).then((values) => {
+      state.value.allLinks = values[0].data;
+      state.value.profileData.id = 0;
+      state.value.profileData.name_es = 'Nuevo Perfil';
+      state.value.isLoading = false;
+    });
+  } else if (recordID) {
     state.value.isLoading = true;
     const promise1 = myAxios.get(`/api/roles/${recordID}`);
     const promise2 = myAxios.get(`/api/roles/${recordID}/users`);
@@ -115,17 +126,17 @@ onMounted(() => {
       state.value.allLinks = values[3].data;
       state.value.isLoading = false;
     });
-  } else {
-    state.value.isLoading = true;
-    const promise1 = myAxios.get(`/api/lookups/sys_links`);
-    Promise.all([promise1]).then((values) => {
-      state.value.allLinks = values[0].data;
-      state.value.profileData.id = 0;
-      state.value.profileData.name_es = 'Nuevo Perfil';
-      state.value.isLoading = false;
-    });
   }
-});
+};
+//HOOKS
+onMounted(() => { loadRecordData(recordID.value) });
+watch(
+  () => currentRoute.value.query.id,
+  () => {
+    recordID.value = currentRoute.value.query.id as LocationQueryValue;
+    recordID.value && loadRecordData(recordID.value);
+  }
+)
 </script>
 
 <template>

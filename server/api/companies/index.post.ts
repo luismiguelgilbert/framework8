@@ -36,7 +36,6 @@ export default defineEventHandler( async (event) => {
       OFFSET ${offset}
       LIMIT ${rowsPerPage}
     `;
-    console.log(text);
     const data = await serverDB.query(text);
 
     return sys_companies.array().parse(data.rows);
