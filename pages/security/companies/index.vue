@@ -50,7 +50,7 @@ const selectedFilter = computed(() => status_options.find(option => String(optio
 const selectedSort = computed(() => sort_options.find(option => String(option.value) === payload.value.sortBy));
 const isSideOpen = ref(false);
 //CUSTOM PROPERTIES & PERMISSIONS
-const rows = ref<type_sys_companies[]>([]);
+const rows = shallowRef<type_sys_companies[]>([]);
 const allowCreate = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.COMPANIES_CREATE));
 const allowEdit = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.COMPANIES_EDIT));
 const allowExport = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.COMPANIES_EXPORT));
@@ -75,6 +75,7 @@ const dropdownOptions = computed(() => {
   let dynamicOptions = [];
   if (allowCreate.value) { dynamicOptions.push({ label: 'Nuevo', icon: 'fas fa-plus-circle', click: () => { goToForm() } }) };
   if (allowExport.value) { dynamicOptions.push({ label: 'Descargar', icon: 'fas fa-file-excel', click: () => { downloadFile() } }) };
+  dynamicOptions.push({ label: 'Refrescar', icon: 'fas fa-arrows-rotate', click: () => { loadData() } });
   return dynamicOptions.length > 0
     ? [ ...[dynamicOptions], ...fixedOptions ]
     : [ ...fixedOptions ];
@@ -134,7 +135,7 @@ const loadData = async() => {
     isLoading.value = true;
     const response = await myAxios.post('/api/companies', payload.value);
     const { data } = response;
-    rows.value = rows.value.concat(data);
+    rows.value = rows.value.concat(data).filter((arr, index, self) => index === self.findIndex((t) => (t.id === arr.id)));
     rowsNumber.value = data[0]?.row_count ?? 0;
   } catch(error) {
     console.error(error);
