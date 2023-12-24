@@ -3,11 +3,11 @@ const state = useUser();
 const appConfig = useAppConfig();
 const myAxios = useAxios();
 
-const setColor = (color: string) => {
+const setColor = async (color: string) => {
   appConfig.ui.primary = color;
   state.value.preferedColor = color;
   try {
-    myAxios.patch(`/api/users/${state.value.userData.id}`, { default_color: color });
+    await myAxios.patch(`/api/users/${state.value.userData.id}/preferences`, { default_color: color });
   } catch (error) {
     console.error(error);
   }

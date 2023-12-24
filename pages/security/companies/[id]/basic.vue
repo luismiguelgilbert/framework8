@@ -10,7 +10,7 @@ const state = useSecurityCompanies();
       class="px-2 py-2"
       size="xl"
       label="Estado de la Compañía"
-      name="profileData.is_active">
+      name="companyData.is_active">
       <div class="flex items-center justify-start">
         <UToggle
           v-model:model-value="state.companyData.is_active"
@@ -21,7 +21,7 @@ const state = useSecurityCompanies();
       class="px-2 py-2"
       label="Código"
       size="xl"
-      name="profileData.id">
+      name="companyData.id">
       <UInput
         v-model:model-value="state.companyData.id"
         required
@@ -41,7 +41,7 @@ const state = useSecurityCompanies();
       class="px-2 py-2"
       size="xl"
       label="Nombre de la compañía"
-      name="profileData.name_es">
+      name="companyData.name_es">
       <UInput
         v-model:model-value="state.companyData.name_es_short"
         label="Nombre de la Compañía"
@@ -59,7 +59,7 @@ const state = useSecurityCompanies();
       class="px-2 py-2"
       size="xl"
       label="Razón Social de la compañía"
-      name="profileData.name_es">
+      name="companyData.name_es">
       <UInput
         v-model:model-value="state.companyData.name_es"
         label="Nombre de la Compañía"
@@ -77,7 +77,7 @@ const state = useSecurityCompanies();
       class="px-2 py-2"
       size="xl"
       label="RUC de la compañía"
-      name="profileData.name_es">
+      name="companyData.name_es">
       <UInput
         v-model:model-value="state.companyData.company_number"
         label="RUC de la Compañía"
@@ -95,7 +95,7 @@ const state = useSecurityCompanies();
       class="px-2 py-2"
       size="xl"
       label="Teléfono de la compañía"
-      name="profileData.name_es">
+      name="companyData.name_es">
       <UInput
         v-model:model-value="state.companyData.billing_phone"
         label="Nombre de la Compañía"
@@ -113,7 +113,7 @@ const state = useSecurityCompanies();
       class="px-2 py-2"
       size="xl"
       label="Dirección de la compañía"
-      name="profileData.name_es">
+      name="companyData.name_es">
       <UInput
         v-model:model-value="state.companyData.billing_address"
         label="Nombre de la Compañía"

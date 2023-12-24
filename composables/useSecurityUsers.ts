@@ -1,5 +1,4 @@
 import type { type_security_users_schema } from "@/typings/client/securityUsers";
-import { security_users_schema } from "@/typings/client/securityUsers";
 
 export const useSecurityUsers = () => useState<type_security_users_schema>('securityUsers', () => {
   return {
@@ -21,6 +20,7 @@ export const useSecurityUsers = () => useState<type_security_users_schema>('secu
       last_sign_in_at: null,
       row_count: 0,
     },
+    allProfiles:[],
     // profileLinks: [],
     // usersData: [],
     // allLinks: [],

@@ -1,12 +1,11 @@
 import serverDB from '@/server/utils/db';
-import { type_sys_companies } from '@/typings/server/sys_companies';
 import { type type_security_companies_schema } from '@/typings/client/securityCompanies';
 import { PermissionsList } from '@/typings/client/permissionsEnum';
 
 export default defineEventHandler( async (event) => {
   try{
     const payload: type_security_companies_schema = await readBody(event);
-    const company_data: type_sys_companies = payload.companyData;
+    const company_data = payload.companyData;
 
     //Check Permissions
     const userId = event.context.user.id;

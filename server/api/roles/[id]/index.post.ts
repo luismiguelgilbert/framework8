@@ -1,14 +1,12 @@
 import serverDB from '@/server/utils/db';
-import { type_sys_profiles } from '@/typings/server/sys_profiles';
-import { type_sys_links } from '@/typings/server/sys_links';
 import { type type_security_roles_schema } from '@/typings/client/securityRoles';
 import { PermissionsList } from '@/typings/client/permissionsEnum';
 
 export default defineEventHandler( async (event) => {
   try{
     const payload: type_security_roles_schema = await readBody(event);
-    const profile_data: type_sys_profiles = payload.profileData;
-    const profile_links: type_sys_links[] = payload.profileLinks;
+    const profile_data = payload.profileData;
+    const profile_links = payload.profileLinks;
 
     //Check Permissions
     const userId = event.context.user.id;
@@ -45,7 +43,6 @@ export default defineEventHandler( async (event) => {
     }
 
     await serverDB.query('COMMIT');
-    //return { message: `Perfil ${id} actualizado correctamente`, data: { id } };
     return { id };
   }catch(err) {
     await serverDB.query('ROLLBACK');

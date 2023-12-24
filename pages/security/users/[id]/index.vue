@@ -1,178 +1,205 @@
 <script setup lang="ts">
-import { security_users_schema } from '@/typings/client/securityUsers'
-//import Basic from './basic.vue'
-//import Permissions from './permissions.vue'
-//import Users from './users.vue'
+import { type LocationQueryValue } from '#vue-router'
+import { security_users_schema, type type_security_users_schema } from '@/typings/client/securityUsers'
+import Basic from './basic.vue'
+import Companies from './companies.vue'
+import { AxiosError } from 'axios';
 
-const route = useRoute();
-const { currentRoute } = useRouter();
+const props = defineProps({
+  allowCreate: { type: Boolean, required: true },
+  allowEdit: { type: Boolean, required: true },
+})
+const emit = defineEmits(['closed']);
+
+const { currentRoute, push } = useRouter();
 const state = useSecurityUsers();
-const toast = useToast();
 const myAxios = useAxios();
-const recordID = route.params.id;
-const currenTab = ref('basic');
+const recordID = ref<LocationQueryValue>(currentRoute.value.query.id as LocationQueryValue);
+const currenTab = ref(0);
+const alertVisible = ref<boolean>(false);
+const alertColor = ref<'rose'|'green'>('rose');
+const alertMessage = ref<string>('');
+const alertDescription = ref<string>('');
+const alertIcon = ref<string>('');
+const body = ref<type_security_users_schema>();
+
+const editModeLabel = computed<string>(() => recordID.value === 'new' ? 'Crear' : 'Editar' );
+const isSaveButtonVisible = computed(() => recordID.value === 'new' ? props.allowCreate : props.allowEdit);
 
 const tabs = [
-  { slot: 'basic', value: 'basic', label: 'Información del Usuario', icon: 'i-heroicons-identification', defaultOpen: true },
-  { slot: 'companies', value: 'links', label: 'Compañías', icon: 'i-heroicons-lock-closed', defaultOpen: false },
-  //{ slot: 'users', value: 'users',label: 'Usuarios con este perfil', icon: 'i-heroicons-users', defaultOpen: false },
+  { slot: 'basic', value: 'basic', label: 'Información', icon: 'i-heroicons-identification', defaultOpen: true },
+  { slot: 'companies', value: 'companies',label: 'Compañías', icon: 'i-heroicons-building', defaultOpen: false },
 ]
 const uiCard = {
-  rounded: 'rounded-none sm:rounded-lg',
+  rounded: 'rounded-none',
   body: 'px-0',
   header: {
     padding: 'sm:px-2 px-2 py-3',
   },
-  footer: {
-    padding: 'px-0 py-0 sm:px-0'
-  }
 }
 
 const goBack = () => { 
-  const queryParams = currentRoute.value.query;
-  const querystring = Object.entries(queryParams).map(([key, value]) => `${key}=${value}`).join('&');
-  navigateTo(`/security/users/${querystring ? `?${querystring}` : ''}`);
+  const newQuery = { ...currentRoute.value.query }
+  delete newQuery.id;
+  push({ query: newQuery });
+  emit('closed');
 }
 const validateAndSave = async () => {
-//   try {
-//     state.value.isLoading = true;
-//     const res = security_roles_schema.safeParse(state.value);
-//     if (!res.success) {
-//       toast.add({ 
-//         title: 'Error al guardar perfil',
-//         description: res.error.issues.map((issue) => issue.message).join('\n'),
-//         icon: 'i-heroicons-exclamation-triangle',
-//         color: 'red',
-//         timeout: 0,
-//       });
-//       console.error(res);
-//       return;
-//     } else {
-//       const body = {
-//         profile_data: state.value.profileData,
-//         profile_links: state.value.profileLinks,
-//       }
-//       if (recordID === 'new') {
-//         const { data } = await myAxios.post(`/api/roles/${recordID}`, body);
-//         navigateTo(`/security/roles/${data.id}`);
-//       } else {
-//         await myAxios.patch(`/api/roles/${recordID}`, body);
-//       }
-//       toast.add({
-//         title: 'Perfil guardado',
-//         icon: 'i-heroicons-check-circle',
-//         color: 'primary'
-//       });
-//     }
-//   } catch(error) {
-//     console.error(error);
-//     toast.add({ 
-//       title: 'Error al guardar perfil',
-//       icon: 'i-heroicons-exclamation-triangle',
-//       color: 'red'
-//     });
-//   } finally {
-//     state.value.isLoading = false;
-//   }
+  try {
+    state.value.isLoading = true;
+    const res = security_users_schema.safeParse(state.value);
+    if (!res.success) {
+      alertColor.value = 'rose';
+      alertMessage.value = res.error.issues.map((issue) => issue.message).join('\n');
+      alertVisible.value = true;
+      alertDescription.value = '';
+      alertIcon.value = 'i-heroicons-exclamation-circle';
+      console.error(res);
+      return;
+    } else {
+      body.value = {
+        isLoading: false,
+        userData: state.value.userData,
+        userCompanies: state.value.userCompanies,
+        allCompanies: [],
+        allProfiles: [],
+      };
+      if (recordID.value === 'new') {
+        // const { data } = await myAxios.post(`/api/companies/${recordID}`, body.value);
+        // body.value.id = data.id;
+        // state.value.companyData.id = data.id;
+        // state.value.id = data.id;
+        // const newQuery = { ...currentRoute.value.query, id: data.id }
+        // push({ query: newQuery });
+      } else {
+        body.value.userData.id = recordID.value?.toString()!;
+        await myAxios.patch(`/api/users/${recordID.value}`, body.value);
+      }
+      alertColor.value = 'green';
+      alertMessage.value = 'Usuario guardado';
+      alertDescription.value = '';
+      alertVisible.value = true;
+      alertIcon.value = 'i-heroicons-check-circle';
+    }
+  } catch(error) {
+    console.error(error);
+    alertColor.value = 'rose';
+    alertMessage.value = 'Error al guardar usuario';
+    alertVisible.value = true;
+    alertDescription.value = (error as AxiosError).response?.statusText ?? '';
+    alertIcon.value = 'i-heroicons-exclamation-circle';
+  } finally {
+    state.value.isLoading = false;
+  }
 }
-// const resetData = () => {
-//   state.value.usersData = [];
-//   state.value.profileLinks = [];
-//   state.value.allLinks = [];
-// }
-// onMounted(() => {
-//   resetData();
-//   if (!isNaN(Number(recordID))) {
-//     state.value.isLoading = true;
-//     const promise1 = myAxios.get(`/api/roles/${recordID}`);
-//     const promise2 = myAxios.get(`/api/roles/${recordID}/users`);
-//     const promise3 = myAxios.get(`/api/roles/${recordID}/sys_links`);
-//     const promise4 = myAxios.get(`/api/lookups/sys_links`);
-//     Promise.all([promise1, promise2, promise3, promise4]).then((values) => {
-//       state.value.profileData = values[0].data;
-//       state.value.usersData = values[1].data;
-//       state.value.profileLinks = values[2].data;
-//       state.value.allLinks = values[3].data;
-//       state.value.isLoading = false;
-//     });
-//   } else {
-//     state.value.isLoading = true;
-//     const promise1 = myAxios.get(`/api/lookups/sys_links`);
-//     Promise.all([promise1]).then((values) => {
-//       state.value.allLinks = values[0].data;
-//       state.value.profileData.name_es = 'Nuevo Perfil';
-//       state.value.isLoading = false;
-//     });
-//   }
-// });
+const resetData = () => {
+  state.value.userData.id = '';
+  state.value.userData.user_name = '';
+  state.value.userData.user_lastname = '';
+  state.value.userData.sys_profile_id = -1;
+  state.value.userData.email = '';
+  state.value.userData.website = '';
+  state.value.userData.avatar_url = '';
+}
+const loadRecordData = (recordID: LocationQueryValue) => {
+  resetData();
+  if (recordID && recordID === 'new') {
+    // state.value.isLoading = true;
+  } else if (recordID) {
+    state.value.isLoading = true;
+    const promise1 = myAxios.get(`/api/users/${recordID}`);
+    const promise2 = myAxios.get(`/api/users/${recordID}/companies`);
+    const promise3 = myAxios.get(`/api/lookups/sys_profiles`);
+    const promise4 = myAxios.get(`/api/lookups/sys_companies`);
+    Promise.all([promise1, promise2, promise3, promise4]).then((values) => {
+      state.value.userData = values[0].data;
+      state.value.userCompanies = values[1].data;
+      state.value.allProfiles = values[2].data;
+      state.value.allCompanies = values[3].data;
+      state.value.isLoading = false;
+    });
+  }
+};
+//HOOKS
+onMounted(() => { loadRecordData(recordID.value) });
+watch(
+  () => currentRoute.value.query.id,
+  () => {
+    recordID.value = currentRoute.value.query.id as LocationQueryValue;
+    recordID.value && loadRecordData(recordID.value);
+  }
+)
 </script>
 
 <template>
-  <div class="max-w-3xl mx-auto"><!--Required to prevent hydration mismatch-->
-    <UForm>
-      <UCard
-        :ui="uiCard"
-        class="overflow-y-auto">
-        <!--HEADER-->
-        <div class="flex justify-between py-3 px-4">
+  <div><!--Required to prevent hydration mismatch-->
+    <UCard
+      :ui="uiCard">
+      <!--HEADER-->
+      <template #header>
+        <div class="flex items-center">
           <UButton
-            size="xl"
-            label="Regresar" 
-            variant="ghost"
-            :disabled="state.isLoading"
-            @click="goBack">
-            <template #leading>
-              <i class="fa-solid fa-circle-chevron-left fa-xl"></i>
-            </template>
-          </UButton>
-          <div class="self-center hidden sm:flex">
-            <span
-              v-if="!state.isLoading"
-              class="pl-3 font-semibold text-gray-700 dark:text-gray-300 text-2xl text-ellipsis overflow-hidden truncate">
-              {{ state.profileData.name_es }}
-            </span>
+            color="gray"
+            variant="link"
+            :padded="false"
+            icon="i-heroicons-x-circle"
+            @click="goBack" />
+          <span class="font-semibold text-xl pl-2"> {{`${editModeLabel} Usuario`}} </span>
+        </div>
+      </template>
+      <!--BODY-->
+      <div>
+        <UTabs
+          v-model="currenTab"
+          :items="tabs"
+          :ui="{
+            list: { rounded: 'rounded-none' }
+          }"
+          class="w-full" />
+        <div class="h-[calc(100dvh-180px)] sm:h-[calc(100dvh-179px)] overflow-y-auto">
+          <BittSkeletonList v-if="state.isLoading" class="mx-6 mt-5" :items="1" />
+          <div v-else>
+            <UForm :state="state">
+              <Basic v-show="currenTab === 0" class="px-2 sm:px-4 pb-6" />
+              <Companies v-show="currenTab === 1" class="px-2 sm:px-4 pb-6" />
+            </UForm>
           </div>
+        </div>
+      </div>
+      <!--FOOTER-->   
+      <template #footer>
+        <UAlert
+          v-if="!isSaveButtonVisible"
+          icon="i-heroicons-information-circle"
+          color="yellow"
+          title="No tiene permisos para guardar cambios"
+          variant="solid" />
+        <div v-else>
+          <UAlert
+            v-if="alertVisible"
+            :ui="{ title: 'text-xs', description: 'text-xs' }"
+            :close-button="{ icon: 'i-heroicons-x-mark-20-solid', color: 'white', variant: 'link', padded: false }"
+            :icon="alertIcon"
+            :color="alertColor"
+            :title="alertMessage"
+            :description="alertDescription"
+            variant="solid"
+            @close="alertVisible = false" />
           <UButton
-            size="xl"
-            label="Guardar"
-            color="primary"
-            type="submit"
-            :loading="state.isLoading"
+            v-if="!alertVisible"
             :disabled="state.isLoading"
+            :loading="state.isLoading"
+            block
+            size="xl"
+            label="Guardar" 
+            variant="solid"
             @click="validateAndSave">
             <template #leading v-if="!state.isLoading">
               <i class="fa-solid fa-save fa-xl"></i>
             </template>
           </UButton>
         </div>
-        <div class="border border-neutral-100 dark:border-neutral-700" />
-        <!--FORM-->
-        <div class="h-[calc(100dvh-182px)] sm:h-[calc(100dvh-146px)] overflow-y-auto">
-          <BittSkeletonList v-if="state.isLoading" class="mx-6 mt-5" :items="10" />
-          <div v-else class="py-4">
-            Pendiente
-            <!--<Basic v-show="currenTab === 'basic'" class="px-2 sm:px-4 pb-6" />
-            <Permissions v-show="currenTab == 'links'" class="px-2 sm:px-4 pb-6" />
-            <Users v-show="currenTab === 'users'" class="px-2 sm:px-4 pb-6" />-->
-          </div>
-          <br /><br />
-        </div>
-        <!--TABS-->
-        <template #footer>
-          <UButtonGroup size="xl" orientation="horizontal" :ui="{ rounded: 'rounded-none' }" class="grid grid-cols-3 text-center"> 
-            <UButton
-              v-for="tab in tabs"
-              :key="tab.value"
-              :label="tab.label"
-              :icon="tab.icon"
-              :variant="currenTab === tab.value ? 'solid':'soft'"
-              size="xl"
-              truncate
-              class="justify-center"
-              @click="currenTab = tab.value" />
-          </UButtonGroup>
-        </template>
-      </UCard>
-    </UForm>
+      </template>
+    </UCard>
   </div>
 </template>

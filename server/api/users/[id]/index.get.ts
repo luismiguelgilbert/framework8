@@ -1,19 +1,10 @@
 import serverDB from '@/server/utils/db';
-import { sys_users, sort_options } from '@/typings/server/sys_users'
-import type { filter_payload } from '@/typings/server/filter_payload'
+import { sys_users } from '@/typings/server/sys_users'
 
 export default defineEventHandler( async (event) => {
   try{
-    const filter = await readBody(event) as filter_payload;
-    const sortById = Number(filter.sortBy);
-    const page: number = Number(filter.page);
-    const rowsPerPage: number = Number(filter.rowsPerPage);
-    const search_string = filter.searchString!.trim();
-    const offset: number = rowsPerPage * (page - 1);
-    const sortBy: string = sort_options.find(x => x.value === sortById)?.sqlValue!;
-
-    const text = `
-      select
+    const id = (event.context.params?.id);
+    const text = `SELECT
       a.id,
       b.user_name,
       b.user_lastname,
@@ -30,22 +21,18 @@ export default defineEventHandler( async (event) => {
       left join sys_users b on a.id = b.id
       left join sys_profiles_users c on c.user_id = a.id
       left join sys_profiles d on c.sys_profile_id = d.id
-      WHERE 1 = 1
-        ${search_string.trim().length > 0 
-          ? "and (b.user_name ILIKE '%" + search_string + "%' or b.user_lastname ILIKE '%" + search_string + "%' or a.email ILIKE '%" + search_string + "%')"
-          : ""}
-      ORDER BY ${sortBy}
-      OFFSET ${offset}
-      LIMIT ${rowsPerPage}
+      WHERE a.id = $1
     `;
-    const data = await serverDB.query(text);
+    const values = [id];
+    const data = await serverDB.query(text, values);
 
-    return sys_users.array().parse(data.rows);
+    return sys_users.array().parse(data.rows)[0];
   }catch(err) {
     console.error(`Error at ${event.path}. ${err}`);
     throw createError({
       statusCode: 500,
       statusMessage: 'Unhandled exception',
     });
+
   }
 });
