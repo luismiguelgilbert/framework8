@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import FileSaver from 'file-saver';
+import type { AxiosResponse } from 'axios';
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import { sort_options, status_options} from '@/typings/server/sys_profiles';
 import { filter_payload_object, filter_keys_enum } from '@/typings/server/filter_payload';
@@ -50,7 +51,7 @@ const selectedFilter = computed(() => status_options.find(option => String(optio
 const selectedSort = computed(() => sort_options.find(option => String(option.value) === payload.value.sortBy));
 const isSideOpen = ref(false);
 //CUSTOM PROPERTIES & PERMISSIONS
-const rows = shallowRef<type_sys_profiles[]>([]);
+const rows = ref<type_sys_profiles[]>([]);
 const allowCreate = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_CREATE));
 const allowEdit = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_EDIT));
 const allowExport = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_EXPORT));
@@ -132,9 +133,16 @@ const updatePage = (newPage: number) => {
 const loadData = async() => {
   try {
     isLoading.value = true;
-    const response = await myAxios.post('/api/roles', payload.value);
+    const response: AxiosResponse<type_sys_profiles[]> = await myAxios.post('/api/roles', payload.value);
     const { data } = response;
-    rows.value = rows.value.concat(data).filter((arr, index, self) => index === self.findIndex((t) => (t.id === arr.id)));
+    data.forEach((row) => {
+      const existingIndex = rows.value.findIndex((item) => item.id === row.id);
+      if (existingIndex >= 0) {
+        rows.value[existingIndex] = row;
+      } else {
+        rows.value.push(row);
+      }
+    });
     rowsNumber.value = data[0]?.row_count ?? 0;
   } catch(error) {
     console.error(error);

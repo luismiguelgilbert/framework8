@@ -4,7 +4,7 @@ import type { filter_payload } from '@/typings/server/filter_payload'
 
 export default defineEventHandler( async (event) => {
   try{
-    const filter = await readBody(event) as filter_payload;
+    const filter: filter_payload = await readBody(event);
     const sortById = Number(filter.sortBy);
     const page: number = Number(filter.page);
     const rowsPerPage: number = Number(filter.rowsPerPage);
