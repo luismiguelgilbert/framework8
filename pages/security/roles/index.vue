@@ -182,6 +182,10 @@ const loadOnScroll = (event: UIEvent) => {
     updatePage(newPage);
   }
 };
+const closeAndRefresh = () => {
+  isSideOpen.value = false
+  loadData();
+};
 //HOOKS
 onMounted(async () => {
   initialQueryStateIntoRefs();
@@ -340,7 +344,12 @@ onMounted(async () => {
       <EditForm
         :allow-create="allowCreate"
         :allow-edit="allowEdit"
-        @closed="isSideOpen = false" />
+        @closed="closeAndRefresh" />
     </USlideover>
   </div>
 </template>
+<style scoped lang="scss">
+.scroller {
+  height: 100%;
+}
+</style>
