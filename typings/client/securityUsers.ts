@@ -2,7 +2,6 @@ import { z } from "zod"
 import { sys_users } from "@/typings/server/sys_users";
 import { sys_profiles } from "@/typings/server/sys_profiles";
 import { sys_companies } from "@/typings/server/sys_companies";
-// import { sys_links } from "@/typings/server/sys_links";
 
 export const sys_companies_array = z.array(sys_companies)
   .min(1, { message: "Debe seleccionar al menos 1 compañía." });

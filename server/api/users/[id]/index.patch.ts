@@ -12,10 +12,11 @@ export default defineEventHandler( async (event) => {
     const isUserAllowed = `select * 
       from sys_users a
       inner join sys_profiles_users b on a.id = b.user_id
-      inner join sys_profiles c on c.id = b.id
+      inner join sys_profiles c on c.id = b.sys_profile_id
       inner join sys_profiles_links d on d.sys_profile_id = c.id
       where a.id = '${userId}'
       and d.sys_link_id = ${PermissionsList.USERS_EDIT}`;
+    console.log(isUserAllowed)
     const isUserAllowedResult = (await serverDB.query(isUserAllowed)).rowCount;
     if (isUserAllowedResult === 0) {
       throw createError({
@@ -29,6 +30,7 @@ export default defineEventHandler( async (event) => {
     const user_lastname = payload.userData.user_lastname ? `'${payload.userData.user_lastname}'` : null;
     const avatar_url = payload.userData.avatar_url ? `'${payload.userData.avatar_url}'` : null;
     const website = payload.userData.website ? `'${payload.userData.website}'` : null;
+    const sys_profile_id = payload.userData.sys_profile_id ? `${payload.userData.sys_profile_id}` : null;
 
     //Process
     await serverDB.query('BEGIN');
@@ -42,6 +44,13 @@ export default defineEventHandler( async (event) => {
       WHERE id = '${id}'`;
     await serverDB.query(sqlUpdateUserData);
 
+    //Update Profiles
+    const sqlProfilesDelete = `delete from sys_profiles_users WHERE user_id = '${id}'`;
+    await serverDB.query(sqlProfilesDelete);
+
+    let sqlProfileInsert = `insert into sys_profiles_users (sys_profile_id, user_id) values (${sys_profile_id}, '${id}')`;
+    await serverDB.query(sqlProfileInsert);
+    
     //Update Companies
     const sqlSysCompaniesDelete = `delete from sys_companies_users WHERE user_id = '${id}'`;
     await serverDB.query(sqlSysCompaniesDelete);

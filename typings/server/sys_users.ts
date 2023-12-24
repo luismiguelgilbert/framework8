@@ -7,7 +7,7 @@ export const sys_users = z.object({
   avatar_url: z.coerce.string().optional().nullable(),
   website: z.coerce.string().optional().nullable(),
   email: z.coerce.string().default(''),
-  sys_profile_id: z.number().optional().default(0),
+  sys_profile_id: z.coerce.number().optional().default(0),
   sys_profile_name: z.coerce.string().optional().nullable(),
   dark_enabled: z.coerce.boolean().optional().nullable().default(false),
   default_color: z.coerce.string().optional().nullable().default("indigo"),

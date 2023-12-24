@@ -12,7 +12,7 @@ export default defineEventHandler( async (event) => {
     const isUserAllowed = `select * 
       from sys_users a
       inner join sys_profiles_users b on a.id = b.user_id
-      inner join sys_profiles c on c.id = b.id
+      inner join sys_profiles c on c.id = b.sys_profile_id
       inner join sys_profiles_links d on d.sys_profile_id = c.id
       where a.id = '${userId}'
       and d.sys_link_id = ${PermissionsList.COMPANIES_CREATE}`;
