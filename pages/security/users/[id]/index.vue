@@ -3,6 +3,7 @@ import { type LocationQueryValue } from '#vue-router'
 import { security_users_schema, type type_security_users_schema } from '@/typings/client/securityUsers'
 import Basic from './basic.vue'
 import Companies from './companies.vue'
+import Avatar from './avatar.vue'
 import { AxiosError } from 'axios';
 
 const props = defineProps({
@@ -29,6 +30,7 @@ const isSaveButtonVisible = computed(() => recordID.value === 'new' ? props.allo
 const tabs = [
   { slot: 'basic', value: 'basic', label: 'Información', icon: 'i-heroicons-identification', defaultOpen: true },
   { slot: 'companies', value: 'companies',label: 'Compañías', icon: 'i-heroicons-building', defaultOpen: false },
+  { slot: 'avatar', value: 'avatar',label: 'Avatar', icon: 'i-heroicons-camera', defaultOpen: false },
 ]
 const uiCard = {
   rounded: 'rounded-none',
@@ -162,6 +164,7 @@ watch(
             <UForm :state="state">
               <Basic v-show="currenTab === 0" class="px-2 sm:px-4 pb-6" />
               <Companies v-show="currenTab === 1" class="px-2 sm:px-4 pb-6" />
+              <Avatar v-show="currenTab === 2" class="px-2 sm:px-4 pb-6" />
             </UForm>
           </div>
         </div>

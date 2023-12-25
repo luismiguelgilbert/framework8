@@ -269,7 +269,15 @@ onMounted(async () => {
             <template #user_name-data="{ row }">
               <div v-if="smAndLarger">
                 <div class="flex items-center flex-row">
-                  <UAvatar size="sm">
+                  <UAvatar
+                    v-if="row.avatar_url && row.avatar_url.length > 0"
+                    :src="row.avatar_url"
+                    :avatar="{ src: row.avatar_url }"
+                    size="sm" i>
+                  </UAvatar>
+                  <UAvatar
+                    v-else
+                    size="sm">
                     {{ row.user_name[0] }}
                   </UAvatar>
                   <div class="ps-3">
