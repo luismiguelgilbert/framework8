@@ -26,12 +26,17 @@ const body = ref<type_security_users_schema>();
 
 const editModeLabel = computed<string>(() => recordID.value === 'new' ? 'Crear' : 'Editar' );
 const isSaveButtonVisible = computed(() => recordID.value === 'new' ? props.allowCreate : props.allowEdit);
+const tabs = computed(() => {
+  const allTabs = [
+    { slot: 'basic', value: 'basic', label: 'Información', icon: 'i-heroicons-identification', defaultOpen: true },
+    { slot: 'companies', value: 'companies',label: 'Compañías', icon: 'i-heroicons-building', defaultOpen: false },
+    { slot: 'avatar', value: 'avatar',label: 'Avatar', icon: 'i-heroicons-camera', defaultOpen: false },
+  ];
+  const isEditing = recordID.value !== 'new';
 
-const tabs = [
-  { slot: 'basic', value: 'basic', label: 'Información', icon: 'i-heroicons-identification', defaultOpen: true },
-  { slot: 'companies', value: 'companies',label: 'Compañías', icon: 'i-heroicons-building', defaultOpen: false },
-  { slot: 'avatar', value: 'avatar',label: 'Avatar', icon: 'i-heroicons-camera', defaultOpen: false },
-]
+  return isEditing ? allTabs : allTabs.filter((tab) => tab.value !== 'avatar');
+});
+
 const uiCard = {
   rounded: 'rounded-none',
   body: 'px-0',
@@ -67,12 +72,8 @@ const validateAndSave = async () => {
         allProfiles: [],
       };
       if (recordID.value === 'new') {
-        // const { data } = await myAxios.post(`/api/companies/${recordID}`, body.value);
-        // body.value.id = data.id;
-        // state.value.companyData.id = data.id;
-        // state.value.id = data.id;
-        // const newQuery = { ...currentRoute.value.query, id: data.id }
-        // push({ query: newQuery });
+        await myAxios.post(`/api/users/${recordID}`, body.value);
+        goBack(); //Creation has 2 tabs while Edition shows 3 tabs, and there is a rendering issue on tabs
       } else {
         body.value.userData.id = recordID.value?.toString()!;
         await myAxios.patch(`/api/users/${recordID.value}`, body.value);
@@ -106,7 +107,15 @@ const resetData = () => {
 const loadRecordData = (recordID: LocationQueryValue) => {
   resetData();
   if (recordID && recordID === 'new') {
-    // state.value.isLoading = true;
+    state.value.isLoading = true;
+    const promise1 = myAxios.get(`/api/lookups/sys_profiles`);
+    const promise2 = myAxios.get(`/api/lookups/sys_companies`);
+    Promise.all([promise1, promise2]).then((values) => {
+      state.value.userCompanies = [];
+      state.value.allProfiles = values[0].data;
+      state.value.allCompanies = values[1].data;
+      state.value.isLoading = false;
+    });
   } else if (recordID) {
     state.value.isLoading = true;
     const promise1 = myAxios.get(`/api/users/${recordID}`);

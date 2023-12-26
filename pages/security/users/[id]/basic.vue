@@ -1,11 +1,17 @@
 <script setup lang="ts">
+import { type LocationQueryValue } from '#vue-router'
+
 const state = useSecurityUsers();
+const { currentRoute } = useRouter();
+const recordID = ref<LocationQueryValue>(currentRoute.value.query?.id as LocationQueryValue);
+const isCreating = computed<boolean>(() => recordID.value === 'new' );
 </script>
 
 <template>
   <div class="mx-2">
     <div class="ml-2 mb-2"><span class="font-semibold text-lg">Datos Básicos del Usuario</span></div>
     <UFormGroup
+      v-if="!isCreating"
       class="px-2 py-2"
       label="Código"
       size="xl"
@@ -37,11 +43,11 @@ const state = useSecurityUsers();
         size="xl"
         type="text"
         name="email"
-        readonly
+        :readonly="!isCreating"
         placeholder="Email del Usuario"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-database fa-xl text-gray-500"></i>
+          <i class="fas fa-envelope fa-xl text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -86,21 +92,22 @@ const state = useSecurityUsers();
       size="xl"
       label="Perfil del Usuario"
       name="userData.sys_profile_id">
-      <USelect
-        v-model:model-value="state.userData.sys_profile_id"
-        label="Perfil del Usuario"
-        size="xl"
-        type="text"
-        name="sys_profile_id"
+      <USelectMenu
+        v-model="state.userData.sys_profile_id"
         placeholder="Seleccione el perfil del usuario"
-        :loading="state.isLoading"
-        :options="state.allProfiles"
-        optionAttribute="name_es"
-        valueAttribute="id">
+        option-attribute="name_es"
+        value-attribute="id"
+        searchable
+        searchable-placeholder="Buscar perfil..."
+        :options="state.allProfiles">
         <template #leading v-if="!state.isLoading">
           <i class="fas fa-circle-user fa-xl text-gray-500"></i>
         </template>
-      </USelect>
+        <template #label>
+          <span v-if="state.userData.sys_profile_id > 0">{{ state.allProfiles.find(x=> x.id === state.userData.sys_profile_id)?.name_es}}</span>
+          <span v-else class="text-gray-400 dark:text-gray-500">Seleccione el perfil del usuario</span>
+        </template>
+      </USelectMenu>
     </UFormGroup>
   </div>
 </template>

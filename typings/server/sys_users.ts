@@ -2,12 +2,18 @@ import { z } from "zod"
 
 export const sys_users = z.object({
   id: z.coerce.string(),
-  user_name: z.coerce.string().optional().default(''),
-  user_lastname: z.string().optional().default(''),
+  user_name: z.coerce.string()
+    .min(3, { message: "Nombres del Usuario debe incluir 3 o más caracteres." }),
+  user_lastname: z.coerce.string()
+    .min(3, { message: "Apellidos del Usuario debe incluir 3 o más caracteres." }),
   avatar_url: z.coerce.string().optional().nullable(),
   website: z.coerce.string().optional().nullable(),
-  email: z.coerce.string().default(''),
-  sys_profile_id: z.coerce.number().optional().default(0),
+  email: z.coerce.string()
+    .email({ message: "Email debe ser válido." })
+    .default('my@domain.com'),
+  sys_profile_id: z.coerce.number()
+    .positive({ message: "Perfil no puede estar vacío." })
+    .default(1),
   sys_profile_name: z.coerce.string().optional().nullable(),
   dark_enabled: z.coerce.boolean().optional().nullable().default(false),
   default_color: z.coerce.string().optional().nullable().default("indigo"),
