@@ -12,7 +12,7 @@ export default defineEventHandler( async (event) => {
     ,0 as user_count
     ,1 AS row_count
     FROM sys_profiles a
-    order by 2
+    order by a.name_es
     `;
     let data = await serverDB.query(text);
 

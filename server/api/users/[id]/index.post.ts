@@ -47,9 +47,6 @@ export default defineEventHandler( async (event) => {
     });
     const newUserId = data.user?.id;
 
-    console.log({data});
-    console.log({error});
-
     //Process
     await serverDB.query('BEGIN');
 

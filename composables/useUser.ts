@@ -1,5 +1,6 @@
 import type { type_sp_system_menu } from '@/typings/server/sp_system_menu';
 import { sys_users, type type_sys_users } from "@/typings/server/sys_users";
+import { type type_sys_companies } from "@/typings/server/sys_companies";
 
 interface userState {
   colors: ['indigo', 'violet', 'fuchsia', 'slate', 'zinc', 'neutral', 'stone', 'cool', 'green', 'emerald', 'teal', 'cyan', 'lime', 'blue', 'sky', 'orange', 'amber', 'yellow', 'bitt'],
@@ -9,6 +10,8 @@ interface userState {
   isLoadingUser: boolean,
   menuData: type_sp_system_menu[],
   userData: type_sys_users,
+  userCompanies: type_sys_companies[],
+  userCompany: string | null,
   menuSelected: number,
   isMenuOpen: boolean,
   theme: string,
@@ -26,6 +29,8 @@ export const useUser = () => useState<userState>('user', () => {
     isLoadingUser: false,
     menuData: [],
     userData: sys_users.parse({}),
+    userCompanies: [],
+    userCompany: null,
     menuSelected: -1,
     isMenuOpen: false,
     theme: 'light',

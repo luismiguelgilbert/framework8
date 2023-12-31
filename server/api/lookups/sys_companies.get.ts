@@ -15,7 +15,7 @@ export default defineEventHandler( async (event) => {
       , to_char (a.updated_at::timestamp at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as updated_at
       , count(*) OVER() AS row_count
     FROM sys_companies a
-    order by 3
+    order by a.name_es
     `;
     let data = await serverDB.query(text);
 

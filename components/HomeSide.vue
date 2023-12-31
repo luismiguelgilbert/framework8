@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { z } from 'zod';
 import { sp_system_menu } from '@/typings/server/sp_system_menu';
-import type { type_sp_system_menu } from '@/typings/server/sp_system_menu';
 import { sys_users } from "@/typings/server/sys_users";
+import type { type_sp_system_menu } from '@/typings/server/sp_system_menu';
 
 useHead({ title: 'BITT - Welcome' });
 const appConfig = useAppConfig()
@@ -11,35 +11,69 @@ const router = useRouter();
 const { path } = useRoute();
 const state = useUser();
 const supabase = useSupabaseClient();
-const currentRoute = computed(() => state.value.menuData?.find(menu => menu.id === state.value.menuSelected));
+const myAxios = useAxios();
+
 
 const openMenu = (menu: z.infer<typeof sp_system_menu>) => {
   if (state.value.menuSelected !== menu.id) { 
     state.value.menuSelected = menu.id!;
-    navigateTo(menu.link!);
+    const newURL = menu.requires_company 
+      ? `${menu.link}/${state.value.userCompany}`
+      : menu.link;
+    navigateTo(newURL)
   }
   state.value.isMenuOpen = false;
 };
 
-//Load User Menu Data
-state.value.isLoadingUser = true;
-const { data: userMenuData, error: userMenuError } = await useFetch('/api/system/userMenu');
-if (userMenuError.value?.statusCode === 401) { navigateTo('/login') }
-state.value.menuData = userMenuData.value!;
-state.value.isLoadingUser = false;
+//Load User Menu
+const loadUserMenu = async () => {
+  try {
+    state.value.isLoadingUser = true;
+    const { data } = await myAxios.get('/api/system/userMenu');
+    state.value.menuData = data;
+  } catch(error) {
+    console.error(error);
+    navigateTo('/login');
+  } finally {
+    state.value.isLoadingMenu = false;
+  }
+}
 
 //Load User Data
-state.value.isLoadingMenu = true;
-const { data: userData, error: userDataError } = await useFetch('/api/system/userData');
-if (userDataError.value) { navigateTo('/login') }
-state.value.userData = userData.value!;
-state.value.theme = userData.value?.dark_enabled ? 'dark' : 'light';
-colorMode.preference = state.value.theme;
-state.value.preferedColor = userData.value?.default_color ?? 'indigo';
-appConfig.ui.primary = state.value.preferedColor;
-state.value.preferedDarkColor = userData.value?.default_dark_color ?? 'cool';
-appConfig.ui.gray = state.value.preferedDarkColor;
-state.value.isLoadingMenu = false;
+const loadUserData = async() => {
+  try {
+    state.value.isLoadingUser = true;
+    const { data } = await myAxios.get('/api/system/userData');
+    state.value.userData = data.userData;
+    state.value.userCompanies = data.userCompanies;
+    state.value.userCompany = data.userCompany.id;
+    state.value.theme = data.dark_enabled ? 'dark' : 'light';
+    colorMode.preference = state.value.theme;
+    state.value.preferedColor = state.value.userData.default_color ?? 'indigo';
+    appConfig.ui.primary = state.value.preferedColor;
+    state.value.preferedDarkColor = state.value.userData.default_dark_color ?? 'cool';
+    appConfig.ui.gray = state.value.preferedDarkColor;
+    handleInitialLoad();
+  } catch(error) {
+    console.error(error);
+    navigateTo('/login');
+  } finally {
+    state.value.isLoadingUser = false;
+  }
+}
+
+const handleInitialLoad = () => {
+  //Selects the current menu item, based on matching path with longest length
+  let matchingPaths: type_sp_system_menu[] = [];
+  let matchingPath: type_sp_system_menu = {} as type_sp_system_menu;
+  state.value.menuData?.forEach(menu => {
+    if (menu.link && path.includes(menu.link)) {
+      matchingPaths.push(menu);
+    }
+  });
+  matchingPath = matchingPaths.sort((a, b) => b.link!.length - a.link!.length)[0];
+  state.value.menuSelected = matchingPath?.id ?? -1;
+}
 
 const logout = async () => {
   await supabase.auth.signOut();
@@ -51,20 +85,13 @@ const logout = async () => {
   state.value.isMenuOpen = false;
 }
 
-//Selects the current menu item, based on matching path with longest length
-let matchingPaths: type_sp_system_menu[] = [];
-let matchingPath: type_sp_system_menu = {} as type_sp_system_menu;
-state.value.menuData?.forEach(menu => {
-  if (menu.link && path.includes(menu.link)) {
-    matchingPaths.push(menu);
-  }
+onMounted(async() => {
+  await loadUserMenu();
+  await loadUserData();
 });
-matchingPath = matchingPaths.sort((a, b) => b.link!.length - a.link!.length)[0];
-state.value.menuSelected = matchingPath?.id ?? -1;
 </script>
 
 <template>
-<!--class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform sm:translate-x-0 border-r dark:border-transparent"-->
 <aside
   id="sidebar"
   class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform sm:translate-x-0 border-r dark:border-gray-800"
@@ -91,6 +118,7 @@ state.value.menuSelected = matchingPath?.id ?? -1;
             v-if="menu.id === state.menuSelected"
             class="justify-start"
             truncate
+            :title="menu.name_es"
             block
             size="xl"
             variant="soft"
@@ -104,6 +132,7 @@ state.value.menuSelected = matchingPath?.id ?? -1;
             v-else
             class="justify-start"
             truncate
+            :title="menu.name_es"
             block
             size="xl"
             color="gray"

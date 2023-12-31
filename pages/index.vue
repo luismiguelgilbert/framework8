@@ -2,6 +2,7 @@
 useHead({ title: 'BITT - Welcome' });
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import Theme from './indexTheme.vue'
+import Companies from './indexCompanies.vue'
 import Colors from './indexColor.vue'
 import User from './indexUser.vue'
 
@@ -11,6 +12,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const smAndLarger = breakpoints.greaterOrEqual('sm');
 const tabs = [
   { slot: 'user', value: 'user', label: 'Usuario', icon: 'i-heroicons-user-circle', defaultOpen: true },
+  { slot: 'companies', value: 'companies', label: 'Compañías', icon: 'i-heroicons-building-office-2', defaultOpen: false },
   { slot: 'colors', value: 'colors',label: 'Color', icon: 'i-heroicons-swatch', defaultOpen: false },
   { slot: 'theme', value: 'theme', label: 'Tema', icon: 'i-heroicons-moon', defaultOpen: false },
 ]
@@ -78,8 +80,9 @@ const tabs = [
           <BittSkeletonList v-if="state.isLoadingUser" class="mx-6 mt-5" :items="1" />
           <div v-else>
             <User v-show="currenTab === 0" class="px-2 sm:px-4 pb-6" />
-            <Colors v-show="currenTab === 1" class="px-2 sm:px-4 pb-6" />
-            <Theme v-show="currenTab === 2" class="px-2 sm:px-4 pb-6" />
+            <Companies v-show="currenTab === 1" class="px-2 sm:px-4 pb-6" />
+            <Colors v-show="currenTab === 2" class="px-2 sm:px-4 pb-6" />
+            <Theme v-show="currenTab === 3" class="px-2 sm:px-4 pb-6" />
           </div>
         </div>
       </UCard>
