@@ -32,6 +32,7 @@ export default defineEventHandler( async (event) => {
       name_es = '${profile_data.name_es}'
       ,is_active = ${profile_data.is_active}
       ,updated_at = now()
+      ,updated_by = '${userId}'
       WHERE id = ${id}`;
     await serverDB.query(sqlSysProfiles);
 

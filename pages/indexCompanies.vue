@@ -14,7 +14,7 @@ const setPreferedCompany = async (company: string) => {
 <template>
   <div class="mx-5 py-1 sm:py-3">
     <div class="ml-2 mb-2">
-      <span class="font-semibold text-lg">Seleccione su Compañía</span>
+      <span class="font-semibold text-lg">Seleccione su Compañía Predeterminada</span>
     </div>
     <URadioGroup
       class="px-5 py-2"

@@ -26,14 +26,16 @@ export default defineEventHandler( async (event) => {
 
     await serverDB.query('BEGIN');
 
-    const sqlSysProfiles = `INSERT INTO sys_companies (company_number, name_es, name_es_short, billing_phone, billing_address, is_active, created_at, updated_at) 
+    const sqlSysProfiles = `INSERT INTO sys_companies (company_number, name_es, name_es_short, billing_phone, billing_address, is_active, created_at, updated_at, updated_by) 
       values ('${company_data.company_number}',
       '${company_data.name_es}',
       '${company_data.name_es_short}',
       '${company_data.billing_phone}',
       '${company_data.billing_address}',
       ${company_data.is_active},
-      now(), now()) 
+      now(),
+      now(),
+      '${userId}') 
     RETURNING id`;
     const { rows } = await serverDB.query(sqlSysProfiles);
     const id = rows[0].id;

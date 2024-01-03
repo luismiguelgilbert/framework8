@@ -27,8 +27,8 @@ export default defineEventHandler( async (event) => {
 
     await serverDB.query('BEGIN');
 
-    const sqlSysProfiles = `INSERT INTO sys_profiles (created_at, name_es, is_active, updated_at) 
-    values (now(), '${profile_data.name_es}', ${profile_data.is_active}, now()) 
+    const sqlSysProfiles = `INSERT INTO sys_profiles (created_at, name_es, is_active, updated_at, updated_by) 
+    values (now(), '${profile_data.name_es}', ${profile_data.is_active}, now(), '${userId}') 
     RETURNING id`;
     const { rows } = await serverDB.query(sqlSysProfiles);
     const id = rows[0].id;

@@ -34,6 +34,7 @@ export default defineEventHandler( async (event) => {
       ,billing_address = '${company_data.billing_address}'
       ,is_active = ${company_data.is_active}
       ,updated_at = now()
+      ,updated_by = '${userId}'
       WHERE id = '${id}'`;
     await serverDB.query(sqlSysProfiles);
     

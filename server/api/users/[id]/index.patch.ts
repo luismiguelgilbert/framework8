@@ -41,6 +41,7 @@ export default defineEventHandler( async (event) => {
       ,avatar_url = COALESCE(${avatar_url}, avatar_url)
       ,website = COALESCE(${website}, website)
       ,updated_at = now()
+      ,updated_by = '${userId}'
       WHERE id = '${id}'`;
     await serverDB.query(sqlUpdateUserData);
 

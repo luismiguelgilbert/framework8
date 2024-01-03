@@ -12,6 +12,7 @@ export default defineEventHandler( async (event) => {
     const user_name = payload.userData.user_name ? `${payload.userData.user_name}` : null;
     const user_lastname = payload.userData.user_lastname ? `${payload.userData.user_lastname}` : null;
     const sys_profile_id = payload.userData.sys_profile_id ? `${payload.userData.sys_profile_id}` : null;
+    const updated_by = event.context.user.id ? `${event.context.user.id}` : null;
 
     //Check Permissions
     const userId = event.context.user.id;
@@ -41,7 +42,7 @@ export default defineEventHandler( async (event) => {
           // id: 'John',
           user_name: user_name,
           user_lastname: user_lastname,
-          avatar_url: '',
+          avatar_url: ''
         }
       }
     });
@@ -49,6 +50,10 @@ export default defineEventHandler( async (event) => {
 
     //Process
     await serverDB.query('BEGIN');
+
+    //Update User UpdatedBy
+    let sqlUserUpdate = `update sys_users set updated_by = '${updated_by}' where id = '${newUserId}'`;
+    await serverDB.query(sqlUserUpdate);
 
     //Update Profiles
     let sqlProfileInsert = `insert into sys_profiles_users (sys_profile_id, user_id) values (${sys_profile_id}, '${newUserId}')`;
