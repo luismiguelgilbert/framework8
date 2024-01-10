@@ -9,4 +9,7 @@ export enum PermissionsList {
   USERS_CREATE = 17,
   USERS_EDIT = 18,
   USERS_EXPORT = 19,
+  UOM_CREATE = 20,
+  UOM_EDIT = 21,
+  UOM_EXPORT = 22,
 }

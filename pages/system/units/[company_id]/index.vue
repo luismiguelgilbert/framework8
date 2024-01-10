@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import { type LocationQueryValue } from '#vue-router'
 import FileSaver from 'file-saver';
 import type { AxiosResponse } from 'axios';
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
-import { sort_options, status_options} from '@/typings/server/sys_profiles';
+import { sort_options, status_options} from '@/typings/server/inv_uom';
 import { filter_payload_object, filter_keys_enum } from '@/typings/server/filter_payload';
-import type { type_sys_profiles } from '@/typings/server/sys_profiles';
+import type { type_inv_uom } from '@/typings/server/inv_uom';
 import type { filter_payload } from '@/typings/server/filter_payload';
 import EditForm from './[id]/index.vue';
 import { PermissionsList } from '@/typings/client/permissionsEnum';
 
-useHead({ title: 'Perfiles' });
+useHead({ title: 'Medidas' });
 const mainState = useUser();
 const { currentRoute, push } = useRouter();
 const myAxios = useAxios();
@@ -17,6 +18,7 @@ const toast = useToast();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const smAndLarger = breakpoints.greaterOrEqual('sm');
 
+const userCompanyName = computed<string>(() => mainState.value.userCompanies.find(x=>x.id === mainState.value.userCompany)?.name_es_short ?? '');
 const uiTable = computed(() => {
   return {
     thead: smAndLarger.value ? 'visible' : 'hidden',
@@ -38,6 +40,7 @@ const uiTableContainer = {
 };
 const uiSlide = {width: 'w-screen max-w-lg'};
 //COMMON REFS
+const routerCompanyID = ref<LocationQueryValue>(currentRoute.value.params.company_id as LocationQueryValue);
 const isLoading = ref<boolean>(false);
 const rowsNumber = ref(0);
 const payload = ref<filter_payload>(filter_payload_object.parse({
@@ -51,12 +54,12 @@ const selectedFilter = computed(() => status_options.find(option => String(optio
 const selectedSort = computed(() => sort_options.find(option => String(option.value) === payload.value.sortBy));
 const isSideOpen = ref(false);
 //CUSTOM PROPERTIES & PERMISSIONS
-const rows = ref<type_sys_profiles[]>([]);
+const rows = ref<type_inv_uom[]>([]);
 const allowCreate = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_CREATE));
 const allowEdit = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_EDIT));
 const allowExport = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_EXPORT));
 const columns = computed(() => {
-  const visibleAlways = { key: 'name_es', name: 'name_es', field: 'name_es', label: 'Perfil', sortable: false };
+  const visibleAlways = { key: 'name_es', name: 'name_es', field: 'name_es', label: 'Unidad', sortable: false };
   const visibleDesktop = [
     { key: 'created_at', name: 'created_at', field: 'created_at', label: 'Fecha creación', sortable: false },
     { key: 'is_active', name: 'is_active', field: 'is_active', label: 'Estado', sortable: false },
@@ -133,7 +136,7 @@ const updatePage = (newPage: number) => {
 const loadData = async() => {
   try {
     isLoading.value = true;
-    const response: AxiosResponse<type_sys_profiles[]> = await myAxios.post('/api/roles', payload.value);
+    const response: AxiosResponse<type_inv_uom[]> = await myAxios.post(`/api/${routerCompanyID.value}/inventory/uom`, payload.value);
     const { data } = response;
     data.forEach((row) => {
       const existingIndex = rows.value.findIndex((item) => item.id === row.id);
@@ -151,7 +154,7 @@ const loadData = async() => {
     isLoading.value = false;
   }
 };
-const goToForm = (row?: type_sys_profiles) => {
+const goToForm = (row?: type_inv_uom) => {
   const rowValue = row?.id ? String(row?.id) : 'new';
   const newQueries = [
     { parameter: filter_keys_enum.ID, value: rowValue },
@@ -168,7 +171,7 @@ const shouldOpenSide = () => {
 const downloadFile = async() => {
   isLoading.value = true;
   const { data } = await myAxios.post('/api/roles/download', payload.value, { responseType: 'blob' });
-  FileSaver.saveAs(data, "Perfiles.xlsx");
+  FileSaver.saveAs(data, "Unidades.xlsx");
   isLoading.value = false;
 };
 const loadOnScroll = (event: UIEvent) => {
@@ -214,7 +217,7 @@ onMounted(async () => {
             :variant="smAndLarger ? 'outline' : 'none'"
             size="xl"
             icon="i-heroicons-magnifying-glass-20-solid"
-            placeholder="Buscar Perfiles..."
+            placeholder="Buscar Unidades..."
             @input="(event: InputEvent) => updateSearchString((event.target as HTMLInputElement).value)">
           </UInput>
           <div class="px-1"></div>
@@ -243,6 +246,10 @@ onMounted(async () => {
       <UCard :ui="uiTableContainer">
         <!--HEADER-->
         <template #header>
+          <UBreadcrumb
+              class="pl-1"
+              :links="[{ label: userCompanyName, icon: 'i-heroicons-building-office', },]"
+            />
           <div class="flex items-center justify-between gap-3">
             <span>
               <UIcon name="pl-1 fas fa-filter text-gray-400" />
@@ -254,7 +261,7 @@ onMounted(async () => {
           </div>
         </template>
         <!--BODY-->
-        <div class="h-[calc(100dvh-100px)] sm:h-[calc(100dvh-170px)] overflow-x-hidden" @scroll="loadOnScroll">
+        <div class="h-[calc(100dvh-120px)] sm:h-[calc(100dvh-190px)] overflow-x-hidden" @scroll="loadOnScroll">
           <UTable
             :columns="columns"
             :rows="rows"
@@ -263,7 +270,7 @@ onMounted(async () => {
             @select="goToForm">
             <!--Nombre-->
             <template #name_es-header>
-              <span class="hidden sm:block">Perfil</span>
+              <span class="hidden sm:block">Unidad</span>
             </template>
             <template #name_es-data="{ row }">
               <!--Desktop-->
@@ -278,7 +285,7 @@ onMounted(async () => {
                   </UChip>
                   <div class="ps-3">
                     <div class="text-base font-semibold">{{ row.name_es }}</div>
-                    <div class="font-normal text-gray-500">{{ `${row.user_count} usuarios` }}</div>
+                    <div class="font-normal text-gray-500">{{ row.name_es_short }}</div>
                   </div>
                 </div>
               </div>
@@ -294,7 +301,7 @@ onMounted(async () => {
                   </UChip>
                   <div class="ps-3">
                     <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
-                    <div class="font-normal text-gray-500">{{ `${row.user_count} usuarios` }}</div>
+                    <div class="font-normal text-gray-500">{{ row.name_es_short }}</div>
                     <div class="font-normal text-gray-500">Creado el {{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</div>
                   </div>
                 </div>

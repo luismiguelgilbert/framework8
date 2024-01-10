@@ -47,7 +47,7 @@ const loadUserData = async() => {
     state.value.userData = data.userData;
     state.value.userCompanies = data.userCompanies;
     state.value.userCompany = data.userCompany.id;
-    state.value.theme = data.dark_enabled ? 'dark' : 'light';
+    state.value.theme = data.userData.dark_enabled ? 'dark' : 'light';
     colorMode.preference = state.value.theme;
     state.value.preferedColor = state.value.userData.default_color ?? 'indigo';
     appConfig.ui.primary = state.value.preferedColor;
