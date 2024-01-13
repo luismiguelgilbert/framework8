@@ -16,6 +16,7 @@ const myAxios = useAxios();
 const toast = useToast();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const smAndLarger = breakpoints.greaterOrEqual('sm');
+const lgAndLarger = breakpoints.greaterOrEqual('lg');
 
 const uiTable = computed(() => {
   return {
@@ -32,8 +33,8 @@ const uiMainCard = {
 const uiMobileButton = { rounded: 'rounded-none' };
 const uiOptions = { rounded: 'rounded-none sm:rounded-lg'};
 const uiTableContainer = { 
-  rounded: 'rounded-none sm:rounded-lg',
-  header: { padding: 'px-1 sm:px-4 py-2', background: 'bg-gray-100 dark:bg-gray-800' },
+  rounded: 'rounded-none xl:rounded-lg',
+  header: { padding: 'px-1 sm:px-4 py-2', background: 'bg-gray-100 dark:bg-gray-800 xl:rounded-t-lg' },
   body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
 };
 const uiSlide = {width: 'w-screen max-w-lg'};
@@ -236,10 +237,7 @@ onMounted(async () => {
         </div>
       </div>
     </UCard>
-    <div v-if="smAndLarger" class="h-2">
-      <UProgress v-if="isLoading" animation="carousel" />
-    </div>
-    <div class="max-w-3xl mx-auto mt-0 sm:mt-3">
+    <div class="max-w-3xl mx-auto mt-0 xl:mt-3">
       <UCard :ui="uiTableContainer">
         <!--HEADER-->
         <template #header>
@@ -247,14 +245,15 @@ onMounted(async () => {
             <span>
               <UIcon name="pl-1 fas fa-filter text-gray-400" />
               <span class="pl-2 font-bold">{{ selectedFilter?.label }}</span>
-              <UIcon v-if="smAndLarger" name="pl-6 fas fa-arrow-up-short-wide text-gray-500" />
-              <span v-if="smAndLarger" class="pl-2 font-bold">{{ selectedSort?.label }}</span>
+              <UIcon v-if="lgAndLarger" name="pl-6 fas fa-arrow-up-short-wide text-gray-500" />
+              <span v-if="lgAndLarger" class="pl-2 font-bold">{{ selectedSort?.label }}</span>
             </span>
             <span class="font-semibold pr-1">{{ rowsNumber }} registros</span>
           </div>
         </template>
         <!--BODY-->
-        <div class="h-[calc(100dvh-100px)] sm:h-[calc(100dvh-170px)] overflow-x-hidden" @scroll="loadOnScroll">
+        <div class="h-[calc(100dvh-95px)] sm:h-[calc(100dvh-120px)] xl:h-[calc(100dvh-170px)] overflow-x-hidden" @scroll="loadOnScroll">
+          <UProgress v-if="isLoading" animation="carousel" class="max-w-3xl absolute z-50" />
           <UTable
             :columns="columns"
             :rows="rows"
@@ -277,7 +276,7 @@ onMounted(async () => {
                     </UAvatar>
                   </UChip>
                   <div class="ps-3">
-                    <div class="text-base font-semibold">{{ row.name_es }}</div>
+                    <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
                     <div class="font-normal text-gray-500">{{ `${row.user_count} usuarios` }}</div>
                   </div>
                 </div>
@@ -331,11 +330,9 @@ onMounted(async () => {
               </span>
             </template>
           </UTable>
+          <br /><br />
         </div>
       </UCard>
-    </div>
-    <div v-if="!smAndLarger" class="h-2">
-      <UProgress v-if="isLoading" animation="carousel" />
     </div>
     <USlideover
       :ui="uiSlide"
