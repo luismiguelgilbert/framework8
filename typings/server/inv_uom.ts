@@ -3,7 +3,7 @@ import { z } from "zod"
 export const inv_uom = z.object({
   id: z.coerce.string(),
   name_es: z.string()
-    .min(3, { message: "Nombre debe incluir 3 o más caracteres." })
+    .min(2, { message: "Nombre debe incluir 2 o más caracteres." })
     .default(''),
   name_es_short: z.string()
     .min(1, { message: "Abreviatura debe incluir 1 o más caracteres." })
