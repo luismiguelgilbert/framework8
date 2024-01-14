@@ -16,7 +16,6 @@ const myAxios = useAxios();
 const toast = useToast();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const smAndLarger = breakpoints.greaterOrEqual('sm');
-const lgAndLarger = breakpoints.greaterOrEqual('lg');
 
 const uiTable = computed(() => {
   return {
@@ -26,12 +25,6 @@ const uiTable = computed(() => {
     tbody: smAndLarger.value ? 'divide-y divide-gray-200 dark:divide-gray-800' : 'divide-y divide-white dark:divide-gray-900',
   }
 });
-const uiTableContainer = { 
-  rounded: 'rounded-none xl:rounded-lg',
-  header: { padding: 'px-1 sm:px-4 py-2', background: 'bg-gray-100 dark:bg-gray-800 xl:rounded-t-lg' },
-  body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
-};
-const uiSlide = {width: 'w-screen max-w-lg'};
 //COMMON REFS
 const isLoading = ref<boolean>(false);
 const rowsNumber = ref(0);
@@ -197,117 +190,104 @@ onMounted(async () => {
       v-model:payload-searchString="payload.searchString"
       hint="Buscar compañías"
       @update-searchstring="updateSearchString" />
-    <div class="max-w-full xl:max-w-3xl mx-auto mt-0 xl:mt-3">
-      <UCard :ui="uiTableContainer">
-        <!--HEADER-->
-        <template #header>
-          <div class="flex items-center justify-between gap-3">
-            <span>
-              <UIcon name="pl-1 fas fa-filter text-gray-400" />
-              <span class="pl-2 font-bold">{{ selectedFilter?.label }}</span>
-              <UIcon v-if="lgAndLarger" name="pl-6 fas fa-arrow-up-short-wide text-gray-500" />
-              <span v-if="lgAndLarger" class="pl-2 font-bold">{{ selectedSort?.label }}</span>
+    <DatalistMainCard
+      :requires-company="false"
+      :is-loading="isLoading"
+      :is-side-open="isSideOpen"
+      :selected-filter="selectedFilter?.label ?? '' "
+      :selected-sort="selectedSort?.label ?? '' "
+      :rows-number="rowsNumber ?? 0 "
+      @table-scroll="loadOnScroll" >
+      <template v-slot:table>
+        <UTable
+          :columns="columns"
+          :rows="rows"
+          :ui="uiTable"
+          :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No hay datos.' }"
+          @select="goToForm">
+          <!--RazónSocial-->
+          <template #name_es-header>
+            <span class="hidden sm:block">Compañía</span>
+          </template>
+          <template #name_es-data="{ row }">
+            <!--Desktop-->
+            <div v-if="smAndLarger">
+              <div class="flex items-center flex-row">
+                <UChip
+                  inset
+                  :color="row.is_active ? 'primary' : 'rose'" >
+                  <UAvatar size="sm">
+                    {{ row.name_es[0] }}
+                  </UAvatar>
+                </UChip>
+                <div class="ps-3">
+                  <div class="text-base font-semibold">{{ row.name_es_short }}</div>
+                  <div style="text-wrap: pretty; overflow-wrap: break-word;" class="font-normal text-gray-500">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
+                  <div class="font-normal text-gray-500">{{ `RUC: ${row.company_number}` }}</div>
+                </div>
+              </div>
+            </div>
+            <!--Mobile-->
+            <div v-if="!smAndLarger" style="width: calc(90vw); overflow-x: hidden; text-overflow: ellipsis;">
+              <div class="flex flex-row items-center">
+                <UChip
+                  inset
+                  :color="row.is_active ? 'primary' : 'rose'" >
+                  <UAvatar size="sm">
+                    {{ row.name_es[0] }}
+                  </UAvatar>
+                </UChip>
+                <div class="ps-3">
+                  <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ String(row.name_es_short).replaceAll('_', ' ') }}</div>
+                  <div style="text-wrap: pretty; overflow-wrap: break-word;" class="font-normal text-gray-500">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
+                  <div class="font-normal text-gray-500">{{ `${row.company_number}` }}</div>
+                </div>
+              </div>
+            </div>
+          </template>
+          <!--Nombre-->
+          <template #name_es_short-header>
+            <span class="hidden sm:block">Nombre</span>
+          </template>
+          <template #name_es_short-data="{ row }">
+            <div class="ps-3">
+              <div class="flex items-center">
+                <i class="hidden sm:block fa-solid fa-phone text-gray-400 pr-2"></i>
+                <div class="font-normal text-gray-500">{{ `${row.billing_phone}` }}</div>
+              </div>
+              <div class="flex items-center w-15 whitespace-break-spaces">
+                <i class="hidden sm:block fa-solid fa-location-pin text-gray-400 pr-2"></i>
+                <div class="font-normal text-gray-500 ">{{ `${row.billing_address}` }}</div>
+              </div>
+            </div>
+          </template>
+          <template #is_active-header>
+            <span class="hidden sm:block">Activo?</span>
+          </template>
+          <template #is_active-data="{ row }">
+            <span class="hidden sm:block">
+            <UBadge
+              v-if="row.is_active"
+              class="ml-2"
+              variant="soft"
+              color="primary"
+              label="&#9679; Activo" />
+            <UBadge
+              v-else
+              class="ml-2"
+              variant="soft" 
+              color="rose"
+              label="&#9679; Inactivo" />
             </span>
-            <span class="font-semibold pr-1">{{ rowsNumber }} registros</span>
-          </div>
-        </template>
-        <!--BODY-->
-        <div class="h-[calc(100dvh-95px)] sm:h-[calc(100dvh-120px)] xl:h-[calc(100dvh-170px)] overflow-x-hidden" @scroll="loadOnScroll">
-          <UProgress v-if="isLoading" animation="carousel" class="max-w-3xl absolute z-50" />
-          <UTable
-            :columns="columns"
-            :rows="rows"
-            :ui="uiTable"
-            :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No hay datos.' }"
-            @select="goToForm">
-            <!--RazónSocial-->
-            <template #name_es-header>
-              <span class="hidden sm:block">Compañía</span>
-            </template>
-            <template #name_es-data="{ row }">
-              <!--Desktop-->
-              <div v-if="smAndLarger">
-                <div class="flex items-center flex-row">
-                  <UChip
-                    inset
-                    :color="row.is_active ? 'primary' : 'rose'" >
-                    <UAvatar size="sm">
-                      {{ row.name_es[0] }}
-                    </UAvatar>
-                  </UChip>
-                  <div class="ps-3">
-                    <div class="text-base font-semibold">{{ row.name_es_short }}</div>
-                    <div style="text-wrap: pretty; overflow-wrap: break-word;" class="font-normal text-gray-500">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
-                    <div class="font-normal text-gray-500">{{ `RUC: ${row.company_number}` }}</div>
-                  </div>
-                </div>
-              </div>
-              <!--Mobile-->
-              <div v-if="!smAndLarger" style="width: calc(90vw); overflow-x: hidden; text-overflow: ellipsis;">
-                <div class="flex flex-row items-center">
-                  <UChip
-                    inset
-                    :color="row.is_active ? 'primary' : 'rose'" >
-                    <UAvatar size="sm">
-                      {{ row.name_es[0] }}
-                    </UAvatar>
-                  </UChip>
-                  <div class="ps-3">
-                    <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ String(row.name_es_short).replaceAll('_', ' ') }}</div>
-                    <div style="text-wrap: pretty; overflow-wrap: break-word;" class="font-normal text-gray-500">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
-                    <div class="font-normal text-gray-500">{{ `${row.company_number}` }}</div>
-                  </div>
-                </div>
-              </div>
-            </template>
-            <!--Nombre-->
-            <template #name_es_short-header>
-              <span class="hidden sm:block">Nombre</span>
-            </template>
-            <template #name_es_short-data="{ row }">
-              <div class="ps-3">
-                <div class="flex items-center">
-                  <i class="hidden sm:block fa-solid fa-phone text-gray-400 pr-2"></i>
-                  <div class="font-normal text-gray-500">{{ `${row.billing_phone}` }}</div>
-                </div>
-                <div class="flex items-center w-15 whitespace-break-spaces">
-                  <i class="hidden sm:block fa-solid fa-location-pin text-gray-400 pr-2"></i>
-                  <div class="font-normal text-gray-500 ">{{ `${row.billing_address}` }}</div>
-                </div>
-              </div>
-            </template>
-            <template #is_active-header>
-              <span class="hidden sm:block">Activo?</span>
-            </template>
-            <template #is_active-data="{ row }">
-              <span class="hidden sm:block">
-              <UBadge
-                v-if="row.is_active"
-                class="ml-2"
-                variant="soft"
-                color="primary"
-                label="&#9679; Activo" />
-              <UBadge
-                v-else
-                class="ml-2"
-                variant="soft" 
-                color="rose"
-                label="&#9679; Inactivo" />
-              </span>
-            </template>
-          </UTable>
-          <br /><br />
-        </div>
-      </UCard>
-    </div>
-    <USlideover
-      :ui="uiSlide"
-      v-model="isSideOpen"
-      prevent-close>
-      <EditForm
-        :allow-create="allowCreate"
-        :allow-edit="allowEdit"
-        @closed="closeAndRefresh" />
-    </USlideover>
+          </template>
+        </UTable>
+      </template>
+      <template v-slot:editForm>
+        <EditForm
+          :allow-create="allowCreate"
+          :allow-edit="allowEdit"
+          @closed="closeAndRefresh" />
+      </template>
+    </DatalistMainCard>
   </div>
 </template>

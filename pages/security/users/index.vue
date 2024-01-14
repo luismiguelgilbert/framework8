@@ -16,7 +16,6 @@ const myAxios = useAxios();
 const toast = useToast();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const smAndLarger = breakpoints.greaterOrEqual('sm');
-const lgAndLarger = breakpoints.greaterOrEqual('lg');
 
 const uiTable = computed(() => {
   return {
@@ -26,18 +25,6 @@ const uiTable = computed(() => {
     tbody: smAndLarger.value ? 'divide-y divide-gray-200 dark:divide-gray-800' : 'divide-y divide-white dark:divide-gray-900',
   }
 });
-const uiMainCard = { 
-  body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
-  rounded: 'rounded-none',
-};
-const uiMobileButton = { rounded: 'rounded-none' };
-const uiOptions = { rounded: 'rounded-none sm:rounded-lg'};
-const uiTableContainer = { 
-  rounded: 'rounded-none xl:rounded-lg',
-  header: { padding: 'px-1 sm:px-4 py-2', background: 'bg-gray-100 dark:bg-gray-800 xl:rounded-t-lg' },
-  body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
-};
-const uiSlide = {width: 'w-screen max-w-lg'};
 //COMMON REFS
 const isLoading = ref<boolean>(false);
 const rowsNumber = ref(0);
@@ -203,93 +190,80 @@ onMounted(async () => {
       v-model:payload-searchString="payload.searchString"
       hint="Buscar usuarios"
       @update-searchstring="updateSearchString" />
-    <div class="max-w-full xl:max-w-3xl mx-auto mt-0 xl:mt-3">
-      <UCard :ui="uiTableContainer">
-        <!--HEADER-->
-        <template #header>
-          <div class="flex items-center justify-between gap-3">
-            <span>
-              <UIcon name="pl-1 fas fa-filter text-gray-400" />
-              <span class="pl-2 font-bold">{{ selectedFilter?.label }}</span>
-              <UIcon v-if="lgAndLarger" name="pl-6 fas fa-arrow-up-short-wide text-gray-500" />
-              <span v-if="lgAndLarger" class="pl-2 font-bold">{{ selectedSort?.label }}</span>
-            </span>
-            <span class="font-semibold pr-1">{{ rowsNumber }} registros</span>
-          </div>
-        </template>
-        <!--BODY-->
-        <div class="h-[calc(100dvh-95px)] sm:h-[calc(100dvh-120px)] xl:h-[calc(100dvh-170px)] overflow-x-hidden" @scroll="loadOnScroll">
-          <UProgress v-if="isLoading" animation="carousel" class="max-w-3xl absolute z-50" />
-          <UTable
-            :columns="columns"
-            :rows="rows"
-            :ui="uiTable"
-            :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No hay datos.' }"
-            @select="goToForm">
-            <!--Nombre-->
-            <template #user_name-header>
-              <span class="hidden sm:block">Usuario</span>
-            </template>
-            <template #user_name-data="{ row }">
-              <div v-if="smAndLarger">
-                <div class="flex items-center flex-row">
-                  <UAvatar
-                    v-if="row.avatar_url && row.avatar_url.length > 0"
-                    :src="row.avatar_url"
-                    :avatar="{ src: row.avatar_url }"
-                    size="sm" i>
-                  </UAvatar>
-                  <UAvatar
-                    v-else
-                    size="sm">
-                    {{ row.user_name[0] }}
-                  </UAvatar>
-                  <div class="ps-3">
-                    <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ `${row.user_name} ${row.user_lastname}` }}</div>
-                    <div class="font-normal text-gray-500">{{ row.email }}</div>
-                  </div>
-                </div>
-              </div>
-              <!--Mobile-->
-              <div v-if="!smAndLarger" style="width: calc(90vw); overflow-x: hidden; text-overflow: ellipsis;">
-                <div class="flex flex-row items-center">
-                  <UAvatar size="sm">
-                    {{ row.user_name[0] }}
-                  </UAvatar>
-                  <div class="ps-3">
-                    <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ `${row.user_name} ${row.user_lastname}` }}</div>
-                    <div class="font-normal text-gray-500">{{ row.email }}</div>
-                    <div class="font-normal text-gray-500">{{ row.sys_profile_name }}</div>
-                  </div>
-                </div>
-              </div>
-            </template>
-            <!--Profile-->
-            <template #sys_profile_name-header>
-              <span class="hidden sm:block pl-2">Perfil</span>
-            </template>
-            <template #sys_profile_name-data="{ row }">
-              <!--Desktop-->
-              <div v-if="smAndLarger">
+    <DatalistMainCard
+      :requires-company="false"
+      :is-loading="isLoading"
+      :is-side-open="isSideOpen"
+      :selected-filter="selectedFilter?.label ?? '' "
+      :selected-sort="selectedSort?.label ?? '' "
+      :rows-number="rowsNumber ?? 0 "
+      @table-scroll="loadOnScroll" >
+      <template v-slot:table>
+        <UTable
+          :columns="columns"
+          :rows="rows"
+          :ui="uiTable"
+          :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No hay datos.' }"
+          @select="goToForm">
+          <!--Nombre-->
+          <template #user_name-header>
+            <span class="hidden sm:block">Usuario</span>
+          </template>
+          <template #user_name-data="{ row }">
+            <div v-if="smAndLarger">
+              <div class="flex items-center flex-row">
+                <UAvatar
+                  v-if="row.avatar_url && row.avatar_url.length > 0"
+                  :src="row.avatar_url"
+                  :avatar="{ src: row.avatar_url }"
+                  size="sm" i>
+                </UAvatar>
+                <UAvatar
+                  v-else
+                  size="sm">
+                  {{ row.user_name[0] }}
+                </UAvatar>
                 <div class="ps-3">
-                  <div class="text-base font-semibold">{{ row.sys_profile_name }}</div>
-                  <div class="font-normal text-gray-500">{{ row.id }}</div>
+                  <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ `${row.user_name} ${row.user_lastname}` }}</div>
+                  <div class="font-normal text-gray-500">{{ row.email }}</div>
                 </div>
               </div>
-            </template>
-          </UTable>
-          <br /><br />
-        </div>
-      </UCard>
-    </div>
-    <USlideover
-      :ui="uiSlide"
-      v-model="isSideOpen"
-      prevent-close>
-      <EditForm
-        :allow-create="allowCreate"
-        :allow-edit="allowEdit"
-        @closed="closeAndRefresh" />
-    </USlideover>
+            </div>
+            <!--Mobile-->
+            <div v-if="!smAndLarger" style="width: calc(90vw); overflow-x: hidden; text-overflow: ellipsis;">
+              <div class="flex flex-row items-center">
+                <UAvatar size="sm">
+                  {{ row.user_name[0] }}
+                </UAvatar>
+                <div class="ps-3">
+                  <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ `${row.user_name} ${row.user_lastname}` }}</div>
+                  <div class="font-normal text-gray-500">{{ row.email }}</div>
+                  <div class="font-normal text-gray-500">{{ row.sys_profile_name }}</div>
+                </div>
+              </div>
+            </div>
+          </template>
+          <!--Profile-->
+          <template #sys_profile_name-header>
+            <span class="hidden sm:block pl-2">Perfil</span>
+          </template>
+          <template #sys_profile_name-data="{ row }">
+            <!--Desktop-->
+            <div v-if="smAndLarger">
+              <div class="ps-3">
+                <div class="text-base font-semibold">{{ row.sys_profile_name }}</div>
+                <div class="font-normal text-gray-500">{{ row.id }}</div>
+              </div>
+            </div>
+          </template>
+        </UTable>
+      </template>
+      <template v-slot:editForm>
+        <EditForm
+          :allow-create="allowCreate"
+          :allow-edit="allowEdit"
+          @closed="closeAndRefresh" />
+      </template>
+    </DatalistMainCard>
   </div>
 </template>
