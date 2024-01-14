@@ -53,11 +53,8 @@ const tabs = [
         </div>
       </template>
     </UCard>
-    <div v-if="smAndLarger" class="h-2">
-      <UProgress v-if="state.isLoadingMenu || state.isLoadingUser" animation="carousel" />
-    </div>
     <!--BODY-->
-    <div class="max-w-3xl mx-auto mt-0 sm:mt-3">
+    <div class="max-w-3xl mx-auto mt-0 xl:mt-3">
       <UCard
         :ui="{ 
           rounded: 'rounded-none sm:rounded-lg',
@@ -70,13 +67,12 @@ const tabs = [
           :items="tabs"
           :ui="{
             list: {
-              rounded: 'rounded-none',
+              rounded: 'rounded-none xl:rounded-t-lg',
               //padding: `${state.theme === 'dark' ? 'px-0' : 'p1'}`
             },
           }"
           class="w-full" />
-          {{  }}
-        <div class="h-[calc(100dvh-100px)] sm:h-[calc(100dvh-175px)] overflow-y-auto">
+        <div class="h-[calc(100dvh-95px)] sm:h-[calc(100dvh-120px)] xl:h-[calc(100dvh-170px)] overflow-x-hidden overflow-y-auto">
           <BittSkeletonList v-if="state.isLoadingUser" class="mx-6 mt-5" :items="1" />
           <div v-else>
             <User v-show="currenTab === 0" class="px-2 sm:px-4 pb-6" />
