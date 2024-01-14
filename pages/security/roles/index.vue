@@ -26,12 +26,6 @@ const uiTable = computed(() => {
     tbody: smAndLarger.value ? 'divide-y divide-gray-200 dark:divide-gray-800' : 'divide-y divide-white dark:divide-gray-900',
   }
 });
-const uiMainCard = { 
-  body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
-  rounded: 'rounded-none',
-};
-const uiMobileButton = { rounded: 'rounded-none' };
-const uiOptions = { rounded: 'rounded-none sm:rounded-lg'};
 const uiTableContainer = { 
   rounded: 'rounded-none xl:rounded-lg',
   header: { padding: 'px-1 sm:px-4 py-2', background: 'bg-gray-100 dark:bg-gray-800 xl:rounded-t-lg' },
@@ -96,16 +90,15 @@ const initialQueryStateIntoRefs = () => {
     payload.value[name] = value as string;
   });
 };
-const updateSearchString = useDebounceFn((newString: string) => {
-  payload.value.searchString = newString;
+const updateSearchString = () => {
   payload.value.page = '1';
   const newQueries = [
-    { parameter: filter_keys_enum.SEARCH, value: newString},
+    { parameter: filter_keys_enum.SEARCH, value: payload.value.searchString!},
   ]
   updateQueryState(newQueries);
   rows.value = [];
   loadData();
-}, 1000);
+};
 const updateFilter = (newStatus: number) => {
   payload.value.status = String(newStatus);
   payload.value.page = '1';
@@ -197,46 +190,12 @@ onMounted(async () => {
 
 <template>
   <div><!--Required to prevent hydration mismatch-->
-    <UCard :ui="uiMainCard">
-      <div
-        class="w-full bg-white"
-        :class="smAndLarger ? 'dark:bg-gray-900' : 'dark:bg-gray-900'">
-        <div class="flex items-center justify-between gap-3 px-0 py-0 sm:px-4 sm:py-3">
-          <UButton
-            v-if="!smAndLarger"
-            :ui="uiMobileButton"
-            variant="ghost"
-            icon="i-heroicons-bars-4"
-            size="xl"
-            class="px-4 py-4"
-            @click="mainState.isMenuOpen = true" />
-          <UInput
-            :model-value="payload.searchString"
-            :variant="smAndLarger ? 'outline' : 'none'"
-            size="xl"
-            icon="i-heroicons-magnifying-glass-20-solid"
-            placeholder="Buscar Perfiles..."
-            @input="(event: InputEvent) => updateSearchString((event.target as HTMLInputElement).value)">
-          </UInput>
-          <div class="px-1"></div>
-          <div>
-            <UDropdown
-              :items="dropdownOptions"
-              :popper="{ placement: 'bottom-start' }">
-              <UButton
-                :variant="smAndLarger ? 'solid' : 'ghost'"
-                :ui="uiOptions"
-                :loading="isLoading"
-                :label="smAndLarger ? 'Opciones' : ''"
-                :trailing-icon="smAndLarger ? 'i-heroicons-chevron-down-20-solid' : ''"
-                icon="i-heroicons-cog"
-                size="xl"
-                class="px-4 py-4" />
-            </UDropdown>
-          </div>
-        </div>
-      </div>
-    </UCard>
+    <DatalistHeader
+      :dropdown-options="dropdownOptions"
+      :is-loading="isLoading"
+      v-model:payload-searchString="payload.searchString"
+      hint="Buscar perfiles"
+      @update-searchstring="updateSearchString" />
     <div class="max-w-full xl:max-w-3xl mx-auto mt-0 xl:mt-3">
       <UCard :ui="uiTableContainer">
         <!--HEADER-->
