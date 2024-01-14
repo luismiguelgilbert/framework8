@@ -27,6 +27,7 @@ defineProps({
     default: 0,
   },
 });
+const emits = defineEmits(['table-scroll']);
 
 const uiTableContainer = { 
   rounded: 'rounded-none xl:rounded-lg',
@@ -37,6 +38,10 @@ const uiSlide = {width: 'w-screen max-w-lg'};
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const lgAndLarger = breakpoints.greaterOrEqual('lg');
+
+const onScroll = (event: UIEvent) => {
+  emits('table-scroll', event);
+}
 
 </script>
 
@@ -59,7 +64,7 @@ const lgAndLarger = breakpoints.greaterOrEqual('lg');
         </div>
       </template>
       <!--BODY-->
-      <div class="h-[calc(100dvh-95px)] sm:h-[calc(100dvh-120px)] xl:h-[calc(100dvh-170px)] overflow-x-hidden">
+      <div class="h-[calc(100dvh-95px)] sm:h-[calc(100dvh-120px)] xl:h-[calc(100dvh-170px)] overflow-x-hidden" @scroll="onScroll">
         <UProgress v-if="isLoading" animation="carousel" class="max-w-3xl absolute z-50" />
         <slot name="table"></slot>
         <br /><br />
