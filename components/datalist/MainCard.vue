@@ -2,6 +2,11 @@
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 
 defineProps({
+  requiresCompany: {
+    type: Boolean as PropType<boolean>,
+    required: false,
+    default: false,
+  },
   isLoading: {
     type: Boolean as PropType<boolean>,
     required: true,
@@ -35,6 +40,8 @@ const uiTableContainer = {
   body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
 };
 const uiSlide = {width: 'w-screen max-w-lg'};
+const mainState = useUser();
+const userCompanyName = computed<string>(() => mainState.value.userCompanies.find(x=>x.id === mainState.value.userCompany)?.name_es_short ?? '');
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const lgAndLarger = breakpoints.greaterOrEqual('lg');
@@ -50,6 +57,11 @@ const onScroll = (event: UIEvent) => {
     <UCard :ui="uiTableContainer">
       <!--HEADER-->
       <template #header>
+        <UBreadcrumb
+          v-if="requiresCompany"
+          class="pl-1"
+          :links="[{ label: userCompanyName, icon: 'i-heroicons-building-office', },]"
+        />
         <div class="flex items-center justify-between gap-3">
           <span>
             <UIcon name="pl-1 fas fa-filter text-gray-400" />
@@ -64,7 +76,10 @@ const onScroll = (event: UIEvent) => {
         </div>
       </template>
       <!--BODY-->
-      <div class="h-[calc(100dvh-95px)] sm:h-[calc(100dvh-120px)] xl:h-[calc(100dvh-170px)] overflow-x-hidden" @scroll="onScroll">
+      <div 
+        class="h-[calc(100dvh-95px)] sm:h-[calc(100dvh-120px)] overflow-x-hidden"
+        :class="requiresCompany ? 'xl:h-[calc(100dvh-190px)]' : 'xl:h-[calc(100dvh-170px)]'"
+        @scroll="onScroll">
         <UProgress v-if="isLoading" animation="carousel" class="max-w-3xl absolute z-50" />
         <slot name="table"></slot>
         <br /><br />
