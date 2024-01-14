@@ -241,7 +241,7 @@ onMounted(async () => {
         </div>
       </div>
     </UCard>
-    <div class="max-w-3xl mx-auto mt-0 xl:mt-3">
+    <div class="max-w-full xl:max-w-3xl mx-auto mt-0 xl:mt-3">
       <UCard :ui="uiTableContainer">
         <!--HEADER-->
         <template #header>

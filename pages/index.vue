@@ -54,7 +54,7 @@ const tabs = [
       </template>
     </UCard>
     <!--BODY-->
-    <div class="max-w-3xl mx-auto mt-0 xl:mt-3">
+    <div class="max-w-full xl:max-w-3xl mx-auto mt-0 xl:mt-3">
       <UCard
         :ui="{ 
           rounded: 'rounded-none sm:rounded-lg',
