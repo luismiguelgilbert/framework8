@@ -72,7 +72,7 @@ const validateAndSave = async () => {
         allProfiles: [],
       };
       if (recordID.value === 'new') {
-        await myAxios.post(`/api/users/${recordID}`, body.value);
+        await myAxios.post(`/api/users/${recordID.value}`, body.value);
         goBack(); //Creation has 2 tabs while Edition shows 3 tabs, and there is a rendering issue on tabs
       } else {
         body.value.userData.id = recordID.value?.toString()!;

@@ -17,14 +17,12 @@ const toast = useToast();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const smAndLarger = breakpoints.greaterOrEqual('sm');
 
-const uiTable = computed(() => {
-  return {
-    thead: smAndLarger.value ? 'visible' : 'hidden',
-    td: { base: 'py-5 pl-4'},
-    divide: smAndLarger.value ? 'divide-y divide-gray-300 dark:divide-gray-700' : 'divide-y divide-white dark:divide-gray-900',
-    tbody: smAndLarger.value ? 'divide-y divide-gray-200 dark:divide-gray-800' : 'divide-y divide-white dark:divide-gray-900',
-  }
-});
+const uiTable = {
+  thead: 'collapse sm:visible',
+  td: { base: 'py-5 pl-4'},
+  divide: 'divide-y divide-white sm:divide-gray-200 dark:divide-gray-900 sm:dark:divide-gray-700',
+  tbody: 'divide-y divide-white sm:divide-gray-100 dark:divide-gray-900 sm:dark:divide-gray-800',
+};
 //COMMON REFS
 const isLoading = ref<boolean>(false);
 const rowsNumber = ref(0);

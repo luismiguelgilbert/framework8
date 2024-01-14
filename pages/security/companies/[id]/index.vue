@@ -63,7 +63,7 @@ const validateAndSave = async () => {
         usersData: [],
       };
       if (recordID.value === 'new') {
-        const { data } = await myAxios.post(`/api/companies/${recordID}`, body.value);
+        const { data } = await myAxios.post(`/api/companies/${recordID.value}`, body.value);
         body.value.id = data.id;
         state.value.companyData.id = data.id;
         state.value.id = data.id;
@@ -102,9 +102,7 @@ const resetData = () => {
 }
 const loadRecordData = (recordID: LocationQueryValue) => {
   resetData();
-  if (recordID && recordID === 'new') {
-    // state.value.isLoading = true;
-  } else if (recordID) {
+  if (recordID != 'new') {
     state.value.isLoading = true;
     const promise1 = myAxios.get(`/api/companies/${recordID}`);
     const promise2 = myAxios.get(`/api/companies/${recordID}/users`);

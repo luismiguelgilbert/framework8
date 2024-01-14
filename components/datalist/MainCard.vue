@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
-
+//Macros
 defineProps({
   requiresCompany: {
     type: Boolean as PropType<boolean>,
@@ -33,7 +32,7 @@ defineProps({
   },
 });
 const emits = defineEmits(['table-scroll']);
-
+//Constants
 const uiTableContainer = { 
   rounded: 'rounded-none xl:rounded-lg',
   header: { padding: 'px-1 sm:px-4 py-2', background: 'bg-gray-100 dark:bg-gray-800 xl:rounded-t-lg' },
@@ -42,14 +41,8 @@ const uiTableContainer = {
 const uiSlide = {width: 'w-screen max-w-lg'};
 const mainState = useUser();
 const userCompanyName = computed<string>(() => mainState.value.userCompanies.find(x=>x.id === mainState.value.userCompany)?.name_es_short ?? '');
-
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const lgAndLarger = breakpoints.greaterOrEqual('lg');
-
-const onScroll = (event: UIEvent) => {
-  emits('table-scroll', event);
-}
-
+//Events
+const onScroll = (event: UIEvent) => emits('table-scroll', event);
 </script>
 
 <template>
@@ -66,8 +59,8 @@ const onScroll = (event: UIEvent) => {
           <span>
             <UIcon name="pl-1 fas fa-filter text-gray-400" />
             <span class="pl-2 font-bold">{{ selectedFilter }}</span>
-            <UIcon v-if="lgAndLarger" name="pl-6 fas fa-arrow-up-short-wide text-gray-500" />
-            <span v-if="lgAndLarger" class="pl-2 font-bold">{{ selectedSort }}</span>
+            <UIcon class="collapse lg:visible" name="pl-6 fas fa-arrow-up-short-wide text-gray-500" />
+            <span class="collapse lg:visible pl-2 font-bold">{{ selectedSort }}</span>
           </span>
           <span v-if="!isLoading" class="font-semibold pr-1">{{ rowsNumber }} registros</span>
           <USkeleton

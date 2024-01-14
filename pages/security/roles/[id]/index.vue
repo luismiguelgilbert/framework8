@@ -67,7 +67,7 @@ const validateAndSave = async () => {
         allLinks: [],
       };
       if (recordID.value === 'new') {
-        const { data } = await myAxios.post(`/api/roles/${recordID}`, body.value);
+        const { data } = await myAxios.post(`/api/roles/${recordID.value}`, body.value);
         body.value.id = data.id;
         state.value.profileData.id = data.id;
         state.value.id = data.id;
@@ -167,7 +167,6 @@ watch(
         <div class="h-[calc(100dvh-180px)] sm:h-[calc(100dvh-179px)] overflow-y-auto">
           <BittSkeletonList v-if="state.isLoading" class="mx-6 mt-5" :items="1" />
           <div v-else>
-            <!--:schema="security_roles_schema"-->
             <UForm :state="state">
               <Basic v-show="currenTab === 0" class="px-2 sm:px-4 pb-6" />
               <Permissions v-show="currenTab === 1" class="px-2 sm:px-4 pb-6" />

@@ -3,7 +3,6 @@ import { type LocationQueryValue } from '#vue-router'
 import { uom_schema, type type_uom_schema } from '@/typings/client/invUom'
 import Basic from './basic.vue'
 import { AxiosError } from 'axios';
-import { inv_uom } from '~/typings/server/inv_uom';
 
 const props = defineProps({
   allowCreate: { type: Boolean, required: true },
