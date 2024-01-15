@@ -1,4 +1,6 @@
 import type { type_security_users_schema } from "@/typings/client/securityUsers";
+import type { filter_payload } from "@/typings/server/filter_payload";
+import type { type_sys_users } from '@/typings/server/sys_users';
 
 export const useSecurityUsers = () => useState<type_security_users_schema>('securityUsers', () => {
   return {
@@ -11,7 +13,7 @@ export const useSecurityUsers = () => useState<type_security_users_schema>('secu
       website: '',
       email: '',
       sys_profile_id: 1,
-      sys_profile_name: 'tes',
+      sys_profile_name: 'empty',
       dark_enabled: false,
       default_color: 'indigo',
       default_dark_color: 'neutral',
@@ -21,9 +23,23 @@ export const useSecurityUsers = () => useState<type_security_users_schema>('secu
       row_count: 0,
     },
     allProfiles:[],
-    // profileLinks: [],
-    // usersData: [],
-    // allLinks: [],
+    userCompanies: [],
+    allCompanies: [],
   }
 
+});
+
+export const useSecurityUsersMainCard = () => useState('securityUsersMainCard', () => {
+  return {
+    payload: {
+      isDefault: '1',
+      status: '1',
+      sortBy: '1',
+      searchString: '',
+      id: '',
+      page: '1',
+      rowsPerPage: '20',
+    } as filter_payload,
+    rows: [] as type_sys_users[],
+  }
 });

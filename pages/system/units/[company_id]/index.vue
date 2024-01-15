@@ -1,47 +1,32 @@
 <script setup lang="ts">
-import { type LocationQueryValue } from '#vue-router'
 import FileSaver from 'file-saver';
-import type { AxiosResponse } from 'axios';
+import { type AxiosResponse } from 'axios';
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
-import { sort_options, status_options} from '@/typings/server/inv_uom';
-import { filter_payload_object, filter_keys_enum } from '@/typings/server/filter_payload';
-import type { type_inv_uom } from '@/typings/server/inv_uom';
-import type { filter_payload } from '@/typings/server/filter_payload';
-import EditForm from './[id]/index.vue';
+import { filter_keys_enum } from '@/typings/server/filter_payload';
 import { PermissionsList } from '@/typings/client/permissionsEnum';
+import { type LocationQueryValue } from '#vue-router'
+
+import { sort_options, status_options, type type_inv_uom } from '@/typings/server/inv_uom';
+import EditForm from './[id]/index.vue';
 
 useHead({ title: 'Medidas' });
-const mainState = useUser();
 const { currentRoute, push } = useRouter();
+const mainState = useUser();
 const myAxios = useAxios();
 const toast = useToast();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const smAndLarger = breakpoints.greaterOrEqual('sm');
 
-const uiTable = computed(() => {
-  return {
-    thead: smAndLarger.value ? 'visible' : 'hidden',
-    td: { base: 'py-5 pl-4'},
-    divide: smAndLarger.value ? 'divide-y divide-gray-300 dark:divide-gray-700' : 'divide-y divide-white dark:divide-gray-900',
-    tbody: smAndLarger.value ? 'divide-y divide-gray-200 dark:divide-gray-800' : 'divide-y divide-white dark:divide-gray-900',
-  }
-});
 //COMMON REFS
-const routerCompanyID = ref<LocationQueryValue>(currentRoute.value.params.company_id as LocationQueryValue);
 const isLoading = ref<boolean>(false);
 const rowsNumber = ref(0);
-const payload = ref<filter_payload>(filter_payload_object.parse({
-  page: '1',
-  rowsPerPage: 20,
-  searchString: '',
-  sortBy: '1',
-  filter: '1',
-}));
-const selectedFilter = computed(() => status_options.find(option => String(option.value) === payload.value.status));
-const selectedSort = computed(() => sort_options.find(option => String(option.value) === payload.value.sortBy));
 const isSideOpen = ref(false);
+//CUSTOM REFS
+const state = useUomMainCard().value;
+const routerCompanyID = ref<LocationQueryValue>(currentRoute.value.params.company_id as LocationQueryValue);
+const selectedFilter = computed(() => status_options.find(option => String(option.value) === state.payload.status));
+const selectedSort = computed(() => sort_options.find(option => String(option.value) === state.payload.sortBy));
 //CUSTOM PROPERTIES & PERMISSIONS
-const rows = ref<type_inv_uom[]>([]);
 const allowCreate = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_CREATE));
 const allowEdit = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_EDIT));
 const allowExport = computed<boolean>(() => mainState.value.menuData.some((item) => item.id === PermissionsList.ROLES_EXPORT));
@@ -55,81 +40,95 @@ const columns = computed(() => {
 });
 const fixedOptions = [
   [
-    ...status_options.map((option) => { return {...option, click: () => { updateFilter(option.value) } }})
+    ...status_options.map((option) => { return {...option, click: () => { updatePayload(filter_keys_enum.STATUS, String(option.value), true, true) } }})
   ],
   [
-    ...sort_options.map((option) => { return {...option, click: () => { updateSorting(option.value) } }})
+    ...sort_options.map((option) => { return {...option, click: () => { updatePayload(filter_keys_enum.SORT, String(option.value), true, true) } }})
   ]
 ];
 const dropdownOptions = computed(() => {
   let dynamicOptions = [];
-  if (allowCreate.value) { dynamicOptions.push({ label: 'Nuevo', icon: 'fas fa-plus-circle', click: () => { goToForm() } }) };
+  if (allowCreate.value) { dynamicOptions.push({ label: 'Nuevo', icon: 'fas fa-plus-circle', click: () => { updatePayload(filter_keys_enum.ID, 'new', false, false) } }) };
   if (allowExport.value) { dynamicOptions.push({ label: 'Descargar', icon: 'fas fa-file-excel', click: () => { downloadFile() } }) };
   dynamicOptions.push({ label: 'Refrescar', icon: 'fas fa-arrows-rotate', click: () => { loadData() } });
   return dynamicOptions.length > 0
     ? [ ...[dynamicOptions], ...fixedOptions ]
     : [ ...fixedOptions ];
-})
-//QUERY ROUTER PROPERTIES
-const updateQueryState = (newQueries: Array<{parameter: filter_keys_enum, value: string}>) => {
-  const newQuery = { ...currentRoute.value.query }
-  newQueries.forEach((query) => {
-    newQuery[query.parameter] = query.value;
+});
+//ACTIONS
+const syncPayloadWithQuery = () => {
+  //Query to Payload
+  if(state.payload.isDefault === '1') {
+    const queryParams = currentRoute.value.query;
+    Object.entries(queryParams)
+      .filter(entry =>
+        !entry[0].includes(filter_keys_enum.PAGE)
+        && !entry[0].includes(filter_keys_enum.ROWS)
+        && !entry[0].includes(filter_keys_enum.DEFAULT))
+      .forEach(([key, value]) => {
+        state.payload[key as filter_keys_enum] = value as string;
+    });
+  }
+  //Payload to Query
+  state.payload.isDefault = '0';
+  let newQueries: Partial<Record<filter_keys_enum, string>> = {};
+  Object.entries(state.payload)
+    .filter(entry =>
+      !entry[0].includes(filter_keys_enum.PAGE)
+      && !entry[0].includes(filter_keys_enum.ROWS)
+      && !entry[0].includes(filter_keys_enum.DEFAULT))
+    .filter(entry => entry[1].length > 0)
+    .forEach(([key, value]) => {
+      newQueries[key as filter_keys_enum] = value;
   });
-  push({ query: newQuery });
+  push({ query: newQueries });
 };
-const initialQueryStateIntoRefs = () => {
-  const queryParams = currentRoute.value.query;
-  Object.entries(queryParams).forEach(([key, value]) => {
-    const name: filter_keys_enum = key as filter_keys_enum;
-    payload.value[name] = value as string;
-  });
+const resetData = () => {
+  state.payload.page = '1';
+  state.rows = [];
 };
-const updateSearchString = () => {
-  payload.value.page = '1';
-  const newQueries = [
-    { parameter: filter_keys_enum.SEARCH, value: payload.value.searchString!},
-  ]
-  updateQueryState(newQueries);
-  rows.value = [];
-  loadData();
-};
-const updateFilter = (newStatus: number) => {
-  payload.value.status = String(newStatus);
-  payload.value.page = '1';
-  const newQueries = [
-    { parameter: filter_keys_enum.STATUS, value: String(newStatus)},
-  ]
-  updateQueryState(newQueries);
-  rows.value = [];
-  loadData();
-};
-const updateSorting = (newSorting: number) => {
-  payload.value.sortBy = String(newSorting);
-  payload.value.page = '1';
-  const newQueries = [
-    { parameter: filter_keys_enum.SORT, value: String(newSorting)},
-  ]
-  updateQueryState(newQueries);
-  rows.value = [];
-  loadData();
+const updatePayload = (attribute: string, value: string|null, shouldResetData: boolean, shouldLoadData: boolean) => {
+  shouldResetData && resetData();
+  if (attribute === filter_keys_enum.STATUS) {
+    state.payload.status = value ?? '';
+  }
+  if (attribute === filter_keys_enum.SORT) {
+    state.payload.sortBy = value ?? '';
+  }
+  if (attribute === filter_keys_enum.ID) {
+    state.payload.id = value ?? '';
+    isSideOpen.value = !!state.payload.id;
+  }
+  syncPayloadWithQuery();
+  shouldLoadData && loadData();
 };
 const updatePage = (newPage: number) => {
-  payload.value.page = String(newPage);
+  state.payload.page = String(newPage);
   loadData();
 };
-//ACTIONS
+const loadOnScroll = (event: UIEvent) => {
+  const eventTarget = event.target as HTMLElement;
+  const { scrollTop, clientHeight, scrollHeight } = eventTarget;
+  const offset = 100;
+  const isBottom = scrollTop + clientHeight + offset >= scrollHeight;
+  const isMoreDataAvailable = rowsNumber.value > state.rows.length;
+  if (isBottom && isMoreDataAvailable && !isLoading.value) {
+    const newPage = state.payload.page ? Number(Number(state.payload.page)+1) : 1;
+    updatePage(newPage);
+  }
+};
+//CUSTOM ACTIONS
 const loadData = async() => {
   try {
     isLoading.value = true;
-    const response: AxiosResponse<type_inv_uom[]> = await myAxios.post(`/api/${routerCompanyID.value}/inventory/uom`, payload.value);
+    const response: AxiosResponse<type_inv_uom[]> = await myAxios.post(`/api/${routerCompanyID.value}/inventory/uom`, state.payload);
     const { data } = response;
     data.forEach((row) => {
-      const existingIndex = rows.value.findIndex((item) => item.id === row.id);
+      const existingIndex = state.rows.findIndex((item) => item.id === row.id);
       if (existingIndex >= 0) {
-        rows.value[existingIndex] = row;
+        state.rows[existingIndex] = row;
       } else {
-        rows.value.push(row);
+        state.rows.push(row);
       }
     });
     rowsNumber.value = data[0]?.row_count ?? 0;
@@ -140,46 +139,18 @@ const loadData = async() => {
     isLoading.value = false;
   }
 };
-const goToForm = (row?: type_inv_uom) => {
-  const rowValue = row?.id ? String(row?.id) : 'new';
-  const newQueries = [
-    { parameter: filter_keys_enum.ID, value: rowValue },
-  ]
-  updateQueryState(newQueries);
-  isSideOpen.value = true;
-};
-const shouldOpenSide = () => {
-  const queryParams = currentRoute.value.query;
-  if (queryParams.id) {
-    isSideOpen.value = true;
-  }
-};
 const downloadFile = async() => {
   isLoading.value = true;
-  const { data } = await myAxios.post('/api/roles/download', payload.value, { responseType: 'blob' });
+  const { data } = await myAxios.post('/api/roles/download', state.payload, { responseType: 'blob' });
   FileSaver.saveAs(data, "Unidades.xlsx");
   isLoading.value = false;
 };
-const loadOnScroll = (event: UIEvent) => {
-  const eventTarget = event.target as HTMLElement;
-  const { scrollTop, clientHeight, scrollHeight } = eventTarget;
-  const offset = 100;
-  const isBottom = scrollTop + clientHeight + offset >= scrollHeight;
-  const isMoreDataAvailable = rowsNumber.value > rows.value.length;
-  if (isBottom && isMoreDataAvailable && !isLoading.value) {
-    const newPage = payload.value.page ? Number(Number(payload.value.page)+1) : 1;
-    updatePage(newPage);
-  }
-};
-const closeAndRefresh = () => {
-  isSideOpen.value = false
-  loadData();
-};
 //HOOKS
 onMounted(async () => {
-  initialQueryStateIntoRefs();
+  resetData();
+  syncPayloadWithQuery();
   await loadData();
-  shouldOpenSide();
+  isSideOpen.value = !!state.payload.id;
 });
 </script>
 
@@ -188,9 +159,9 @@ onMounted(async () => {
     <DatalistHeader
       :dropdown-options="dropdownOptions"
       :is-loading="isLoading"
-      v-model:payload-searchString="payload.searchString"
+      v-model:payload-searchString="state.payload.searchString"
       hint="Buscar unidades"
-      @update-searchstring="updateSearchString" />
+      @update-searchstring="updatePayload(filter_keys_enum.SEARCH, null, true, true)" />
     <DatalistMainCard
       :requires-company="true"
       :is-loading="isLoading"
@@ -202,10 +173,15 @@ onMounted(async () => {
       <template v-slot:table>
         <UTable
           :columns="columns"
-          :rows="rows"
-          :ui="uiTable"
+          :rows="state.rows"
+          :ui="{
+            thead: 'collapse sm:visible',
+            td: { base: 'py-5 pl-4 whitespace-nowrap'},
+            divide: 'divide-y divide-white sm:divide-gray-200 dark:divide-gray-900 sm:dark:divide-gray-700',
+            tbody: 'divide-y divide-white sm:divide-gray-100 dark:divide-gray-900 sm:dark:divide-gray-800',
+          }"
           :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No hay datos.' }"
-          @select="goToForm">
+          @select="(row: type_inv_uom) => updatePayload(filter_keys_enum.ID, String(row.id), false, false)">
           <!--Nombre-->
           <template #name_es-header>
             <span class="hidden sm:block">Unidad</span>
@@ -281,7 +257,7 @@ onMounted(async () => {
         <EditForm
           :allow-create="allowCreate"
           :allow-edit="allowEdit"
-          @closed="closeAndRefresh" />
+          @closed="updatePayload(filter_keys_enum.ID, null, false, true)" />
       </template>
     </DatalistMainCard>
   </div>
