@@ -5,6 +5,13 @@ const state = useInvTypes();
 const { currentRoute } = useRouter();
 const recordID = ref<LocationQueryValue>(currentRoute.value.query?.id as LocationQueryValue);
 const isCreating = computed<boolean>(() => recordID.value === 'new' );
+const updateParentField = (val: string) => {
+  if (val === state.value.invTypeData.parent) {
+    state.value.invTypeData.parent = null;
+  } else {
+    state.value.invTypeData.parent = val;
+  }
+}
 </script>
 
 <template>
@@ -67,13 +74,14 @@ const isCreating = computed<boolean>(() => recordID.value === 'new' );
       label="Pertenece a (opcional)"
       name="invTypeData.parent">
       <USelectMenu
-        v-model="state.invTypeData.parent"
+        :model-value="state.invTypeData.parent!"
         placeholder="Seleccione el tipo al que pertenece"
         option-attribute="name_es"
         value-attribute="id"
         searchable
         searchable-placeholder="Buscar tipo..."
-        :options="state.allTypes.filter(x => x.id !== state.invTypeData.id)">
+        :options="state.allTypes.filter(x => x.id !== state.invTypeData.id)"
+        @update:modelValue="updateParentField">
         <template #leading v-if="!state.isLoading">
           <i class="fas fa-circle-user fa-xl text-gray-500"></i>
         </template>

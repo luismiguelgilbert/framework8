@@ -34,7 +34,7 @@ export default defineEventHandler( async (event) => {
     
     let sqlUpdateUserData = `update inv_types set
        name_es = COALESCE(${name_es}, name_es)
-      ,parent = COALESCE(${parent}, parent)
+      ,parent = ${parent}
       ,is_active = ${payload.invTypeData.is_active}
       ,updated_at = now()
       ,updated_by = '${userId}'

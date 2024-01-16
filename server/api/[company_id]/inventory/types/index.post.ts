@@ -30,7 +30,7 @@ export default defineEventHandler( async (event) => {
           and a.parent is null
         UNION ALL
           SELECT b.sys_company_id, b.id, b.parent
-          ,concat(COALESCE(cte.name_es,'') ,' / ', COALESCE(b.name_es,''))
+          ,concat(COALESCE(cte.name_es,'') ,' > ', COALESCE(b.name_es,''))
           ,b.is_active, b.created_at, b.updated_at
           from inv_types b
           inner join cte on cte.id = b.parent
