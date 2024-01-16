@@ -27,4 +27,7 @@ export default defineNuxtConfig({
       viewport: 'width=device-width, initial-scale=1, set-user-scalable=no',
     }
   },
+  // components: [
+  //   { path: '~/components', pathPrefix: false },
+  // ]
 })

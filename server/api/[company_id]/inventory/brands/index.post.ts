@@ -31,7 +31,7 @@ export default defineEventHandler( async (event) => {
         ,to_char (a.updated_at::timestamp at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as updated_at
         ,count(*) OVER() AS row_count
       FROM inv_brands a
-      WHERE 1 = 1
+      WHERE a.sys_company_id = '${companyId}'
         and a.is_active = ${filterBy}
         ${search_string.trim().length > 0 
           ? "and (a.name_es ILIKE '%" + search_string + "%')"

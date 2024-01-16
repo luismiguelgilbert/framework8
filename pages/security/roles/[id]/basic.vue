@@ -3,7 +3,6 @@ const state = useSecurityRoles();
 </script>
 
 <template>
-  <!--<div class="mx-5 py-1 sm:py-3">-->
   <div class="mx-2">
     <div class="ml-2 mb-2"><span class="font-semibold text-lg">Datos Básicos del Perfil</span></div>
     <UFormGroup
