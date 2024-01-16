@@ -15,4 +15,7 @@ export enum PermissionsList {
   BRANDS_CREATE = 23,
   BRANDS_EDIT = 24,
   BRANDS_EXPORT = 25,
+  INVTYPES_CREATE = 27,
+  INVTYPES_EDIT = 28,
+  INVTYPES_EXPORT = 29,
 }
