@@ -6,6 +6,7 @@ export const inv_types = z.object({
   name_es: z.string()
     .min(2, { message: "Nombre debe incluir 2 o más caracteres." })
     .default(''),
+  full_path: z.string().optional().nullable().default(''),
   is_active: z.boolean().default(true),
   created_at: z.coerce.string().optional().nullable().default(new Date().toISOString()),
   updated_at: z.coerce.string().optional().nullable().default(new Date().toISOString()),

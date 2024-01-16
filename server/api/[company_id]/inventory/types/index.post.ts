@@ -23,6 +23,19 @@ export default defineEventHandler( async (event) => {
     if (isUserAllowedResult === 0) { throw createError({ statusCode: 403, statusMessage: 'Forbidden' })};
 
     const text = `
+      WITH RECURSIVE cte(sys_company_id, id, parent, name_es, is_active, created_at, updated_at) AS (
+          SELECT a.sys_company_id, a.id, a.parent, a.name_es, a.is_active, a.created_at, a.updated_at
+          FROM inv_types a
+          WHERE a.sys_company_id = '${companyId}'
+          and a.parent is null
+        UNION ALL
+          SELECT b.sys_company_id, b.id, b.parent
+          ,concat(COALESCE(cte.name_es,'') ,' / ', COALESCE(b.name_es,''))
+          ,b.is_active, b.created_at, b.updated_at
+          from inv_types b
+          inner join cte on cte.id = b.parent
+          WHERE b.sys_company_id = '${companyId}'
+      )
       SELECT 
         a.id
         ,a.name_es
@@ -30,7 +43,7 @@ export default defineEventHandler( async (event) => {
         ,to_char (a.created_at::timestamp at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as created_at
         ,to_char (a.updated_at::timestamp at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as updated_at
         ,count(*) OVER() AS row_count
-      FROM inv_types a
+      FROM cte a
       WHERE a.sys_company_id = '${companyId}'
         and a.is_active = ${filterBy}
         ${search_string.trim().length > 0 
