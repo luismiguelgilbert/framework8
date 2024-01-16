@@ -1,11 +1,12 @@
 import serverDB from '@/server/utils/db';
-import { type type_uom_schema } from '@/typings/client/invUom';
+import type { type_brands_schema } from "@/typings/client/invBrands";
 import { PermissionsList } from '@/typings/client/permissionsEnum';
 
 export default defineEventHandler( async (event) => {
   try{
-    const payload: type_uom_schema = await readBody(event);
+    const payload: type_brands_schema = await readBody(event);
     const companyId = (event.context.params?.company_id);
+    const id = (event.context.params?.id);
 
     //Check Permissions
     const userId = event.context.user.id;
@@ -15,7 +16,7 @@ export default defineEventHandler( async (event) => {
       inner join sys_profiles c on c.id = b.sys_profile_id
       inner join sys_profiles_links d on d.sys_profile_id = c.id
       where a.id = '${userId}'
-      and d.sys_link_id = ${PermissionsList.UOM_CREATE}`;
+      and d.sys_link_id = ${PermissionsList.BRANDS_EDIT}`;
     const isUserAllowedResult = (await serverDB.query(isUserAllowed)).rowCount;
     if (isUserAllowedResult === 0) {
       throw createError({
@@ -25,20 +26,21 @@ export default defineEventHandler( async (event) => {
     }
 
     //MainData
-    const name_es = payload.uomData.name_es ? `'${payload.uomData.name_es}'` : null;
-    const name_es_short = payload.uomData.name_es_short ? `'${payload.uomData.name_es_short}'` : null;
+    const name_es = payload.brandData.name_es ? `'${payload.brandData.name_es}'` : null;
 
-
+    //Process
     await serverDB.query('BEGIN');
-
-    const sqlSysProfiles = `INSERT INTO inv_uom (sys_company_id, name_es, name_es_short, is_active, updated_by) 
-    values ('${companyId}', ${name_es}, ${name_es_short}, ${payload.uomData.is_active}, '${userId}') 
-    RETURNING id`;
-    const { rows } = await serverDB.query(sqlSysProfiles);
-    const id = rows[0].id;
-
+    
+    let sqlUpdateUserData = `update inv_brands set
+       name_es = COALESCE(${name_es}, name_es)
+      ,is_active = ${payload.brandData.is_active}
+      ,updated_at = now()
+      ,updated_by = '${userId}'
+      WHERE sys_company_id = '${companyId}' and id = '${id}'`;
+    await serverDB.query(sqlUpdateUserData);
+    
     await serverDB.query('COMMIT');
-    return { id };
+    return { message: `Merca ${id} actualizada correctamente` };
   }catch(err) {
     await serverDB.query('ROLLBACK');
     console.error(`Error at ${event.path}. ${err}`);

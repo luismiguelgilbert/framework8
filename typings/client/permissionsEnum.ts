@@ -12,4 +12,7 @@ export enum PermissionsList {
   UOM_CREATE = 20,
   UOM_EDIT = 21,
   UOM_EXPORT = 22,
+  BRANDS_CREATE = 23,
+  BRANDS_EDIT = 24,
+  BRANDS_EXPORT = 25,
 }
