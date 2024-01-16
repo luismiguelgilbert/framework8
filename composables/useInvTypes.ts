@@ -8,14 +8,15 @@ export const useInvTypes = () => useState<type_invTypes_schema>('uom', () => {
     invTypeData: {
       id: '',
       parent: null,
+      full_path: '',
       name_es: '',
       is_active: true,
       created_at: '',
       updated_at: '',
       row_count: 0,
     },
+    allTypes: [],
   }
-
 });
 
 export const useInvTypesMainCard = () => useState('invTypesMainCard', () => {

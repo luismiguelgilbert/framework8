@@ -26,12 +26,12 @@ export default defineEventHandler( async (event) => {
 
     //MainData
     const name_es = payload.invTypeData.name_es ? `'${payload.invTypeData.name_es}'` : null;
-
+    const parent = payload.invTypeData.parent ? `'${payload.invTypeData.parent}'` : null;
 
     await serverDB.query('BEGIN');
 
-    const sqlSysProfiles = `INSERT INTO inv_types (sys_company_id, name_es, is_active, updated_by) 
-    values ('${companyId}', ${name_es}, ${payload.invTypeData.is_active}, '${userId}') 
+    const sqlSysProfiles = `INSERT INTO inv_types (sys_company_id, parent, name_es, is_active, updated_by) 
+    values ('${companyId}', ${parent}, ${name_es}, ${payload.invTypeData.is_active}, '${userId}') 
     RETURNING id`;
     const { rows } = await serverDB.query(sqlSysProfiles);
     const id = rows[0].id;

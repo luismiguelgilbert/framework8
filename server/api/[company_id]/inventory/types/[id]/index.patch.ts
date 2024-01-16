@@ -27,12 +27,14 @@ export default defineEventHandler( async (event) => {
 
     //MainData
     const name_es = payload.invTypeData.name_es ? `'${payload.invTypeData.name_es}'` : null;
-
+    const parent = payload.invTypeData.parent ? `'${payload.invTypeData.parent}'` : null;
+    
     //Process
     await serverDB.query('BEGIN');
     
     let sqlUpdateUserData = `update inv_types set
        name_es = COALESCE(${name_es}, name_es)
+      ,parent = COALESCE(${parent}, parent)
       ,is_active = ${payload.invTypeData.is_active}
       ,updated_at = now()
       ,updated_by = '${userId}'

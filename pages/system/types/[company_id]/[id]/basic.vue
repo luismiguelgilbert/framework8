@@ -61,5 +61,27 @@ const isCreating = computed<boolean>(() => recordID.value === 'new' );
         </template>
       </UInput>
     </UFormGroup>
+    <UFormGroup
+      class="px-2 py-2"
+      size="xl"
+      label="Pertenece a (opcional)"
+      name="invTypeData.parent">
+      <USelectMenu
+        v-model="state.invTypeData.parent"
+        placeholder="Seleccione el tipo al que pertenece"
+        option-attribute="name_es"
+        value-attribute="id"
+        searchable
+        searchable-placeholder="Buscar tipo..."
+        :options="state.allTypes.filter(x => x.id !== state.invTypeData.id)">
+        <template #leading v-if="!state.isLoading">
+          <i class="fas fa-circle-user fa-xl text-gray-500"></i>
+        </template>
+        <template #label>
+          <span v-if="state.invTypeData.parent">{{ state.allTypes.find(x=> x.id === state.invTypeData.parent)?.name_es}}</span>
+          <span v-else class="text-gray-400 dark:text-gray-500">Seleccione el tipo al que pertenece</span>
+        </template>
+      </USelectMenu>
+    </UFormGroup>
   </div>
 </template>

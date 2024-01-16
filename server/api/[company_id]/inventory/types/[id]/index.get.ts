@@ -7,6 +7,7 @@ export default defineEventHandler( async (event) => {
     const id = (event.context.params?.id);
     const text = `SELECT
       a.id,
+      a.parent,
       a.name_es,
       a.is_active,
       to_char (a.created_at::timestamp at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as created_at,

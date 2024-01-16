@@ -64,6 +64,7 @@ const validateAndSave = async () => {
       body.value = {
         isLoading: false,
         invTypeData: state.value.invTypeData,
+        allTypes: [],
       };
       if (recordID.value === 'new') {
         await myAxios.post(`/api/${routerCompanyID.value}/inventory/types/${recordID.value}`, body.value);
@@ -96,11 +97,24 @@ const resetData = () => {
 }
 const loadRecordData = (recordID: LocationQueryValue) => {
   resetData();
-  if (recordID && recordID !== 'new') {
+  if (recordID && recordID === 'new') {
     state.value.isLoading = true;
-    const promise1 = myAxios.get(`/api/${routerCompanyID.value}/inventory/types/${recordID}`);
+    const promise1 = myAxios.get(`/api/lookups/${routerCompanyID.value}/inv_types`);
     Promise.all([promise1]).then((values) => {
-      state.value.invTypeData = values[0].data;
+      state.value.allTypes = values[0].data;
+      state.value.invTypeData.id = '';
+      state.value.invTypeData.name_es = '';
+      state.value.invTypeData.parent = null;
+      state.value.invTypeData.is_active = true;
+      state.value.isLoading = false;
+    });
+  } else if (recordID) {
+    state.value.isLoading = true;
+    const promise1 = myAxios.get(`/api/lookups/${routerCompanyID.value}/inv_types`);
+    const promise2 = myAxios.get(`/api/${routerCompanyID.value}/inventory/types/${recordID}`);
+    Promise.all([promise1, promise2]).then((values) => {
+      state.value.allTypes = values[0].data;
+      state.value.invTypeData = values[1].data;
       state.value.isLoading = false;
     });
   }
@@ -129,7 +143,7 @@ watch(
             :padded="false"
             icon="i-heroicons-x-circle"
             @click="goBack" />
-          <span class="font-semibold text-xl pl-2"> {{`${editModeLabel} Unidad`}} </span>
+          <span class="font-semibold text-xl pl-2"> {{`${editModeLabel} Tipo`}} </span>
         </div>
       </template>
       <!--BODY-->
