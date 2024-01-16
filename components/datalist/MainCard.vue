@@ -60,9 +60,9 @@ const onScroll = (event: UIEvent) => emits('table-scroll', event);
             <UIcon name="pl-1 fas fa-filter text-gray-400" />
             <span class="pl-2 font-bold">{{ selectedFilter }}</span>
             <UIcon class="collapse lg:visible" name="pl-6 fas fa-arrow-up-short-wide text-gray-500" />
-            <span class="collapse lg:visible pl-2 font-bold">{{ selectedSort }}</span>
+            <span class="hidden lg:inline pl-2 font-bold">{{ selectedSort }}</span>
           </span>
-          <span v-if="!isLoading" class="font-semibold pr-1">{{ rowsNumber }} registros</span>
+          <span v-if="!isLoading" class="font-semibold pr-1 text-nowrap self-start">{{ rowsNumber }} registros</span>
           <USkeleton
             v-else class="h-4 w-[100px]"
             :ui="{ background: 'bg-primary-400 dark:bg-primary-800'}" />
