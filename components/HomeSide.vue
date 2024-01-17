@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { z } from 'zod';
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import { sp_system_menu } from '@/typings/server/sp_system_menu';
 import { sys_users } from "@/typings/server/sys_users";
 import type { type_sp_system_menu } from '@/typings/server/sp_system_menu';
@@ -12,7 +13,8 @@ const { path } = useRoute();
 const state = useUser();
 const supabase = useSupabaseClient();
 const myAxios = useAxios();
-
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const mdAndLarger = breakpoints.greaterOrEqual('md');
 
 const openMenu = (menu: z.infer<typeof sp_system_menu>) => {
   if (state.value.menuSelected !== menu.id) { 
@@ -146,9 +148,8 @@ onMounted(async() => {
         </NuxtLink>
       </ul>
     </div>
-    <br/><br/> <br/>
-    <br/><br/> <br/>
-    <br/><br/> <br/>
+    <br v-if="mdAndLarger" v-for="n in 0"/>
+    <br v-if="!mdAndLarger" v-for="n in 7"/>
   </div>
   <div v-else>
     <div v-for="n in 20" class="space-y-2 p-2">
