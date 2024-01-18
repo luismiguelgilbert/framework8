@@ -148,7 +148,7 @@ onMounted(async() => {
         </NuxtLink>
       </ul>
     </div>
-    <br v-if="mdAndLarger" v-for="n in 0"/>
+    <br v-if="mdAndLarger" v-for="n in 2"/>
     <br v-if="!mdAndLarger" v-for="n in 7"/>
   </div>
   <div v-else>
