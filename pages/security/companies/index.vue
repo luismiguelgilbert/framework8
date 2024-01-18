@@ -140,7 +140,7 @@ const loadData = async() => {
 };
 const downloadFile = async() => {
   isLoading.value = true;
-  const { data } = await myAxios.post('/api/companies/download', payload.value, { responseType: 'blob' });
+  const { data } = await myAxios.post('/api/companies/download', state.payload, { responseType: 'blob' });
   FileSaver.saveAs(data, "Companias.xlsx");
   isLoading.value = false;
 };

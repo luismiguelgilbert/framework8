@@ -141,7 +141,7 @@ const loadData = async() => {
 };
 const downloadFile = async() => {
   isLoading.value = true;
-  const { data } = await myAxios.post('/api/brands/download', state.payload, { responseType: 'blob' });
+  const { data } = await myAxios.post(`/api/${routerCompanyID.value}/inventory/brands/download`, state.payload, { responseType: 'blob' });
   FileSaver.saveAs(data, "Marcas.xlsx");
   isLoading.value = false;
 };
