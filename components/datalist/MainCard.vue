@@ -26,7 +26,7 @@ defineProps({
     default: '?',
   },
   rowsNumber: {
-    type: String as PropType<number>,
+    type: Number as PropType<number>,
     required: true,
     default: 0,
   },
