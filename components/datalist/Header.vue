@@ -18,7 +18,8 @@ defineProps({
   },
 });
 const emits = defineEmits(['update-searchstring']);
-const propSearchString = defineModel('payloadSearchString');
+const propSearchString = defineModel('payloadSearchString', { type: String, default: '' });
+
 
 const uiMainCard = { 
   body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' } ,
@@ -66,7 +67,6 @@ const updatePropSearchString = useDebounceFn((inputEvent: InputEvent) => {
             :popper="{ placement: 'bottom-start' }">
             <UButton
               :variant="smAndLarger ? 'solid' : 'ghost'"
-              :ui="uiOptions"
               :loading="isLoading"
               :label="smAndLarger ? 'Opciones' : ''"
               :trailing-icon="smAndLarger ? 'i-heroicons-chevron-down-20-solid' : ''"
