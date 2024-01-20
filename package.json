@@ -15,6 +15,7 @@
     "@nuxtjs/google-fonts": "^3.0.2",
     "@nuxtjs/supabase": "^1.1.4",
     "@types/file-saver": "^2.0.6",
+    "@types/mssql": "^9.1.4",
     "@types/pg": "^8.10.3",
     "nuxt": "^3.9.0"
   },
@@ -30,6 +31,7 @@
     "axios": "^1.5.1",
     "exceljs": "^4.3.0",
     "file-saver": "^2.0.5",
+    "mssql": "^10.0.2",
     "pg": "^8.11.3",
     "postgres": "^3.3.5",
     "sass": "^1.67.0",

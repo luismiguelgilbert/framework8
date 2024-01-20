@@ -3,7 +3,7 @@
 <template>
   <NuxtLayout>
     <div>
-      <!-- <NuxtLoadingIndicator /> -->
+      <NuxtLoadingIndicator />
       <NuxtPage :transition="{
         name: 'rotate',
         mode: 'out-in',
