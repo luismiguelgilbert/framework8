@@ -15,7 +15,7 @@ export default defineEventHandler( async (event) => {
       inner join sys_profiles c on c.id = b.sys_profile_id
       inner join sys_profiles_links d on d.sys_profile_id = c.id
       where a.id = '${userId}'
-      and d.sys_link_id = ${PermissionsList.COMPANIES_EDIT}`;
+      and d.sys_link_id = '${PermissionsList.COMPANIES_EDIT}'`;
     const isUserAllowedResult = (await serverDB.query(isUserAllowed)).rowCount;
     if (isUserAllowedResult === 0) {
       throw createError({

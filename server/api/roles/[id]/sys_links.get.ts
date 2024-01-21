@@ -7,13 +7,13 @@ export default defineEventHandler( async (event) => {
     const text = `
     WITH RECURSIVE cte(id, parent, name_es, position, row_level, icon, link, comment_es, created_at, updated_at, requires_company, path, sort_path) AS (
       SELECT a.id, a.parent, a.name_es, a.position, a.row_level, a.icon, a.link, a.comment_es, a.created_at, a.updated_at, a.requires_company, a.name_es
-        ,lpad(cast(a.id as varchar), 4, '0')
+        ,lpad(a.id, 4, '0')
       FROM sys_links a
       where a.parent is null
     UNION ALL
       SELECT b.id, b.parent, b.name_es, b.position, b.row_level, b.icon, b.link, b.comment_es, b.created_at, b.updated_at, b.requires_company
       ,concat(COALESCE(cte.path,'') ,' -> ', COALESCE(b.name_es,''))
-      ,concat(COALESCE(cte.sort_path,'') , COALESCE(lpad(cast(b.id as varchar), 4, '0'),''))
+      ,concat(COALESCE(cte.sort_path,'') , COALESCE(lpad(b.id, 4, '0'),''))
       from sys_links b
       inner join cte on cte.id = b.parent
     )
