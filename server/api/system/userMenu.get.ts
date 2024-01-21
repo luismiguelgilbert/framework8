@@ -18,9 +18,28 @@ export default defineEventHandler( async (event) => {
     inner join sys_links d on c.sys_link_id = d.id
     where a.user_id = $1
     UNION
-    SELECT '0' as id, NULL as parent, 0 as position, null as link, 'Inicio' as name_es, 'fas fa-home' as icon, 'Dashboard inicial' as comment_es, false as requires_company
+      SELECT
+      r.id,
+      r.parent,
+      r.position as position_num,
+      r.link,
+      r.name_es,
+      r.icon,
+      r.comment_es,
+      r.requires_company
+      from sys_links r
+      where r.id in (
+        select d.parent
+        from sys_profiles_users a
+        inner join sys_profiles b on a.sys_profile_id = b.id
+        inner join sys_profiles_links c on c.sys_profile_id = b.id
+        inner join sys_links d on c.sys_link_id = d.id
+        where a.user_id = $1
+      )
     UNION
-    SELECT '-1' as id, '0' as parent, 0 as position, '/' as link, 'Inicio' as name_es, 'fas fa-home' as icon, 'Dashboard inicial' as comment_es, false as requires_company
+      SELECT '0' as id, NULL as parent, 0 as position, null as link, 'Inicio' as name_es, 'fas fa-home' as icon, 'Dashboard inicial' as comment_es, false as requires_company
+    UNION
+      SELECT '-1' as id, '0' as parent, 0 as position, '/' as link, 'Inicio' as name_es, 'fas fa-home' as icon, 'Dashboard inicial' as comment_es, false as requires_company
     order by 3`;
     const values = [event.context.user.id];
     const menu_data = await serverDB.query(text, values);

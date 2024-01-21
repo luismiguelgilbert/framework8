@@ -41,7 +41,7 @@ export default defineEventHandler( async (event) => {
 
     let sqlSysProfilesInsert = `insert into sys_profiles_links (sys_profile_id, sys_link_id) values `;
     profile_links.forEach((link) => {
-      sqlSysProfilesInsert += `(${Number(id)}, ${link.id}),`;
+      sqlSysProfilesInsert += `(${Number(id)}, '${link.id}'),`;
     });
     sqlSysProfilesInsert = sqlSysProfilesInsert.replace(/\,$/, '');
     await serverDB.query(sqlSysProfilesInsert);
