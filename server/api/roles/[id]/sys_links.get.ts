@@ -35,7 +35,6 @@ export default defineEventHandler( async (event) => {
     order by cast(a.id as varchar)
     `;
     const values = [id];
-    console.log(text)
     const data = await serverDB.query(text, values);
 
     return sys_links.array().parse(data.rows);
