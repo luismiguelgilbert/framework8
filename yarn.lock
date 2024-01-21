@@ -580,7 +580,7 @@
   resolved "https://npm-registry.setest.net/@headlessui/tailwindcss/-/tailwindcss-0.2.0.tgz"
   integrity sha512-fpL830Fln1SykOCboExsWr3JIVeQKieLJ3XytLe/tt1A0XzqUthOftDmjcCYLW62w7mQI7wXcoPXr3tZ9QfGxw==
 
-"@headlessui/vue@^1.7.16":
+"@headlessui/vue@1.7.16":
   version "1.7.16"
   resolved "https://npm-registry.setest.net/@headlessui/vue/-/vue-1.7.16.tgz"
   integrity sha512-nKT+nf/q6x198SsyK54mSszaQl/z+QxtASmgMEJtpxSX2Q0OPJX0upS/9daDyiECpeAsvjkoOrm2O/6PyBQ+Qg==
@@ -943,6 +943,30 @@
     unimport "^3.7.1"
     untyped "^1.4.0"
 
+"@nuxt/kit@^3.9.3":
+  version "3.9.3"
+  resolved "https://npm-registry.setest.net/@nuxt/kit/-/kit-3.9.3.tgz"
+  integrity sha512-bHGXpTB6E+YJCC1L9tTwrP7txgLZzyuFes/tgy1ZM4dlfrCsGqLK/K4mddROMdC3D81scnH84u7yQsN0JRgoTg==
+  dependencies:
+    "@nuxt/schema" "3.9.3"
+    c12 "^1.6.1"
+    consola "^3.2.3"
+    defu "^6.1.4"
+    globby "^14.0.0"
+    hash-sum "^2.0.0"
+    ignore "^5.3.0"
+    jiti "^1.21.0"
+    knitwork "^1.0.0"
+    mlly "^1.5.0"
+    pathe "^1.1.2"
+    pkg-types "^1.0.3"
+    scule "^1.2.0"
+    semver "^7.5.4"
+    ufo "^1.3.2"
+    unctx "^2.3.1"
+    unimport "^3.7.1"
+    untyped "^1.4.0"
+
 "@nuxt/schema@^3.8.2", "@nuxt/schema@3.9.1":
   version "3.9.1"
   resolved "https://npm-registry.setest.net/@nuxt/schema/-/schema-3.9.1.tgz"
@@ -955,6 +979,23 @@
     pathe "^1.1.1"
     pkg-types "^1.0.3"
     scule "^1.1.1"
+    std-env "^3.7.0"
+    ufo "^1.3.2"
+    unimport "^3.7.1"
+    untyped "^1.4.0"
+
+"@nuxt/schema@3.9.3":
+  version "3.9.3"
+  resolved "https://npm-registry.setest.net/@nuxt/schema/-/schema-3.9.3.tgz"
+  integrity sha512-pchkGBYdEJ9TAOoC5DKnLuAaFPjzgn2k0OUTr31QwbtHdTR3Q2Ua/oKsS1g9CPU7KRzSE5Vkf7ECE8zVydqF5A==
+  dependencies:
+    "@nuxt/ui-templates" "^1.3.1"
+    consola "^3.2.3"
+    defu "^6.1.4"
+    hookable "^5.5.3"
+    pathe "^1.1.2"
+    pkg-types "^1.0.3"
+    scule "^1.2.0"
     std-env "^3.7.0"
     ufo "^1.3.2"
     unimport "^3.7.1"
@@ -988,32 +1029,32 @@
   resolved "https://npm-registry.setest.net/@nuxt/ui-templates/-/ui-templates-1.3.1.tgz"
   integrity sha512-5gc02Pu1HycOVUWJ8aYsWeeXcSTPe8iX8+KIrhyEtEoOSkY0eMBuo0ssljB8wALuEmepv31DlYe5gpiRwkjESA==
 
-"@nuxt/ui@^2.12.0":
-  version "2.12.0"
-  resolved "https://npm-registry.setest.net/@nuxt/ui/-/ui-2.12.0.tgz"
-  integrity sha512-iLC8tvk5aJqD8ASo07JS8Fyyy2hnqliCQA7Fd7fuJlkVMxiZ8QQyW3bhadPg4OR4hCVmc+zNMRQ+mdVNMtINJw==
+"@nuxt/ui@^2.12.3":
+  version "2.12.3"
+  resolved "https://npm-registry.setest.net/@nuxt/ui/-/ui-2.12.3.tgz"
+  integrity sha512-F/eoqU8pTBVCdJ1QHvWKZjXHVNNV6Q1SCgPRWJyNnfbnIi97a50/aiHVJZfvr0zp3FQKa/ogWTITF5Vxss5TtA==
   dependencies:
     "@egoist/tailwindcss-icons" "^1.7.2"
     "@headlessui/tailwindcss" "^0.2.0"
-    "@headlessui/vue" "^1.7.16"
+    "@headlessui/vue" "1.7.16"
     "@iconify-json/heroicons" "^1.1.19"
-    "@nuxt/kit" "^3.9.1"
+    "@nuxt/kit" "^3.9.3"
     "@nuxtjs/color-mode" "^3.3.2"
-    "@nuxtjs/tailwindcss" "^6.10.3"
+    "@nuxtjs/tailwindcss" "^6.10.4"
     "@popperjs/core" "^2.11.8"
     "@tailwindcss/aspect-ratio" "^0.4.2"
     "@tailwindcss/container-queries" "^0.1.1"
     "@tailwindcss/forms" "^0.5.7"
     "@tailwindcss/typography" "^0.5.10"
-    "@vueuse/core" "^10.7.1"
-    "@vueuse/integrations" "^10.7.1"
-    "@vueuse/math" "^10.7.1"
+    "@vueuse/core" "^10.7.2"
+    "@vueuse/integrations" "^10.7.2"
+    "@vueuse/math" "^10.7.2"
     defu "^6.1.4"
     fuse.js "^6.6.2"
     nuxt-icon "^0.6.8"
     ohash "^1.1.3"
-    pathe "^1.1.1"
-    scule "^1.1.1"
+    pathe "^1.1.2"
+    scule "^1.2.0"
     tailwind-merge "^2.2.0"
     tailwindcss "^3.4.1"
 
@@ -1084,7 +1125,7 @@
     defu "^6.1.3"
     pathe "^1.1.1"
 
-"@nuxtjs/tailwindcss@^6.10.3", "@nuxtjs/tailwindcss@^6.8.0":
+"@nuxtjs/tailwindcss@^6.10.4", "@nuxtjs/tailwindcss@^6.8.0":
   version "6.10.4"
   resolved "https://npm-registry.setest.net/@nuxtjs/tailwindcss/-/tailwindcss-6.10.4.tgz"
   integrity sha512-MG2HYTOH4iJjdfxpfgQ5dDQD/FV+MzqhKk6pYDKkZnTtb7HiKz7B4Yujnqvj5tSwV+kanbU9n++BFuAOJZop4w==
@@ -1664,14 +1705,14 @@
   resolved "https://npm-registry.setest.net/@vue/shared/-/shared-3.4.7.tgz"
   integrity sha512-G+i4glX1dMJk88sbJEcQEGWRQnVm9eIY7CcQbO5dpdsD9SF8jka3Mr5OqZYGjczGN1+D6EUwdu6phcmcx9iuPA==
 
-"@vueuse/core@^10.6.0", "@vueuse/core@^10.7.1", "@vueuse/core@10.7.1":
-  version "10.7.1"
-  resolved "https://npm-registry.setest.net/@vueuse/core/-/core-10.7.1.tgz"
-  integrity sha512-74mWHlaesJSWGp1ihg76vAnfVq9NTv1YT0SYhAQ6zwFNdBkkP+CKKJmVOEHcdSnLXCXYiL5e7MaewblfiYLP7g==
+"@vueuse/core@^10.6.0", "@vueuse/core@^10.7.2", "@vueuse/core@10.7.2":
+  version "10.7.2"
+  resolved "https://npm-registry.setest.net/@vueuse/core/-/core-10.7.2.tgz"
+  integrity sha512-AOyAL2rK0By62Hm+iqQn6Rbu8bfmbgaIMXcE3TSr7BdQ42wnSFlwIdPjInO62onYsEMK/yDMU8C6oGfDAtZ2qQ==
   dependencies:
     "@types/web-bluetooth" "^0.0.20"
-    "@vueuse/metadata" "10.7.1"
-    "@vueuse/shared" "10.7.1"
+    "@vueuse/metadata" "10.7.2"
+    "@vueuse/shared" "10.7.2"
     vue-demi ">=0.14.6"
 
 "@vueuse/core@10.4.1":
@@ -1684,21 +1725,21 @@
     "@vueuse/shared" "10.4.1"
     vue-demi ">=0.14.5"
 
-"@vueuse/integrations@^10.7.1":
-  version "10.7.1"
-  resolved "https://npm-registry.setest.net/@vueuse/integrations/-/integrations-10.7.1.tgz"
-  integrity sha512-cKo5LEeKVHdBRBtMTOrDPdR0YNtrmN9IBfdcnY2P3m5LHVrsD0xiHUtAH1WKjHQRIErZG6rJUa6GA4tWZt89Og==
+"@vueuse/integrations@^10.7.2":
+  version "10.7.2"
+  resolved "https://npm-registry.setest.net/@vueuse/integrations/-/integrations-10.7.2.tgz"
+  integrity sha512-+u3RLPFedjASs5EKPc69Ge49WNgqeMfSxFn+qrQTzblPXZg6+EFzhjarS5edj2qAf6xQ93f95TUxRwKStXj/sQ==
   dependencies:
-    "@vueuse/core" "10.7.1"
-    "@vueuse/shared" "10.7.1"
+    "@vueuse/core" "10.7.2"
+    "@vueuse/shared" "10.7.2"
     vue-demi ">=0.14.6"
 
-"@vueuse/math@^10.7.1":
-  version "10.7.1"
-  resolved "https://npm-registry.setest.net/@vueuse/math/-/math-10.7.1.tgz"
-  integrity sha512-Oz9OHRK+NOVhkH4FfMkQu7cHkvPhSrb3gIE0tHN0OGYplRRFeiLQit/JOLJz85Xhaae+IezCmCt2MeoLaZdgVw==
+"@vueuse/math@^10.7.2":
+  version "10.7.2"
+  resolved "https://npm-registry.setest.net/@vueuse/math/-/math-10.7.2.tgz"
+  integrity sha512-Z1h/kdW5f4c/v/QOpWFFaEx4UaIt7xQTxoDnxQAx1gHGHpGYTtBlQHm80zrRodCz0auyBZMkALkCgKinzGggXw==
   dependencies:
-    "@vueuse/shared" "10.7.1"
+    "@vueuse/shared" "10.7.2"
     vue-demi ">=0.14.6"
 
 "@vueuse/metadata@10.4.1":
@@ -1706,10 +1747,10 @@
   resolved "https://npm-registry.setest.net/@vueuse/metadata/-/metadata-10.4.1.tgz"
   integrity sha512-2Sc8X+iVzeuMGHr6O2j4gv/zxvQGGOYETYXEc41h0iZXIRnRbJZGmY/QP8dvzqUelf8vg0p/yEA5VpCEu+WpZg==
 
-"@vueuse/metadata@10.7.1":
-  version "10.7.1"
-  resolved "https://npm-registry.setest.net/@vueuse/metadata/-/metadata-10.7.1.tgz"
-  integrity sha512-jX8MbX5UX067DYVsbtrmKn6eG6KMcXxLRLlurGkZku5ZYT3vxgBjui2zajvUZ18QLIjrgBkFRsu7CqTAg18QFw==
+"@vueuse/metadata@10.7.2":
+  version "10.7.2"
+  resolved "https://npm-registry.setest.net/@vueuse/metadata/-/metadata-10.7.2.tgz"
+  integrity sha512-kCWPb4J2KGrwLtn1eJwaJD742u1k5h6v/St5wFe8Quih90+k2a0JP8BS4Zp34XUuJqS2AxFYMb1wjUL8HfhWsQ==
 
 "@vueuse/nuxt@^10.4.1":
   version "10.4.1"
@@ -1730,10 +1771,10 @@
   dependencies:
     vue-demi ">=0.14.5"
 
-"@vueuse/shared@10.7.1":
-  version "10.7.1"
-  resolved "https://npm-registry.setest.net/@vueuse/shared/-/shared-10.7.1.tgz"
-  integrity sha512-v0jbRR31LSgRY/C5i5X279A/WQjD6/JsMzGa+eqt658oJ75IvQXAeONmwvEMrvJQKnRElq/frzBR7fhmWY5uLw==
+"@vueuse/shared@10.7.2":
+  version "10.7.2"
+  resolved "https://npm-registry.setest.net/@vueuse/shared/-/shared-10.7.2.tgz"
+  integrity sha512-qFbXoxS44pi2FkgFjPvF4h7c9oMDutpyBdcJdMYIMg9XyXli2meFMuaKn+UMgsClo//Th6+beeCgqweT/79BVA==
   dependencies:
     vue-demi ">=0.14.6"
 
@@ -1762,7 +1803,7 @@ accepts@^1.3.5:
     mime-types "~2.1.34"
     negotiator "0.6.3"
 
-acorn@^8.10.0, acorn@^8.11.2, acorn@^8.6.0, acorn@^8.8.2, acorn@8.11.3:
+acorn@^8.10.0, acorn@^8.11.2, acorn@^8.11.3, acorn@^8.6.0, acorn@^8.8.2, acorn@8.11.3:
   version "8.11.3"
   resolved "https://npm-registry.setest.net/acorn/-/acorn-8.11.3.tgz"
   integrity sha512-Y9rRfJG5jcKOE0CLisYbojUjIrIEE7AGMzA/Sm4BslANhbS+cDMpgBdcPT91oJ7OuJ9hYJBx59RjbhxVnrF8Xg==
@@ -5120,15 +5161,15 @@ mkdirp@^1.0.3:
   dependencies:
     minimist "^1.2.6"
 
-mlly@^1.2.0, mlly@^1.3.0, mlly@^1.4.2:
-  version "1.4.2"
-  resolved "https://npm-registry.setest.net/mlly/-/mlly-1.4.2.tgz"
-  integrity sha512-i/Ykufi2t1EZ6NaPLdfnZk2AX8cs0d+mTzVKuPfqPKPatxLApaBoxJQ9x1/uckXtrS/U5oisPMDkNs0yQTaBRg==
+mlly@^1.2.0, mlly@^1.3.0, mlly@^1.4.2, mlly@^1.5.0:
+  version "1.5.0"
+  resolved "https://npm-registry.setest.net/mlly/-/mlly-1.5.0.tgz"
+  integrity sha512-NPVQvAY1xr1QoVeG0cy8yUYC7FQcOx6evl/RjT1wL5FvzPnzOysoqB/jmx/DhssT2dYa8nxECLAaFI/+gVLhDQ==
   dependencies:
-    acorn "^8.10.0"
-    pathe "^1.1.1"
+    acorn "^8.11.3"
+    pathe "^1.1.2"
     pkg-types "^1.0.3"
-    ufo "^1.3.0"
+    ufo "^1.3.2"
 
 mri@^1.2.0:
   version "1.2.0"
@@ -5820,10 +5861,10 @@ path-type@^5.0.0:
   resolved "https://npm-registry.setest.net/path-type/-/path-type-5.0.0.tgz"
   integrity sha512-5HviZNaZcfqP95rwpv+1HDgUamezbqdSYTyzjTvwtJSnIH+3vnbmWsItli8OFEndS984VT55M3jduxZbX351gg==
 
-pathe@^1.1.0, pathe@^1.1.1:
-  version "1.1.1"
-  resolved "https://npm-registry.setest.net/pathe/-/pathe-1.1.1.tgz"
-  integrity sha512-d+RQGp0MAYTIaDBIMmOfMwz3E+LOZnxx1HZd5R18mmCZY0QBlK0LDZfPc8FW8Ed2DlvsuE6PRjroDY+wg4+j/Q==
+pathe@^1.1.0, pathe@^1.1.1, pathe@^1.1.2:
+  version "1.1.2"
+  resolved "https://npm-registry.setest.net/pathe/-/pathe-1.1.2.tgz"
+  integrity sha512-whLdWMYL2TwI08hn8/ZqAbrVemu0LNaNNJZX73O6qaIdCTfXutsLhMkjdENX0qhsQ9uIimo4/aQOmXkoon2nDQ==
 
 perfect-debounce@^1.0.0:
   version "1.0.0"
@@ -6699,7 +6740,7 @@ saxes@^5.0.1:
   dependencies:
     xmlchars "^2.2.0"
 
-scule@^1.0.0, scule@^1.1.0, scule@^1.1.1:
+scule@^1.0.0, scule@^1.1.0, scule@^1.1.1, scule@^1.2.0:
   version "1.2.0"
   resolved "https://npm-registry.setest.net/scule/-/scule-1.2.0.tgz"
   integrity sha512-CRCmi5zHQnSoeCik9565PONMg0kfkvYmcSqrbOJY4txFfy1wvVULV4FDaiXhUblUgahdqz3F2NwHZ8i4eBTwUw==
