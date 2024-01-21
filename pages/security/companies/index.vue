@@ -185,7 +185,7 @@ onMounted(async () => {
           <template #name_es-header>
             <span class="hidden sm:block">Compañía</span>
           </template>
-          <template #name_es-data="{ row }">
+          <template #name_es-data="{ row }: { row: type_sys_companies }">
             <!--Desktop-->
             <div v-if="smAndLarger">
               <div class="flex items-center flex-row">
@@ -225,7 +225,7 @@ onMounted(async () => {
           <template #name_es_short-header>
             <span class="hidden sm:block">Nombre</span>
           </template>
-          <template #name_es_short-data="{ row }">
+          <template #name_es_short-data="{ row }: { row: type_sys_companies }">
             <div class="ps-3">
               <div class="flex items-center">
                 <i class="hidden sm:block fa-solid fa-phone text-gray-400 pr-2"></i>
@@ -240,7 +240,7 @@ onMounted(async () => {
           <template #is_active-header>
             <span class="hidden sm:block">Activo?</span>
           </template>
-          <template #is_active-data="{ row }">
+          <template #is_active-data="{ row }: { row: type_sys_companies }">
             <span class="hidden sm:block">
             <UBadge
               v-if="row.is_active"

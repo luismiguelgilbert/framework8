@@ -185,7 +185,7 @@ onMounted(async () => {
           <template #user_name-header>
             <span class="hidden sm:block">Usuario</span>
           </template>
-          <template #user_name-data="{ row }">
+          <template #user_name-data="{ row }: { row: type_sys_users }">
             <div v-if="smAndLarger">
               <div class="flex items-center flex-row">
                 <UAvatar
@@ -223,7 +223,7 @@ onMounted(async () => {
           <template #sys_profile_name-header>
             <span class="hidden sm:block pl-2">Perfil</span>
           </template>
-          <template #sys_profile_name-data="{ row }">
+          <template #sys_profile_name-data="{ row }: { row: type_sys_users }">
             <!--Desktop-->
             <div v-if="smAndLarger">
               <div class="ps-3">

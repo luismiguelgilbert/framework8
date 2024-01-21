@@ -225,7 +225,7 @@ onMounted(async () => {
           <template #created_at-header>
             <span class="hidden sm:block">Fecha Creación</span>
           </template>
-          <template #created_at-data="{ row }">
+          <template #created_at-data="{ row }: { row: type_traselec }">
             <div class="flex items-center">
               <i class="hidden sm:block fa-regular fa-calendar text-gray-400 pr-2"></i>
             </div>
@@ -234,7 +234,7 @@ onMounted(async () => {
           <template #is_active-header>
             <span class="hidden sm:block">Activo?</span>
           </template>
-          <template #is_active-data="{ row }">
+          <template #is_active-data="{ row }: { row: type_traselec }">
             <span class="hidden sm:block">
             <UBadge
               v-if="row.is_active"

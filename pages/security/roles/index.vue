@@ -184,7 +184,7 @@ onMounted(async () => {
           <template #name_es-header>
             <span class="hidden sm:block">Perfil</span>
           </template>
-          <template #name_es-data="{ row }">
+          <template #name_es-data="{ row }: { row: type_sys_profiles }">
             <!--Desktop-->
             <div v-if="smAndLarger">
               <div class="flex items-center flex-row">
@@ -223,7 +223,7 @@ onMounted(async () => {
           <template #created_at-header>
             <span class="hidden sm:block">Fecha Creación</span>
           </template>
-          <template #created_at-data="{ row }">
+          <template #created_at-data="{ row }: { row: type_sys_profiles }">
             <div class="flex items-center">
               <i class="hidden sm:block fa-regular fa-calendar text-gray-400 pr-2"></i>
               <span class="hidden sm:block">{{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</span>
@@ -233,7 +233,7 @@ onMounted(async () => {
           <template #is_active-header>
             <span class="hidden sm:block">Activo?</span>
           </template>
-          <template #is_active-data="{ row }">
+          <template #is_active-data="{ row }: { row: type_sys_profiles }">
             <span class="hidden sm:block">
             <UBadge
               v-if="row.is_active"
