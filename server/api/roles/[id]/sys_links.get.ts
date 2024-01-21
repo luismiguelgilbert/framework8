@@ -4,40 +4,39 @@ import { sys_links } from '@/typings/server/sys_links';
 export default defineEventHandler( async (event) => {
   try{
     const id = (event.context.params?.id);
-    const text = `SELECT
-     c.id
-    ,c.parent
-    ,c.position
-    ,c.link
-    ,c.name_es
-    ,c.icon
-    ,c.comment_es
-    ,c.row_level
-    ,to_char (c.created_at::timestamp at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as created_at
-    ,to_char (c.updated_at::timestamp at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as updated_at
-    FROM sys_profiles a
-    INNER JOIN sys_profiles_links b on a.id = b.sys_profile_id
-    INNER JOIN sys_links c on b.sys_link_id = c.id
-    WHERE a.id = $1
+    const text = `
+    WITH RECURSIVE cte(id, parent, name_es, position, row_level, icon, link, comment_es, created_at, updated_at, requires_company, path) AS (
+      SELECT a.id, a.parent, a.name_es, a.position, a.row_level, a.icon, a.link, a.comment_es, a.created_at, a.updated_at, a.requires_company, a.name_es
+      FROM sys_links a
+      where a.parent is null
+    UNION ALL
+      SELECT b.id, b.parent, b.name_es, b.position, b.row_level, b.icon, b.link, b.comment_es, b.created_at, b.updated_at, b.requires_company
+      ,concat(COALESCE(cte.path,'') ,' -> ', COALESCE(b.name_es,''))
+      from sys_links b
+      inner join cte on cte.id = b.parent
+    )
+    SELECT 
+    a.id
+    ,a.parent
+    ,a.position
+    ,a.link
+    ,a.name_es
+    ,a.icon
+    ,a.comment_es
+    ,a.row_level
+    ,a.created_at
+    ,a.updated_at
+    ,a.requires_company
+    ,a.path
+    FROM cte a
+    INNER JOIN sys_profiles_links b on a.id = b.sys_link_id
+    INNER JOIN sys_profiles c on c.id = b.sys_profile_id
+    WHERE c.id = $1
+    order by cast(a.id as varchar)
     `;
     const values = [id];
+    console.log(text)
     const data = await serverDB.query(text, values);
-    
-    //Add path (root, level 1 and level 2)
-    data.rows = data.rows.map(x => {
-      let path = '';
-      if (x.row_level === 0) { path = x.name_es }
-      if (x.row_level === 1) { path = `${data.rows.find(p => p.id === x.parent)?.name_es} / ${x.name_es}` }
-      if (x.row_level === 2) {
-        const parent = data.rows.find(p => p.id === x.parent);
-        const grandParent = data.rows.find(p => p.id === parent?.parent);
-        path = `${grandParent?.name_es} / ${parent?.name_es} / ${x.name_es}`
-      }
-      return {
-        ...x,
-        path
-      }
-    })
 
     return sys_links.array().parse(data.rows);
   } catch(err) {

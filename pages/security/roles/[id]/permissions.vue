@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const state = useSecurityRoles();
+import { type type_sys_links } from '@/typings/server/sys_links';
 
 const columns = [
   {  key: 'name_es',  label: 'Permisos', sortable: false},
@@ -19,10 +20,6 @@ const getIconFromId = (id: number) => {
   const link = state.value.allLinks.find(object => object.id === id);
   return link ? link.icon! : '';
 }
-const getGrandparentNameFromId = (parentId: number | null | undefined) => {
-  const grandParentId = state.value.allLinks.find(object => object.id === parentId)?.parent;
-  return grandParentId ? `${getNameFromId(grandParentId)} / ` : '';
-}
 </script>
 
 <template>
@@ -35,14 +32,12 @@ const getGrandparentNameFromId = (parentId: number | null | undefined) => {
         class="w-full"
         :columns="columns"
         v-model="state.profileLinks"
-        :sort="{ column: 'path', direction: 'desc' }"
         :rows="allLinksRoot">
-        <template #name_es-data="{ row }">
-          <UIcon v-if="row.row_level === 1" :name="row.icon" class="pl-4" />
-          <UIcon v-if="row.row_level === 2" :name="getIconFromId(row.parent)" class="pl-4" />
-          {{ getGrandparentNameFromId(row.parent) }}
-          {{ getNameFromId(row.parent) }} / 
-          {{ row.name_es }} 
+        <template #name_es-data="{ row }: { row: type_sys_links }">
+          <UIcon v-if="row.row_level === 1" :name="row.icon!" />
+          <UIcon v-if="row.row_level === 2" :name="getIconFromId(row.parent!)" />
+          {{ row.path }}
+          <UIcon v-if="row.row_level === 2" :name="row.icon!" class="pl-1" />
         </template>
       </UTable>
     </UCard>
