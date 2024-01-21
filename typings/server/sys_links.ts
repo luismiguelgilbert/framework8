@@ -13,5 +13,6 @@ export const sys_links = z.object({
   updated_at: z.coerce.string().optional().nullable().default(new Date().toISOString()),
   requires_company: z.coerce.boolean().default(false),
   path: z.coerce.string().optional().nullable(),
+  sort_path: z.coerce.string().optional().nullable(),
 });
 export type type_sys_links = z.infer<typeof sys_links>;

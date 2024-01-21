@@ -7,15 +7,9 @@ const columns = [
 ];
 const uiCard = {
   body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
-}
+};
 
-const allLinksRoot = computed(() => {
-  return state.value.allLinks.filter(x => x.row_level > 0)
-});
-const getNameFromId = (id: number) => {
-  const link = state.value.allLinks.find(object => object.id === id);
-  return link ? link.name_es : '';
-}
+const allLinksRoot = computed(() => state.value.allLinks.filter(x => x.row_level > 0));
 const getIconFromId = (id: number) => {
   const link = state.value.allLinks.find(object => object.id === id);
   return link ? link.icon! : '';
