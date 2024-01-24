@@ -48,6 +48,7 @@ onMounted(async () => {
           :search-attributes="['project_name', 'partner_name']"
           option-attribute="project_name"
           value-attribute="project_id"
+          size="xl"
           block
           searchable>
           <template #label>
