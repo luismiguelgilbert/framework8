@@ -1,38 +1,16 @@
-import sql from 'mssql';
+import { Sequelize } from 'sequelize';
 
-const sqlConfig = {
-  user: process.env.SQL_DATABASE_USR!,
-  password: process.env.SQL_DATABASE_PWD!,
-  database: process.env.SQL_DATABASE_NAME!,
-  server: process.env.SQL_DATABASE_URL!,
-  connectionTimeout: 30000,
-  pool: {
-    max: 10,
-    min: 0,
-    idleTimeoutMillis: 30000
-  },
-  options: {
-    encrypt: false, // for azure
-    trustServerCertificate: true // change to true for local dev / self-signed certs
-  }
-};
-
-class SqlConnection {
-  public connection: sql.ConnectionPool;
-  constructor() {
-    this.connection = new sql.ConnectionPool(sqlConfig);
-    this.connectToSql();
-  }
-  async connectToSql() {
-    try {
-      console.log('Connecting to SQL Server...');
-      await this.connection.connect();
-      console.log('Connected to SQL Server');
-    } catch (err) {
-      console.log('Error connecting to SQL Server');
-      console.log(err);
+const sequelize = new Sequelize(process.env.SQL_DATABASE_NAME!, process.env.SQL_DATABASE_USR!, process.env.SQL_DATABASE_PWD!, {
+  host: process.env.SQL_DATABASE_URL!,
+  dialect: 'mssql',
+  dialectOptions: {
+    options: {
+      // Your tedious options here
+      useUTC: false,
+      dateFirst: 1
     }
-  }
-}
+  },
+  logging: false,
+});
 
-export default new SqlConnection();
+export default sequelize;

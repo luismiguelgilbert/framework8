@@ -14,8 +14,15 @@ const myAxios = useAxios();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const smAndLarger = breakpoints.greaterOrEqual('sm');
 const selected = ref<number>();
-const response: AxiosResponse<type_traselec_prj_master[]> = await myAxios.get(`/api/traselec/prj_root`);
-const { data: projects } = response;
+const projects = ref<type_traselec_prj_master[]>();
+const loadData = async() => {
+  const response: AxiosResponse<type_traselec_prj_master[]> = await myAxios.get(`/api/traselec/prj_root`);
+  projects.value = response.data;
+};
+//HOOKS
+onMounted(async () => {
+  await loadData();
+});
 </script>
 
 <template>
@@ -44,7 +51,7 @@ const { data: projects } = response;
           block
           searchable>
           <template #label>
-            <span v-if="selected" class="truncate">{{ projects.find(x=> x.project_id === selected)?.project_name}}</span>
+            <span v-if="selected && projects" class="truncate">{{ projects.find(x=> x.project_id === selected)?.project_name}}</span>
             <span v-else class="text-gray-400 dark:text-gray-500">Seleccione el proyecto</span>
           </template>
           <template #option-empty="{ query }">

@@ -1,6 +1,7 @@
-import SqlConnection from '@/server/utils/db_sql';
+import sequelize from '@/server/utils/db_sql';
 import { traselec, status_options, sort_options } from '@/typings/server/traselec'
 import type { filter_payload } from '@/typings/server/filter_payload'
+import { QueryTypes } from 'sequelize';
 
 export default defineEventHandler( async (event) => {
   try{
@@ -14,8 +15,8 @@ export default defineEventHandler( async (event) => {
     const sortBy: string = sort_options.find(x => x.value === sortById)?.sqlValue!;
     const filterBy: string = status_options.find(x => x.value === filterById)?.sqlValue!;
 
-    const result = await SqlConnection.connection.request().query(`
-      select 
+    const result = await sequelize.query(
+      `select 
       a.Inventory_ID as id
       ,b.name
       ,a.internal_code
@@ -29,9 +30,9 @@ export default defineEventHandler( async (event) => {
       ORDER BY ${sortBy}
       OFFSET ${offset} ROWS
       FETCH NEXT ${rowsPerPage} ROWS ONLY
-    `);
+      `, { type: QueryTypes.SELECT });
 
-    return traselec.array().parse(result.recordset);
+    return traselec.array().parse(result);
 
   } catch(err) {
     console.error(`Error at ${event.path}. ${err}`);
