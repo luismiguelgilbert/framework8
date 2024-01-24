@@ -5,6 +5,7 @@ const sqlConfig = {
   password: process.env.SQL_DATABASE_PWD!,
   database: process.env.SQL_DATABASE_NAME!,
   server: process.env.SQL_DATABASE_URL!,
+  connectionTimeout: 30000,
   pool: {
     max: 10,
     min: 0,
