@@ -9,6 +9,15 @@ export const traselec = z.object({
 });
 export type type_traselec = z.infer<typeof traselec>;
 
+export const traselec_prj_master = z.object({
+  project_id: z.coerce.number(),
+  project_name: z.string(),
+  partner_name: z.string(),
+  code: z.string().optional().nullable(),
+  comments: z.string().optional().nullable(),
+});
+export type type_traselec_prj_master = z.infer<typeof traselec_prj_master>;
+
 export const status_options = [
   { label: 'Items Activos', value: 1, sqlValue: 1, icon: 'fas fa-filter' },
   { label: 'Items Inactivos', value: 2, sqlValue: 0, icon: 'fas fa-filter' },
