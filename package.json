@@ -15,7 +15,10 @@
     "@nuxtjs/google-fonts": "^3.0.2",
     "@nuxtjs/supabase": "^1.1.4",
     "@types/file-saver": "^2.0.6",
+    "@types/node": "^20.11.6",
     "@types/pg": "^8.10.3",
+    "@types/tedious": "^4.0.14",
+    "@types/validator": "^13.11.8",
     "nuxt": "^3.9.3"
   },
   "dependencies": {
