@@ -161,7 +161,7 @@ onMounted(async () => {
                 <UMeter
                   :value="row.inv_budget_qty > row.inv_real_qty ? row.inv_real_qty : row.inv_budget_qty"
                   color="green"
-                  label="Presupuesto" />
+                  :label="row.inv_budget_qty > row.inv_real_qty ? 'Consumo' : 'Presupuesto'"/>
                 <UMeter
                   v-if="row.inv_real_qty > row.inv_budget_qty"
                   :value="Math.abs(row.inv_real_qty - row.inv_budget_qty)" 
