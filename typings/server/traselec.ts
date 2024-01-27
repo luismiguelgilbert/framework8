@@ -18,6 +18,24 @@ export const traselec_prj_master = z.object({
 });
 export type type_traselec_prj_master = z.infer<typeof traselec_prj_master>;
 
+export const traselec_prj_master_budgets = z.object({
+  project_id: z.coerce.number(),
+  code: z.string().nullable().optional(),
+  name: z.string().nullable().optional(),
+  path: z.string().optional().nullable(),
+});
+export type type_traselec_prj_master_budgets = z.infer<typeof traselec_prj_master_budgets>;
+
+export const traselec_prj_master_budget_inv = z.object({
+  inv_id: z.coerce.number(),
+  inv_code: z.string().nullable().optional(),
+  inv_name: z.string().nullable().optional(),
+  inv_budget_qty: z.coerce.number(),
+  inv_uom_name: z.string().optional().nullable(),
+  inv_real_qty: z.coerce.number(),
+});
+export type type_traselec_prj_master_budget_inv = z.infer<typeof traselec_prj_master_budget_inv>;
+
 export const status_options = [
   { label: 'Items Activos', value: 1, sqlValue: 1, icon: 'fas fa-filter' },
   { label: 'Items Inactivos', value: 2, sqlValue: 0, icon: 'fas fa-filter' },
