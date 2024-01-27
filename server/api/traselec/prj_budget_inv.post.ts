@@ -1,6 +1,6 @@
 import sequelize from '@/server/utils/db_sql';
 import { QueryTypes } from 'sequelize';
-import { traselec_prj_master_budgets } from '@/typings/server/traselec'
+import { traselec_prj_master_budget_inv } from '@/typings/server/traselec'
 
 export default defineEventHandler( async (event) => {
   try{
@@ -42,8 +42,7 @@ export default defineEventHandler( async (event) => {
       order by invNames.Name
       `, { type: QueryTypes.SELECT });
 
-    // return traselec_prj_master_budgets.array().parse(result);
-    return result;
+    return traselec_prj_master_budget_inv.array().parse(result);
   } catch(err) {
     console.error(`Error at ${event.path}. ${err}`);
     throw createError({

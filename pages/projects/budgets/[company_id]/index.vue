@@ -24,6 +24,8 @@ const getProjects = async() => {
   isProjectsLoading.value = true;
   const response: AxiosResponse<type_traselec_prj_master[]> = await myAxios.get(`/api/traselec/prj_root`);
   projects.value = response.data;
+  budgets.value = [];
+  inventory.value = [];
   isProjectsLoading.value = false;
 };
 const getBudgets = async() => {
@@ -32,6 +34,7 @@ const getBudgets = async() => {
     budgetSelected.value = undefined;
     const response: AxiosResponse<type_traselec_prj_master[]> = await myAxios.post('/api/traselec/prj_budgets', projectSelected.value);
     budgets.value = response.data;
+    inventory.value = [];
     isProjectsLoading.value = false;
   }
 };
@@ -144,18 +147,35 @@ onMounted(async () => {
       :loading="isInventoryLoading">
       <template #product-data="{ row }: { row: type_traselec_prj_master_budget_inv }">
         <div class="flex	">
-          <!-- <div class="ps-3"> -->
           <div class="w-full">
             <div
               style="text-wrap: pretty; overflow-wrap: break-word;"
               class="text-base font-semibold">{{ String(row.inv_name).replaceAll('_', ' ') }}
               <span class="font-normal text-gray-500">{{ `(${row.inv_code})` }}</span>
             </div>
-            <UProgress
-              :value="row.inv_real_qty"
-              :max="row.inv_budget_qty > row.inv_real_qty ? row.inv_budget_qty : row.inv_real_qty"
-              indicator
-              :color="row.inv_budget_qty > row.inv_real_qty ? 'primary' : 'red'" />
+              <UMeterGroup
+                :min="0"
+                :max="row.inv_budget_qty > row.inv_real_qty ? row.inv_budget_qty : row.inv_real_qty"
+                size="md"
+                icon="i-heroicons-minus">
+                <UMeter
+                  :value="row.inv_budget_qty > row.inv_real_qty ? row.inv_real_qty : row.inv_budget_qty"
+                  color="green"
+                  label="Presupuesto" />
+                <UMeter
+                  v-if="row.inv_real_qty > row.inv_budget_qty"
+                  :value="Math.abs(row.inv_real_qty - row.inv_budget_qty)" 
+                  color="red"
+                  label="Exceso" />
+                <template #indicator>
+                  <div class="flex gap-1.5 justify-end text-sm">
+                    <p>{{ row.inv_real_qty }} /</p>
+                    <p class="text-gray-500 dark:text-gray-400">
+                      {{ row.inv_budget_qty }} {{ row.inv_uom_name }} 
+                    </p>
+                  </div>
+                </template>
+              </UMeterGroup>
           </div>
         </div>
       </template>
