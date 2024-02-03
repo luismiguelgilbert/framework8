@@ -199,7 +199,7 @@ onMounted(async () => {
                   </UAvatar>
                 </UChip>
                 <div class="ps-3">
-                  <div class="text-base font-semibold">{{ row.name }}</div>
+                  <div class="text-base font-semibold whitespace-normal break-all">{{ row.name }}</div>
                   <div class="font-normal text-gray-500">{{ row.internal_code }}</div>
                 </div>
               </div>
@@ -215,7 +215,7 @@ onMounted(async () => {
                   </UAvatar>
                 </UChip>
                 <div class="ps-3">
-                  <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ String(row.name).replaceAll('_', ' ') }}</div>
+                  <div class="text-base font-semibold whitespace-normal break-all">{{ String(row.name).replaceAll('_', ' ') }}</div>
                   <div class="font-normal text-gray-500">{{ row.internal_code }}</div>
                 </div>
               </div>

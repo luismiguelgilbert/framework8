@@ -200,7 +200,7 @@ onMounted(async () => {
                   {{ row.user_name[0] }}
                 </UAvatar>
                 <div class="ps-3">
-                  <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ `${row.user_name} ${row.user_lastname}` }}</div>
+                  <div class="text-base font-semibold whitespace-normal break-all">{{ `${row.user_name} ${row.user_lastname}` }}</div>
                   <div class="font-normal text-gray-500">{{ row.email }}</div>
                 </div>
               </div>
@@ -212,7 +212,7 @@ onMounted(async () => {
                   {{ row.user_name[0] }}
                 </UAvatar>
                 <div class="ps-3">
-                  <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ `${row.user_name} ${row.user_lastname}` }}</div>
+                  <div class="text-base font-semibold whitespace-normal break-all">{{ `${row.user_name} ${row.user_lastname}` }}</div>
                   <div class="font-normal text-gray-500">{{ row.email }}</div>
                   <div class="font-normal text-gray-500">{{ row.sys_profile_name }}</div>
                 </div>

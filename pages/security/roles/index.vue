@@ -196,7 +196,7 @@ onMounted(async () => {
                   </UAvatar>
                 </UChip>
                 <div class="ps-3">
-                  <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
+                  <div class="text-base font-semibold whitespace-normal break-all">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
                   <div class="font-normal text-gray-500">{{ `${row.user_count} usuarios` }}</div>
                 </div>
               </div>
@@ -212,7 +212,7 @@ onMounted(async () => {
                   </UAvatar>
                 </UChip>
                 <div class="ps-3">
-                  <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
+                  <p class="text-base font-semibold whitespace-normal break-all">{{ String(row.name_es).replaceAll('_', ' ') }}</p>
                   <div class="font-normal text-gray-500">{{ `${row.user_count} usuarios` }}</div>
                   <div class="font-normal text-gray-500">Creado el {{ new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(row.created_at)) }}</div>
                 </div>

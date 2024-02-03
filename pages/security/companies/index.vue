@@ -198,7 +198,7 @@ onMounted(async () => {
                 </UChip>
                 <div class="ps-3">
                   <div class="text-base font-semibold">{{ row.name_es_short }}</div>
-                  <div style="text-wrap: pretty; overflow-wrap: break-word;" class="font-normal text-gray-500">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
+                  <div class="font-normal text-gray-500 whitespace-normal break-all">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
                   <div class="font-normal text-gray-500">{{ `RUC: ${row.company_number}` }}</div>
                 </div>
               </div>
@@ -214,8 +214,8 @@ onMounted(async () => {
                   </UAvatar>
                 </UChip>
                 <div class="ps-3">
-                  <div style="text-wrap: pretty; overflow-wrap: break-word;" class="text-base font-semibold">{{ String(row.name_es_short).replaceAll('_', ' ') }}</div>
-                  <div style="text-wrap: pretty; overflow-wrap: break-word;" class="font-normal text-gray-500">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
+                  <div class="text-base font-semibold whitespace-normal break-all">{{ String(row.name_es_short).replaceAll('_', ' ') }}</div>
+                  <div class="font-normal text-gray-500 whitespace-normal break-all">{{ String(row.name_es).replaceAll('_', ' ') }}</div>
                   <div class="font-normal text-gray-500">{{ `${row.company_number}` }}</div>
                 </div>
               </div>

@@ -69,8 +69,7 @@ onMounted(async () => {
             @click="mainState.isMenuOpen = true" />
           <div class="space-y-4 w-full">
             <UFormGroup
-              class="w-full pr-20 md:pr-2"
-              label="Obra/Proyecto"
+              class="w-full pt-1 pr-20 md:pr-2"
               size="xl"
               name="projectSelected">
               <USelectMenu
@@ -88,7 +87,7 @@ onMounted(async () => {
                 @update:model-value="getBudgets" >
                 <template #label>
                   <span v-if="projectSelected && projects" class="truncate">{{ projects.find(x=> x.project_id === projectSelected)?.project_name}}</span>
-                  <span v-else class="text-gray-400 dark:text-gray-500">Seleccione el proyecto</span>
+                  <span v-else class="text-gray-400 dark:text-gray-500">Obra/Proyecto</span>
                 </template>
                 <template #option-empty="{ query }">
                   <q>{{ query }}</q> not found
@@ -104,7 +103,6 @@ onMounted(async () => {
             </UFormGroup>
             <UFormGroup
               class="w-full pr-20 md:pr-2 pb-2"
-              label="Presupuesto"
               size="xl"
               name="selected">
               <USelectMenu
@@ -122,7 +120,7 @@ onMounted(async () => {
                 @update:model-value="getInventory">
                 <template #label>
                   <span v-if="budgetSelected && budgets" class="truncate">{{ budgets.find(x=> x.project_id === budgetSelected)?.code}}</span>
-                  <span v-else class="text-gray-400 dark:text-gray-500">Seleccione el presupuesto</span>
+                  <span v-else class="text-gray-400 dark:text-gray-500">Presupuesto</span>
                 </template>
                 <template #option-empty="{ query }">
                   <q>{{ query }}</q> not found
@@ -141,7 +139,7 @@ onMounted(async () => {
       </div>
     </UCard>
     <UTable
-      class="h-[calc(100dvh-170px)] sm:h-[calc(100dvh-190px)] overflow-x-hidden"
+      class="h-[calc(100dvh-120px)] sm:h-[calc(100dvh-140px)] overflow-x-hidden"
       :columns="[{ key: 'product', name: 'product', field: 'product', label: 'Item', sortable: false }]"
       :rows="inventory"
       :loading="isInventoryLoading">
@@ -150,7 +148,7 @@ onMounted(async () => {
           <div class="w-full">
             <div
               style="text-wrap: pretty; overflow-wrap: break-word;"
-              class="text-base font-semibold">{{ String(row.inv_name).replaceAll('_', ' ') }}
+              class="text-base font-semibold whitespace-normal break-all">{{ String(row.inv_name).replaceAll('_', ' ') }}
               <span class="font-normal text-gray-500">{{ `(${row.inv_code})` }}</span>
             </div>
               <UMeterGroup
