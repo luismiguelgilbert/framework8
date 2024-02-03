@@ -74,7 +74,7 @@ const handleInitialLoad = () => {
     }
   });
   matchingPath = matchingPaths.sort((a, b) => b.link!.length - a.link!.length)[0];
-  state.value.menuSelected = matchingPath?.id ?? -1;
+  state.value.menuSelected = matchingPath?.id ?? '-1';
 }
 
 const logout = async () => {
@@ -84,7 +84,7 @@ const logout = async () => {
   //Reset state
   state.value.menuData = [];
   state.value.userData = sys_users.parse({});
-  state.value.menuSelected = -1;
+  state.value.menuSelected = '-1';
   state.value.isMenuOpen = false;
 }
 
@@ -107,7 +107,7 @@ onMounted(async() => {
       v-for="(rootMenu, index) in state.menuData?.filter((m) => m.parent === null)"
       :key="index">
       <ul 
-        v-if="rootMenu.id !== 0 && state.menuData.filter(m => m.parent == rootMenu.id).length > 0" 
+        v-if="rootMenu.id !== '0' && state.menuData.filter(m => m.parent == rootMenu.id).length > 0" 
         class="pt-4 mt-4 space-y-2 font-medium  text-gray-400 dark:text-gray-500 border-gray-200">
         {{ rootMenu.name_es }}
       </ul>
