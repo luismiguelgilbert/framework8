@@ -24,6 +24,7 @@ const login = async () => {
     const { error } = await supabase.auth.signInWithPassword(credentials.value);
     error && (loginError.value = error);
     if (!error) {
+      generateSBcookies();
       navigateTo('/');
     } else {
       loading.value = false;
@@ -34,11 +35,12 @@ const login = async () => {
   }
 }
 
-const loginFromCookies = async () => {
+const loginFromCookiesOrLocalStorage = async () => {
   try {
     loading.value = true;
-    const { data, error } = await supabase.auth.refreshSession();
+    const { error } = await supabase.auth.refreshSession();
     if (!error) {
+      generateSBcookies();
       navigateTo('/');
     } else{
       loading.value = false;
@@ -49,13 +51,47 @@ const loginFromCookies = async () => {
   }
 }
 
+const generateSBcookies = () => {
+  try {
+    //Generate sb-access-token cookie from localStorage
+    Object.keys(localStorage).forEach((key) => {
+      if (key.includes('sb-') && key.includes('token')) {
+        const supabaseStorageData = JSON.parse(localStorage[key]);
+        const supabaseAccessToken = supabaseStorageData.access_token;
+        createCookie('sb-access-token', supabaseAccessToken, 1);
+      }
+    });
+    //Generate sb-refresh-token cookie from localStorage
+    Object.keys(localStorage).forEach((key) => {
+      if (key.includes('sb-') && key.includes('token')) {
+        const supabaseStorageData = JSON.parse(localStorage[key]);
+        const supabaseRefreshToken = supabaseStorageData.refresh_token;
+        createCookie('sb-refresh-token', supabaseRefreshToken, 1);
+      }
+    });
+  } catch(error) {
+    loading.value = false;
+    console.error(error);
+  }
+}
+
+const createCookie = (name: string, value: string, days: number) => {
+  let expires = '';
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days*24*60*60*1000));
+    expires = `; expires=${date.toUTCString()}`;
+  }
+  document.cookie = `${name}=${value || ''}${expires}; path=/; samesite=strict;`; //";secure" breaks local development
+}
+
 const resetLoginError = () => {
   loginError.value = new AuthError('', 0);
 }
 
 onMounted(async () => {
   resetLoginError();
-  await loginFromCookies();
+  await loginFromCookiesOrLocalStorage();
 });
 </script>
 
