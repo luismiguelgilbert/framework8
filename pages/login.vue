@@ -24,6 +24,7 @@ const login = async () => {
     const { error } = await supabase.auth.signInWithPassword(credentials.value);
     error && (loginError.value = error);
     if (!error) {
+      document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
       generateSBcookies();
       navigateTo('/');
     } else {
@@ -40,6 +41,7 @@ const loginFromCookiesOrLocalStorage = async () => {
     loading.value = true;
     const { error } = await supabase.auth.refreshSession();
     if (!error) {
+      document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
       generateSBcookies();
       navigateTo('/');
     } else{
@@ -58,7 +60,7 @@ const generateSBcookies = () => {
       if (key.includes('sb-') && key.includes('token')) {
         const supabaseStorageData = JSON.parse(localStorage[key]);
         const supabaseAccessToken = supabaseStorageData.access_token;
-        createCookie('sb-access-token', supabaseAccessToken, 1);
+        supabaseAccessToken && createCookie('sb-access-token', supabaseAccessToken, 1);
       }
     });
     //Generate sb-refresh-token cookie from localStorage
@@ -66,7 +68,7 @@ const generateSBcookies = () => {
       if (key.includes('sb-') && key.includes('token')) {
         const supabaseStorageData = JSON.parse(localStorage[key]);
         const supabaseRefreshToken = supabaseStorageData.refresh_token;
-        createCookie('sb-refresh-token', supabaseRefreshToken, 1);
+        supabaseRefreshToken && createCookie('sb-refresh-token', supabaseRefreshToken, 1);
       }
     });
   } catch(error) {

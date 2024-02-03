@@ -79,6 +79,7 @@ const handleInitialLoad = () => {
 
 const logout = async () => {
   await supabase.auth.signOut();
+  document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
   await router.push('/login');
   //Reset state
   state.value.menuData = [];
