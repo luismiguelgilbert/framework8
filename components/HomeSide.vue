@@ -46,7 +46,7 @@ if (menuError.value) { navigateTo('/login') }
 if (!menuError.value && menuData.value) { state.value.menuData = menuData.value }
 
 //Load User Data
-const { data:userData, error:userError, pending: userPending } = await useFetch('/api/system/userData');
+const { data:userData, error:userError } = await useFetch('/api/system/userData');
 if (userError.value) { navigateTo('/login') }
 if (!userError.value && userData.value) {
   state.value.userData = userData.value.userData;
