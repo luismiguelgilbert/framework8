@@ -18,7 +18,7 @@ const setPreferedCompany = async (company: string) => {
 <template>
   <div class="mx-5 py-1 sm:py-3">
     <div class="ml-2 mb-2">
-      <span class="font-semibold text-lg">Seleccione su Compañía Predeterminada</span>
+      <span class="font-semibold text-lg">Seleccione su Organización Predeterminada</span>
     </div>
     <URadioGroup
       v-if="state.userCompany"
@@ -35,7 +35,7 @@ const setPreferedCompany = async (company: string) => {
       icon='i-heroicons-exclamation-circle'
       color="rose"
       variant="solid"
-      title="Error al guardar compañía"
+      title="Error al guardar organización"
     />
     <br /><br />
   </div>
