@@ -4,5 +4,8 @@ colorMode.preference = 'light'
 </script>
 
 <template>
-  <slot />
+    <suspense>
+      <!-- <slot /> -->
+      <NuxtPage />
+    </suspense>
 </template>

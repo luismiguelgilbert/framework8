@@ -12,7 +12,6 @@ const router = useRouter();
 const { path } = useRoute();
 const state = useUser();
 const supabase = useSupabaseClient();
-const myAxios = useAxios();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const mdAndLarger = breakpoints.greaterOrEqual('md');
 
@@ -20,49 +19,12 @@ const openMenu = (menu: z.infer<typeof sp_system_menu>) => {
   if (state.value.menuSelected !== menu.id) { 
     state.value.menuSelected = menu.id!;
     const newURL = menu.requires_company 
-      ? `${menu.link}/${state.value.userCompany}`
-      : menu.link;
+    ? `${menu.link}/${state.value.userCompany}`
+    : menu.link;
     navigateTo(newURL)
   }
   state.value.isMenuOpen = false;
 };
-
-//Load User Menu
-const loadUserMenu = async () => {
-  try {
-    state.value.isLoadingUser = true;
-    const { data } = await myAxios.get('/api/system/userMenu');
-    state.value.menuData = data;
-  } catch(error) {
-    console.error(error);
-    navigateTo('/login');
-  } finally {
-    state.value.isLoadingMenu = false;
-  }
-}
-
-//Load User Data
-const loadUserData = async() => {
-  try {
-    state.value.isLoadingUser = true;
-    const { data } = await myAxios.get('/api/system/userData');
-    state.value.userData = data.userData;
-    state.value.userCompanies = data.userCompanies;
-    state.value.userCompany = data.userCompany.id;
-    state.value.theme = data.userData.dark_enabled ? 'dark' : 'light';
-    colorMode.preference = state.value.theme;
-    state.value.preferedColor = state.value.userData.default_color ?? 'indigo';
-    appConfig.ui.primary = state.value.preferedColor;
-    state.value.preferedDarkColor = state.value.userData.default_dark_color ?? 'cool';
-    appConfig.ui.gray = state.value.preferedDarkColor;
-    handleInitialLoad();
-  } catch(error) {
-    console.error(error);
-    navigateTo('/login');
-  } finally {
-    state.value.isLoadingUser = false;
-  }
-}
 
 const handleInitialLoad = () => {
   //Selects the current menu item, based on matching path with longest length
@@ -75,6 +37,27 @@ const handleInitialLoad = () => {
   });
   matchingPath = matchingPaths.sort((a, b) => b.link!.length - a.link!.length)[0];
   state.value.menuSelected = matchingPath?.id ?? '-1';
+};
+
+//Load Menu Data
+const { data:menuData, error:menuError, pending: menuPending } = await useFetch('/api/system/userMenu');
+if (menuError.value) { navigateTo('/login') }
+if (!menuError.value && menuData.value) { state.value.menuData = menuData.value }
+
+//Load User Data
+const { data:userData, error:userError, pending: userPending } = await useFetch('/api/system/userData');
+if (userError.value) { navigateTo('/login') }
+if (!userError.value && userData.value) {
+  state.value.userData = userData.value.userData;
+  state.value.userCompanies = userData.value.userCompanies;
+  state.value.userCompany = userData.value.userCompany.id;
+  state.value.theme = userData.value.userData.dark_enabled ? 'dark' : 'light';
+  colorMode.preference = state.value.theme;
+  state.value.preferedColor = state.value.userData.default_color ?? 'indigo';
+  appConfig.ui.primary = state.value.preferedColor;
+  state.value.preferedDarkColor = state.value.userData.default_dark_color ?? 'cool';
+  appConfig.ui.gray = state.value.preferedDarkColor;
+  handleInitialLoad();
 }
 
 const logout = async () => {
@@ -88,10 +71,6 @@ const logout = async () => {
   state.value.isMenuOpen = false;
 }
 
-onMounted(async() => {
-  await loadUserMenu();
-  await loadUserData();
-});
 </script>
 
 <template>
@@ -101,7 +80,7 @@ onMounted(async() => {
   :class="{ '-translate-x-full' : !state.isMenuOpen }"
   aria-label="Sidebar">
   <div
-    v-if="!state.isLoadingMenu"
+    v-if="!menuPending && !menuError"
     class="h-full px-3 py-4 overflow-y-auto bg-white dark:bg-gray-900">
     <div
       v-for="(rootMenu, index) in state.menuData?.filter((m) => m.parent === null)"

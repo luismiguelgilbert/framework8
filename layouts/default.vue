@@ -3,7 +3,10 @@
     <HomeSide />
     <div class="sm:ml-64">
       <div class="p-0 h-[calc(100dvh)] sm:h-[calc(100dvh)] overflow-hidden bg-gray-50 dark:bg-gray-900" >
-          <slot />
+        <suspense>
+          <!-- <slot /> -->
+          <NuxtPage />
+        </suspense>
       </div>
     </div>
   </div>
