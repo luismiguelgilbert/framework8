@@ -14,6 +14,7 @@ const state = useUser();
 const supabase = useSupabaseClient();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const mdAndLarger = breakpoints.greaterOrEqual('md');
+const isLoading = ref(false);
 
 const openMenu = (menu: z.infer<typeof sp_system_menu>) => {
   if (state.value.menuSelected !== menu.id) { 
@@ -61,6 +62,7 @@ if (!userError.value && userData.value) {
 }
 
 const logout = async () => {
+  isLoading.value = true;
   await supabase.auth.signOut();
   document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
   await router.push('/login');
@@ -69,6 +71,7 @@ const logout = async () => {
   state.value.userData = sys_users.parse({});
   state.value.menuSelected = '-1';
   state.value.isMenuOpen = false;
+  isLoading.value = false;
 }
 
 </script>
@@ -145,8 +148,10 @@ const logout = async () => {
       block
       label="Logout"
       size="xl"
+      :loading="isLoading"
+      :disabled="isLoading"
       @click="logout">
-      <template #leading>
+      <template #leading v-if="!isLoading">
         <i class="fa-solid fa-door-open fa-xl"></i>
       </template>
     </UButton>
