@@ -1,16 +1,20 @@
 <script setup lang="ts">
 const state = useUser();
 const appConfig = useAppConfig();
-const myAxios = useAxios();
+const isUpdating = ref(false);
+const hasError = ref(false);
 
-const setColor = async (color: string) => {
-  appConfig.ui.primary = color;
-  state.value.preferedColor = color;
-  try {
-    await myAxios.patch(`/api/users/${state.value.userData.id}/preferences`, { default_color: color });
-  } catch (error) {
-    console.error(error);
-  }
+const setColor = async () => {
+  appConfig.ui.primary = state.value.preferedColor;
+
+  isUpdating.value = true;
+  hasError.value = false;
+  const { error } = await useFetch(`/api/users/${state.value.userData.id}/preferences`, {
+    method: 'patch',
+    body: { default_color: state.value.preferedColor },
+  });
+  isUpdating.value = false;
+  if (error.value ) { hasError.value = true }
 }
 </script>
 
@@ -23,7 +27,16 @@ const setColor = async (color: string) => {
       class="px-5 py-2"
       v-model="state.preferedColor"
       :options="state.colors"
+      :disabled="isUpdating"
       @update:modelValue="setColor" />
+    <UProgress v-if="isUpdating" animation="carousel" />
+    <UAlert
+      v-if="hasError"
+      icon='i-heroicons-exclamation-circle'
+      color="rose"
+      variant="solid"
+      title="Error al guardar preferencia"
+    />
     <br /><br />
   </div>
 </template>
