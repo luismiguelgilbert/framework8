@@ -18,7 +18,7 @@ const setPreferedCompany = async (company: string) => {
 <template>
   <div class="mx-5 py-1 sm:py-3">
     <div class="ml-2 mb-2">
-      <span class="font-semibold text-lg">Seleccione su Organización Predeterminada</span>
+      <span class="font-semibold text-lg">Seleccione su organización</span>
     </div>
     <URadioGroup
       v-if="state.userCompany"
