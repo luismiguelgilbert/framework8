@@ -7,6 +7,7 @@ import { PermissionsList } from '@/typings/client/permissionsEnum';
 
 import { sort_options, status_options, type type_sys_users } from '@/typings/server/sys_users';
 import EditForm from './[id]/index.vue';
+import UploadForm from './UploadForm.vue'
 
 useHead({ title: 'Usuarios' });
 const { currentRoute, push } = useRouter();
@@ -21,6 +22,7 @@ const isLoading = ref<boolean>(false);
 const rowsNumber = ref(0);
 const isSideOpen = ref(false);
 //CUSTOM REFS
+const isUploadFormOpen = ref(false);
 const state = useSecurityUsersMainCard().value;
 const selectedFilter = computed(() => status_options.find(option => String(option.value) === state.payload.status));
 const selectedSort = computed(() => sort_options.find(option => String(option.value) === state.payload.sortBy));
@@ -48,6 +50,7 @@ const fixedOptions = [
 const dropdownOptions = computed(() => {
   let dynamicOptions = [];
   if (allowCreate.value) { dynamicOptions.push({ label: 'Nuevo', icon: 'fas fa-plus-circle', click: () => { updatePayload(filter_keys_enum.ID, 'new', false, false) } }) };
+  if (allowCreate.value) { dynamicOptions.push({ label: 'Crear en lote', icon: 'fas fa-file-circle-plus', click: () => { uploadUsers() } }) };
   if (allowExport.value) { dynamicOptions.push({ label: 'Descargar', icon: 'fas fa-file-excel', click: () => { downloadFile() } }) };
   dynamicOptions.push({ label: 'Refrescar', icon: 'fas fa-arrows-rotate', click: () => { loadData() } });
   return dynamicOptions.length > 0
@@ -143,6 +146,9 @@ const downloadFile = async() => {
   const { data } = await myAxios.post('/api/users/download', state.payload, { responseType: 'blob' });
   FileSaver.saveAs(data, "Usuarios.xlsx");
   isLoading.value = false;
+};
+const uploadUsers = () => {
+  isUploadFormOpen.value = true;
 };
 //HOOKS
 onMounted(async () => {
@@ -241,5 +247,9 @@ onMounted(async () => {
           @closed="updatePayload(filter_keys_enum.ID, null, false, true)" />
       </template>
     </DatalistMainCard>
+    <UploadForm
+      :is-open="isUploadFormOpen"
+      @close="isUploadFormOpen = false"
+      />
   </div>
 </template>
