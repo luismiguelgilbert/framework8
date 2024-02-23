@@ -73,7 +73,6 @@ const onScroll = (event: UIEvent) => emits('table-scroll', event);
         class="h-[calc(100dvh-95px)] sm:h-[calc(100dvh-120px)] overflow-x-hidden"
         :class="requiresCompany ? 'xl:h-[calc(100dvh-190px)]' : 'xl:h-[calc(100dvh-170px)]'"
         @scroll="onScroll">
-        <UProgress v-if="isLoading" animation="carousel" class="max-w-3xl absolute z-50" />
         <slot name="table"></slot>
         <br /><br />
       </div>

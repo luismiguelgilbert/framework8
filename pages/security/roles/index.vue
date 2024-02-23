@@ -172,6 +172,7 @@ onMounted(async () => {
         <UTable
           :columns="columns"
           :rows="state.rows"
+          :loading="isLoading"
           :ui="{
             thead: 'collapse sm:visible',
             td: { base: 'py-5 pl-4 whitespace-nowrap'},
