@@ -207,7 +207,7 @@ onMounted(async () => {
                   {{ row.user_name[0] }}
                 </UAvatar>
                 <div class="ps-3">
-                  <div class="text-base font-semibold whitespace-normal break-all">{{ `${row.user_name} ${row.user_lastname}` }}</div>
+                  <div class="text-base font-semibold whitespace-normal break-all dark:text-white text-black">{{ `${row.user_name} ${row.user_lastname}` }}</div>
                   <div class="font-normal text-gray-500">{{ row.email }}</div>
                 </div>
               </div>

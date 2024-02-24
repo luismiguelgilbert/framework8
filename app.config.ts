@@ -1,7 +1,8 @@
 export default defineAppConfig({
   ui: {
     primary: 'indigo',
-    fontFamily: 'Ubuntu',
+    // fontFamily: 'Ubuntu',
+    fontFamily: 'DMSans',
     gray: 'neutral',
     /*button: {
       "base": "focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 flex-shrink-0",

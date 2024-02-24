@@ -3,52 +3,34 @@ const state = useUser();
 </script>
 
 <template>
-  <div class="mx-5 py-1 sm:py-3">
-    <div class="ml-2 mb-2"><span class="font-semibold text-lg">Datos del Usuario</span></div>
-    <UFormGroup
-      class="px-2 py-2"
-      label="Código"
-      size="xl"
-      name="profileData.id">
-      <UInput
-        :value="state.userData.id"
-        required
-        label="Código"
-        size="xl"
-        type="text"
-        name="id"
-        readonly
-        :loading="state.isLoadingUser">
-        <template #leading v-if="!state.isLoadingUser">
-          <i class="fas fa-database fa-xl text-gray-500"></i>
-        </template>
-      </UInput>
-    </UFormGroup>
-    <UFormGroup
-      class="px-2 py-2"
-      size="xl"
-      label="Mail"
-      name="profileData.name_es">
+  <div class="divide-y divide-gray-200 dark:divide-gray-800 space-y-6 *:pt-6 first:*:pt-2 first:*:pt-0 mb-6 px-2 sm:px-4 ">
+    <div class="mt-6 flex flex-row flex-wrap gap-4 justify-between content-between">
+      <div>
+        <p class="text-gray-900 dark:text-white font-semibold">Email:</p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Cuenta de correo del usuario.</p>
+      </div>
       <UInput
         :value="state.userData.email"
-        label="Mail"
+        class="flex-auto max-w-96"
         size="xl"
         type="text"
         name="email"
+        aria-label="Email"
         readonly
         :loading="state.isLoadingUser">
         <template #leading v-if="!state.isLoadingUser">
           <i class="fas fa-envelope fa-xl text-gray-500"></i>
         </template>
       </UInput>
-    </UFormGroup>
-    <UFormGroup
-      class="px-2 py-2"
-      size="xl"
-      label="Nombres"
-      name="profileData.name_es">
+    </div>
+    <div class="flex flex-row flex-wrap gap-4 justify-between content-between">
+      <div>
+        <p class="text-gray-900 dark:text-white font-semibold">Nombres:</p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Nombres del usuario.</p>
+      </div>
       <UInput
         :value="state.userData.user_name"
+        class="flex-auto max-w-96"
         label="Nombres"
         size="xl"
         type="text"
@@ -59,14 +41,15 @@ const state = useUser();
           <i class="fas fa-user fa-xl text-gray-500"></i>
         </template>
       </UInput>
-    </UFormGroup>
-    <UFormGroup
-      class="px-2 py-2"
-      size="xl"
-      label="Apellidos"
-      name="profileData.name_es">
+    </div>
+    <div class="flex flex-row flex-wrap gap-4 justify-between content-between">
+      <div>
+        <p class="text-gray-900 dark:text-white font-semibold">Apellidos:</p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Apellidos del usuario.</p>
+      </div>
       <UInput
         :value="state.userData.user_lastname"
+        class="flex-auto max-w-96"
         label="Apellidos"
         size="xl"
         type="text"
@@ -77,14 +60,15 @@ const state = useUser();
           <i class="far fa-user fa-xl text-gray-500"></i>
         </template>
       </UInput>
-    </UFormGroup>
-    <UFormGroup
-      class="px-2 py-2"
-      size="xl"
-      label="Perfil"
-      name="profileData.sys_profile_name">
+    </div>
+    <div class="flex flex-row flex-wrap gap-4 justify-between content-between">
+      <div>
+        <p class="text-gray-900 dark:text-white font-semibold">Perfil:</p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Rol para controlar permisos.</p>
+      </div>
       <UInput
         :value="state.userData.sys_profile_name"
+        class="flex-auto max-w-96"
         label="Perfil"
         size="xl"
         type="text"
@@ -95,14 +79,35 @@ const state = useUser();
           <i class="fas fa-circle-user fa-xl text-gray-500"></i>
         </template>
       </UInput>
-    </UFormGroup>
-    <UFormGroup
-      class="px-2 py-2"
-      size="xl"
-      label="Último Ingreso"
-      name="profileData.last_sign_in_at">
+    </div>
+    <div class="flex flex-row flex-wrap gap-4 justify-between content-between">
+      <div>
+        <p class="text-gray-900 dark:text-white font-semibold">Código:</p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Código usado por el sistema.</p>
+      </div>
+        <UInput
+          :value="state.userData.id"
+          class="flex-auto max-w-96"
+          required
+          size="xl"
+          type="text"
+          name="id"
+          label="Código"
+          readonly
+          :loading="state.isLoadingUser">
+          <template #leading v-if="!state.isLoadingUser">
+            <i class="fas fa-database fa-xl text-gray-500"></i>
+          </template>
+        </UInput>
+    </div>
+    <div class="flex flex-row flex-wrap gap-4 justify-between content-between">
+      <div>
+        <p class="text-gray-900 dark:text-white font-semibold">Ingreso:</p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Fecha y hora del último ingreso.</p>
+      </div>
       <UInput
         :value="state.userData.last_sign_in_at"
+        class="flex-auto max-w-96"
         label="Último Ingreso"
         size="xl"
         type="text"
@@ -113,14 +118,15 @@ const state = useUser();
           <i class="fas fa-door-open fa-xl text-gray-500"></i>
         </template>
       </UInput>
-    </UFormGroup>
-    <UFormGroup
-      class="px-2 py-2"
-      size="xl"
-      label="Fecha de creación"
-      name="profileData.created_at">
+    </div>
+    <div class="flex flex-row flex-wrap gap-4 justify-between content-between">
+      <div>
+        <p class="text-gray-900 dark:text-white font-semibold">Desde:</p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Fecha y hora de creación del usuario.</p>
+      </div>
       <UInput
         :value="state.userData.created_at"
+        class="flex-auto max-w-96"
         label="Fecha de creación"
         size="xl"
         type="text"
@@ -131,14 +137,15 @@ const state = useUser();
           <i class="fas fa-marker fa-xl text-gray-500"></i>
         </template>
       </UInput>
-    </UFormGroup>
-    <UFormGroup
-      class="px-2 py-2"
-      size="xl"
-      label="Fecha de actualización"
-      name="profileData.updated_at">
+    </div>
+    <div class="flex flex-row flex-wrap gap-4 justify-between content-between">
+      <div>
+        <p class="text-gray-900 dark:text-white font-semibold">Actualización:</p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Fecha y hora de última edición al usuario.</p>
+      </div>
       <UInput
         :value="state.userData.updated_at"
+        class="flex-auto max-w-96"
         label="Fecha de actualización"
         size="xl"
         type="text"
@@ -149,7 +156,6 @@ const state = useUser();
           <i class="fas fa-edit fa-xl text-gray-500"></i>
         </template>
       </UInput>
-    </UFormGroup>
-    <br /><br />
+    </div>
   </div>
 </template>

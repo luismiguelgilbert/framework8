@@ -1,9 +1,9 @@
 <script setup lang="ts">
 </script>
 <template>
+  <NuxtLoadingIndicator />
   <NuxtLayout>
     <div>
-      <NuxtLoadingIndicator />
       <NuxtPage :transition="{
         name: 'rotate',
         mode: 'out-in',
@@ -11,11 +11,13 @@
     </div>
   </NuxtLayout>
   <UNotifications />
+  <UModals />
 </template>
 
 <style>
 body {
-  font-family: 'Ubuntu', sans-serif;
+  /* font-family: 'Ubuntu', sans-serif; */
+  font-family: 'DMSans', sans-serif;
 }
 .layout-enter-active, .layout-leave-active {
   transition: all 0.4s;

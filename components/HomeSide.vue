@@ -15,6 +15,8 @@ const supabase = useSupabaseClient();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const mdAndLarger = breakpoints.greaterOrEqual('md');
 const isLoading = ref(false);
+const isUpdating = ref(false);
+
 
 const openMenu = (menu: z.infer<typeof sp_system_menu>) => {
   if (state.value.menuSelected !== menu.id) { 
@@ -61,6 +63,15 @@ if (!userError.value && userData.value) {
   handleInitialLoad();
 }
 
+const setPreferedCompany = async (company: string) => {
+  isUpdating.value = true;
+  await useFetch(`/api/users/${state.value.userData.id}/preferences`, {
+    method: 'patch',
+    body: { prefered_company: state.value.userCompany },
+  });
+  isUpdating.value = false;
+}
+
 const logout = async () => {
   isLoading.value = true;
   await supabase.auth.signOut();
@@ -85,12 +96,21 @@ const logout = async () => {
   <div
     v-if="!menuPending && !menuError"
     class="h-full px-3 py-4 overflow-y-auto bg-white dark:bg-gray-900">
+    <USelectMenu
+      v-model="state.userCompany"
+      class="mb-5"
+      value-attribute="id"
+      option-attribute="name_es_short"
+      size="xl"
+      :options="state.userCompanies"
+      @update:model-value="setPreferedCompany" />
+  
     <div
       v-for="(rootMenu, index) in state.menuData?.filter((m) => m.parent === null)"
       :key="index">
       <ul 
         v-if="rootMenu.id !== '0' && state.menuData.filter(m => m.parent == rootMenu.id).length > 0" 
-        class="pt-4 mt-4 space-y-2 font-medium  text-gray-400 dark:text-gray-500 border-gray-200">
+        class="pt-4 mt-4 space-y-2 font-medium text-gray-400 dark:text-gray-500 border-gray-200">
         {{ rootMenu.name_es }}
       </ul>
       <ul
@@ -106,7 +126,7 @@ const logout = async () => {
             :title="menu.name_es"
             block
             size="xl"
-            variant="soft"
+            variant="ghost"
             :label="menu.name_es"
             @click="openMenu(menu)">
             <template #leading>

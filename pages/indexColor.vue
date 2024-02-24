@@ -42,54 +42,42 @@ const setColor = async () => {
 </script>
 
 <template>
-  <div class="mx-5 py-1 sm:py-3">
-    <div class="ml-2 mb-2"><span class="font-semibold text-lg">Seleccione su tema preferido</span></div>
-    <div>
-      <URadioGroup
-        class="px-5 py-2"
+  <div class="divide-y divide-gray-200 dark:divide-gray-800 space-y-6 *:pt-6 first:*:pt-2 first:*:pt-0 mb-6 px-2 sm:px-4 ">
+    <div class="mt-6 flex flex-row flex-wrap gap-4 justify-between content-between">
+      <div>
+        <p class="text-gray-900 dark:text-white font-semibold">Tema:</p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Combinación de colores preferida.</p>
+      </div>
+      <USelectMenu
         v-model="state.theme"
+        class="flex-auto max-w-96"
+        size="xl"
         :options="state.themes"
-        :disabled="isUpdating"
-        @update:modelValue="setTheme" />
-      <div
-        v-if="state.theme === 'dark'"
-        class="ml-2 mb-2 mt-4">
-        <span class="font-semibold text-lg">Seleccione su fondo preferido</span>
-        <div class="ml-4 mt-5">
-          <USelectMenu
-            v-model="state.preferedDarkColor"
-            :options="state.darkColors"
-            :disabled="isUpdating"
-            @update:modelValue="setDarkColor" />
-        </div>
-      </div>
+        @update:model-value="setTheme" />
     </div>
-    <div class="ml-2 mb-2 mt-10">
-      <span class="font-semibold text-lg">Seleccione su color preferido</span>
-      <div class="ml-4 mt-5">
-        <USelectMenu
-          v-model="state.preferedColor"
-          :options="state.colors"
-          :disabled="isUpdating"
-          @update:modelValue="setColor">
-          <template #leading>
-            <UBadge :ui="{ rounded: 'rounded-full' }"></UBadge>
-          </template>
-          <template #option="{ option: color }">
-            <span class="h-2 w-2 rounded-full" :class="`bg-${color}-500 dark:bg-${color}-400`" />
-            <span class="truncate">{{ color }}</span>
-          </template>
-        </USelectMenu>
+    <div class="mt-6 flex flex-row flex-wrap gap-4 justify-between content-between">
+      <div>
+        <p class="text-gray-900 dark:text-white font-semibold">Color de fondo:</p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Color de fondo para tema Oscuro (Dark).</p>
       </div>
+      <USelectMenu
+        v-model="state.preferedDarkColor"
+        class="flex-auto max-w-96"
+        size="xl"
+        :options="state.darkColors"
+        @update:model-value="setDarkColor" />
     </div>
-    <UProgress class="mt-5 ml-5" v-if="isUpdating" animation="carousel" />
-    <UAlert
-      v-if="hasError"
-      icon='i-heroicons-exclamation-circle'
-      color="rose"
-      variant="solid"
-      title="Error al guardar preferencia"
-    />
-    <br /><br />
+    <div class="mt-6 flex flex-row flex-wrap gap-4 justify-between content-between">
+      <div>
+        <p class="text-gray-900 dark:text-white font-semibold">Color:</p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Color de acentuación preferido.</p>
+      </div>
+      <USelectMenu
+        v-model="state.preferedColor"
+        class="flex-auto max-w-96"
+        size="xl"
+        :options="state.colors"
+        @update:model-value="setColor" />
+    </div>
   </div>
 </template>

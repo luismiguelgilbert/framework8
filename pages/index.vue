@@ -1,18 +1,16 @@
 <script setup lang="ts">
 useHead({ title: 'BITT - Welcome' });
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
-import Companies from './indexCompanies.vue'
 import Colors from './indexColor.vue'
 import User from './indexUser.vue'
 
 const state = useUser();
-const currenTab = ref(0);
+const tab = ref('user');
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const smAndLarger = breakpoints.greaterOrEqual('sm');
 const tabs = [
   { slot: 'user', value: 'user', label: 'Usuario', icon: 'i-heroicons-user-circle', defaultOpen: true },
   { slot: 'colors', value: 'colors',label: 'Color', icon: 'i-heroicons-swatch', defaultOpen: false },
-  { slot: 'companies', value: 'companies', label: 'Organización / Compañía', icon: 'i-heroicons-building-office-2', defaultOpen: false },
 ]
 </script>
 
@@ -52,40 +50,22 @@ const tabs = [
       </template>
     </UCard>
     <!--BODY-->
-    <div class="max-w-full xl:max-w-3xl mx-auto mt-0 xl:mt-3">
+    <div class="max-w-full mx-auto mt-0">
       <UCard
         :ui="{ 
-          rounded: 'rounded-none sm:rounded-lg',
+          rounded: 'rounded-none',
           header: { padding: 'px-1 sm:px-4 py-2' },
           body: { padding: '', base: '' } ,
         }" >
-        <UTabs
-          color="red"
-          v-model="currenTab"
-          :items="tabs"
-          :ui="{
-            list: {
-              rounded: 'rounded-none xl:rounded-t-lg',
-              //padding: `${state.theme === 'dark' ? 'px-0' : 'p1'}`
-            },
-          }"
-          class="w-full">
-          <template #default="{ item, index, selected }">
-            <div class="flex items-center gap-2 relative truncate">
-              <UIcon :name="item.icon" class="w-4 h-4 flex-shrink-0" />
-
-              <span class="truncate">{{ index + 1 }}. {{ item.label }}</span>
-
-              <span v-if="selected" class="absolute -right-4 w-2 h-2 rounded-full bg-primary-500 dark:bg-primary-400" />
-            </div>
-          </template>
-        </UTabs>
-        <div class="h-[calc(100dvh-95px)] sm:h-[calc(100dvh-120px)] xl:h-[calc(100dvh-170px)] overflow-x-hidden overflow-y-auto">
+        <BTabs
+          v-model="tab"
+          :items="tabs" />
+        <UDivider />
+        <div class="h-[calc(100dvh-95px)] sm:h-[calc(100dvh-120px)] xl:h-[calc(100dvh-120px)] overflow-x-hidden overflow-y-auto px-4">
           <BittSkeletonList v-if="state.isLoadingUser" class="mx-6 mt-5" :items="1" />
           <div v-else>
-            <User v-show="currenTab === 0" class="px-2 sm:px-4 pb-6" />
-            <Colors v-show="currenTab === 1" class="px-2 sm:px-4 pb-6" />
-            <Companies v-show="currenTab === 2" class="px-2 sm:px-4 pb-6" />
+            <User v-if="tab === tabs[0].value" class="px-2 sm:px-4 pb-6" />
+            <Colors v-if="tab === tabs[1].value" class="px-2 sm:px-4 pb-6" />
           </div>
         </div>
       </UCard>
