@@ -39,7 +39,6 @@ export default defineEventHandler( async (event) => {
       password: process.env.NEWUSERSDEFAULTPWD!,
       options: {
         data: {
-          // id: 'John',
           user_name: user_name,
           user_lastname: user_lastname,
           avatar_url: ''
@@ -68,7 +67,7 @@ export default defineEventHandler( async (event) => {
     await serverDB.query(sqlCompaniesInsert);
     
     await serverDB.query('COMMIT');
-    // return { message: `Usuario ${id} actualizado correctamente` };
+        
     return newUserId;
   }catch(err) {
     await serverDB.query('ROLLBACK');

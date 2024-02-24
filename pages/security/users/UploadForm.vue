@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Excel from 'exceljs';
+import { z } from "zod"
 import type { type_sys_profiles } from '@/typings/server/sys_profiles';
 import type { type_sys_companies } from '@/typings/server/sys_companies';
 import type { type_sys_users_ids } from '@/typings/server/sys_users_ids';
@@ -8,6 +9,7 @@ const props = defineProps({
   isOpen: { type: Boolean, required: true },
 })
 const emits = defineEmits(['close']);
+const toast = useToast();
 
 const columns = [
   { label: 'Correo', key: 'email' },
@@ -16,6 +18,7 @@ const columns = [
   { label: 'Rol', key: 'profile' },
   { label: 'Organización', key: 'organization' },
   { label: '', key: 'actions' },
+  { label: '', key: 'created' },
 ];
 const uiTableContainer = { 
   rounded: 'rounded-none',
@@ -27,8 +30,12 @@ type templateRow = {
   user_name: string,
   user_lastname: string,
   profile: string,
+  profileId?: number,
   organization: string,
+  organizationId: string,
   isRowValid: templateRowValid,
+  isUploading?: boolean,
+  isCreated?: boolean,
 };
 type templateRowValid = {
   isEmailValid: boolean,
@@ -43,14 +50,16 @@ const currentStep = ref(1);
 const skipFirstRow = ref(true);
 const hasError = ref(false);
 const isLoading = ref(false);
+const isUploading = ref(false);
 const fileInput = ref<HTMLInputElement>();
 const selectedFile = ref(undefined);
 const rowsWithErrorOnly = ref(false);
 const rows = ref<Array<templateRow>>([]);
+const uploadingIndex = ref(0);
+const selectedRows = ref<Array<templateRow>>([]);
 const sys_users = ref<Array<type_sys_users_ids>>([]);
 const sys_companies = ref<Array<type_sys_companies>>([]);
 const sys_profiles = ref<Array<type_sys_profiles>>([]);
-const isDataValid = computed<boolean>(() => rows.value.some(x => !x.isRowValid.isValid) && rows.value.length <= 0);
 const errorsCount = computed<number>(() => rows.value.filter(x => !x.isRowValid.isValid).length);
 
 const readFileContent = (fileRes: File): Promise<any> => {
@@ -72,11 +81,11 @@ const getSheetRows = async (buffer: ArrayBuffer) => {
     workbook.worksheets[0].eachRow((row, rowIndex) => {
       if (skipFirstRow.value && rowIndex === 1) return;
       sheetRows.push({
-        email: row.getCell(1).text.trim(),
+        email: row.getCell(1).text.trim().toLocaleLowerCase(),
         user_name: row.getCell(2).text.trim(),
         user_lastname: row.getCell(3).text.trim(),
-        profile: row.getCell(4).text.trim(),
-        organization: row.getCell(5).text.trim(),
+        profile: row.getCell(4).text.trim().toLocaleLowerCase(),
+        organization: row.getCell(5).text.trim().toLocaleLowerCase(),
         isRowValid: {
           isEmailValid: false,
           isProfileValid: false,
@@ -108,7 +117,7 @@ const readCSV = async (event: Event) => {
         isLoading.value = true;
         await getActiveProfiles();
         await getActiveCompanies();
-        await getUsersCompanies();
+        await getUsers();
         await validateRows();
         isLoading.value = false;
       }
@@ -133,6 +142,7 @@ const getActiveProfiles = async () => {
     const { data, error } = await useFetch('/api/lookups/sys_profiles');
     if (!error.value && data.value) {
       sys_profiles.value = data.value.filter(profile => profile.is_active);
+      sys_profiles.value.map(profile => profile.name_es = profile.name_es.toLowerCase());
     }
   } catch(error) {
     console.error(error);
@@ -144,17 +154,19 @@ const getActiveCompanies = async () => {
     const { data, error } = await useFetch('/api/lookups/sys_companies');
     if (!error.value && data.value) {
       sys_companies.value = data.value;
+      sys_companies.value.map(company => company.name_es_short = company.name_es_short.toLowerCase());
     }
   } catch(error) {
     console.error(error);
   }
 };
 
-const getUsersCompanies = async () => {
+const getUsers = async () => {
   try {
     const { data, error } = await useFetch('/api/lookups/sys_users_ids');
     if (!error.value && data.value) {
       sys_users.value = data.value;
+      sys_users.value.map(user => user.email = user.email.toLowerCase());
     }
   } catch(error) {
     console.error(error);
@@ -162,7 +174,8 @@ const getUsersCompanies = async () => {
 };
 
 const isRowValid = (row: templateRow): templateRowValid => {
-  const isEmailValid = !sys_users.value.some(user => user.email === row.email);
+  const emailSchema = z.string().email();
+  const isEmailValid = !sys_users.value.some(user => user.email === row.email) && emailSchema.safeParse(row.email).success;
   const isProfileValid = sys_profiles.value.some(profile => profile.name_es === row.profile);
   const isCompanyValid = sys_companies.value.some(company => company.name_es_short === row.organization);
   const isNameValid = row.user_name?.length > 0;
@@ -181,6 +194,69 @@ const isRowValid = (row: templateRow): templateRowValid => {
 const validateRows = () => {
   for (let i = 0; i < rows.value.length; i++) {
     rows.value[i].isRowValid = isRowValid(rows.value[i]);
+    rows.value[i].profileId = sys_profiles.value.find(profile => profile.name_es === rows.value[i].profile)?.id;
+    rows.value[i].organizationId = sys_companies.value.find(company => company.name_es_short === rows.value[i].organization)?.id ?? '';
+  }
+};
+
+const deleteSelectedRows = () => {
+  rows.value = rows.value.filter(row => !selectedRows.value.includes(row));
+  selectedRows.value = [];
+  validateRows();
+};
+
+const createUsers = async () => {
+  try {
+    isUploading.value = true;
+    let index = -1;
+    for (const row of rows.value) {
+      index++;
+      uploadingIndex.value ++;
+      rows.value[index].isUploading = true;
+      const newUser = {
+        userData: {
+          user_name: row.user_name,
+          user_lastname: row.user_lastname,
+          email: row.email,
+          avatar_url: '',
+          sys_profile_id: row.profileId,
+          dark_enabled: false,
+          default_color: 'indigo',
+          default_dark_color: 'neutral',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          last_sign_in_at: null,
+          row_count: 0,
+        },
+        userCompanies: [{ id: row.organizationId }],
+      }
+      //Create User
+      const { data, error } = await useFetch(`/api/users/new`, {
+        method: 'POST',
+        body: newUser,
+      });
+      //Action after User Created
+      rows.value[index].isUploading = false;
+      if (error.value) {
+        hasError.value = true;
+        rows.value[index].isCreated = false;
+      } else {
+        rows.value[index].isCreated = true;
+      }
+    }
+    resetUploadForm();
+    toast.add({
+      id: 'success_update_avatar',
+      title: 'Usuarios creados correctamente',
+      color: 'green',
+      icon: 'i-heroicons-check-circle',
+      timeout: 1500,
+    });
+    emits('close');
+  } catch(error) {
+    console.error(error);
+  } finally {
+    isUploading.value = false;
   }
 };
 
@@ -200,7 +276,7 @@ const validateRows = () => {
           <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
             Crear usuarios en lote
           </h3>
-          <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="emits('close')" />
+          <UButton v-if="!isUploading" color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="emits('close')" />
         </div>
       </template>
       <div 
@@ -216,20 +292,38 @@ const validateRows = () => {
             type="file"
             placeholder="Cargar plantilla CSV"
             size="xl"
-            icon="i-heroicons-arrow-up-on-square-stack"
             @change="readCSV">
           </UInput>       
         </UCard>
       </div>
       <div v-if="currentStep === 2">
-        <UCheckbox
-          v-model="rowsWithErrorOnly"
-          class="p-4"
-          name="errors"
-          :label="`Mostrar registros con errores únicamente: ${errorsCount} / ${rows.length}`" />
+        <div class="flex">
+          <UCheckbox
+            v-model="rowsWithErrorOnly"
+            class="p-4"
+            name="errors"
+            :disabled="isLoading || isUploading"
+            :label="`Filtrar errores: ${errorsCount} / ${rows.length}`" />
+          <UButton
+            v-if="selectedRows.length > 0"
+            size="xs"
+            variant="ghost"
+            color="rose"
+            :label="`Eliminar ${selectedRows.length} seleccionados`" 
+            :disabled="isLoading || isUploading"
+            @click="deleteSelectedRows">
+            <template #leading>
+              <i class="fa-solid fa-trash pr-2"></i>
+            </template>
+          </UButton>
+        </div>
+        <UProgress v-if="isUploading" :value="uploadingIndex" :max="rows.length" indicator />
         <UDivider />
         <UTable
-          class="h-[calc(100dvh-190px)] sm:h-[calc(100dvh-190px)] overflow-x-hidden"
+          :class="isUploading
+            ? 'h-[calc(100dvh-230px)] sm:h-[calc(100dvh-230px)] overflow-x-hidden'
+            : 'h-[calc(100dvh-190px)] sm:h-[calc(100dvh-190px)] overflow-x-hidden'"
+          v-model="selectedRows"
           :loading="isLoading"
           :columns="columns"
           :rows="!rowsWithErrorOnly ? rows : rows.filter(row => !row.isRowValid.isValid)">
@@ -259,6 +353,14 @@ const validateRows = () => {
               :icon="!row.isRowValid.isValid ? 'i-heroicons-exclamation-circle' : 'i-heroicons-check-circle'"
               variant="ghost" />
           </template>
+          <template #created-data="{ row }: { row: templateRow }">
+            <UButton
+              v-if="row.isCreated !== undefined || row.isUploading"
+              :loading="row.isUploading"
+              :color="row.isCreated ? undefined : 'rose'"
+              :icon="row.isCreated ? 'i-heroicons-check-circle' : 'i-heroicons-exclamation-circle'"
+              variant="solid" />
+          </template>
         </UTable>
       </div>
       <template #footer>
@@ -278,6 +380,7 @@ const validateRows = () => {
               label="Cancelar" 
               variant="solid"
               color="rose"
+              :disabled="isUploading || isLoading"
               @click="resetUploadForm">
               <template #leading>
                 <i class="fa-solid fa-left-long fa-xl pr-2"></i>
@@ -287,11 +390,11 @@ const validateRows = () => {
               v-if="!isLoading && errorsCount === 0"
               variant="solid"
               :color="errorsCount === 0 ? 'primary' : 'rose'"
-              :label="errorsCount === 0 ? 'Crear Usuarios' : 'Existen errores'"
-              :loading="isLoading"
-              :disabled="isLoading"
-              @click="emits('close')">
-              <template #leading>
+              :label="!isUploading ? 'Crear Usuarios' : 'Creando Usuarios...'"
+              :loading="isLoading || isUploading"
+              :disabled="isLoading || isUploading"
+              @click="createUsers">
+              <template #leading v-if="!isUploading">
                 <i class="fa-solid fa-save fa-xl pr-2"></i>
               </template>
             </UButton>

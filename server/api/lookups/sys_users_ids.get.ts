@@ -4,7 +4,9 @@ export default defineEventHandler( async (event) => {
   try{
     const text = `SELECT
      a.id
-    ,a.email
+    ,trim(a.email) as email
+    ,b.user_name
+    ,b.user_lastname
     from auth.users a
     inner join sys_users b on a.id = b.id
     order by a.email
