@@ -313,7 +313,7 @@ const createUsers = async () => {
             :disabled="isLoading || isUploading"
             @click="deleteSelectedRows">
             <template #leading>
-              <i class="fa-solid fa-trash pr-2"></i>
+              <i class="i-heroicons-trash pr-2"></i>
             </template>
           </UButton>
         </div>
@@ -329,23 +329,23 @@ const createUsers = async () => {
           :rows="!rowsWithErrorOnly ? rows : rows.filter(row => !row.isRowValid.isValid)">
           <template #email-data="{ row }: { row: templateRow }">
             <span v-if="row.isRowValid.isEmailValid">{{ row.email }}</span>
-            <span v-else class="text-red-500">{{ row.email }}<i class="fa-solid fa-triangle-exclamation pl-2"></i></span>
+            <span v-else class="text-red-500">{{ row.email }}<i class="i-heroicons-exclamation-triangle pl-2"></i></span>
           </template>
           <template #user_name-data="{ row }: { row: templateRow }">
             <span v-if="row.isRowValid.isNameValid">{{ row.user_name }}</span>
-            <span v-else class="text-red-500">{{ row.user_name }}<i class="fa-solid fa-triangle-exclamation pl-2"></i></span>
+            <span v-else class="text-red-500">{{ row.user_name }}<i class="i-heroicons-exclamation-triangle pl-2"></i></span>
           </template>
           <template #user_lastname-data="{ row }: { row: templateRow }">
             <span v-if="row.isRowValid.isLastnameValid">{{ row.user_lastname }}</span>
-            <span v-else class="text-red-500">{{ row.user_lastname }}<i class="fa-solid fa-triangle-exclamation pl-2"></i></span>
+            <span v-else class="text-red-500">{{ row.user_lastname }}<i class="i-heroicons-exclamation-triangle pl-2"></i></span>
           </template>
           <template #profile-data="{ row }: { row: templateRow }">
             <span v-if="row.isRowValid.isProfileValid">{{ row.profile }}</span>
-            <span v-else class="text-red-500">{{ row.profile }}<i class="fa-solid fa-triangle-exclamation pl-2"></i></span>
+            <span v-else class="text-red-500">{{ row.profile }}<i class="i-heroicons-exclamation-triangle pl-2"></i></span>
           </template>
           <template #organization-data="{ row }: { row: templateRow }">
             <span v-if="row.isRowValid.isCompanyValid">{{ row.organization }}</span>
-            <span v-else class="text-red-500 items-end">{{ row.organization }}<i class="fa-solid fa-triangle-exclamation pl-2"></i></span>
+            <span v-else class="text-red-500 items-end">{{ row.organization }}<i class="i-heroicons-exclamation-triangle pl-2"></i></span>
           </template>
           <template #actions-data="{ row }: { row: templateRow }">
             <UButton
@@ -383,7 +383,7 @@ const createUsers = async () => {
               :disabled="isUploading || isLoading"
               @click="resetUploadForm">
               <template #leading>
-                <i class="fa-solid fa-left-long fa-xl pr-2"></i>
+                <i class="i-heroicons-arrow-left pr-2"></i>
               </template>
             </UButton>
             <UButton
@@ -395,7 +395,7 @@ const createUsers = async () => {
               :disabled="isLoading || isUploading"
               @click="createUsers">
               <template #leading v-if="!isUploading">
-                <i class="fa-solid fa-save fa-xl pr-2"></i>
+                <i class="i-heroicons-check-circle pr-2"></i>
               </template>
             </UButton>
           </div>

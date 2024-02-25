@@ -31,7 +31,7 @@ const uiCard = {
           <div class="flex flex-col py-0">
             <dd class="font-semibold">{{ row.user_name }} {{ row.user_lastname }}</dd>
             <dt>
-              <i class="fa-solid fa-envelope fa-sm text-gray-400"></i> {{ row.email }}
+              <i class="i-heroicons-envelope text-gray-400"></i> {{ row.email }}
             </dt>
           </div>
         </template>

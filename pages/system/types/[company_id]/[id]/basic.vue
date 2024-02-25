@@ -45,7 +45,7 @@ const updateParentField = (val: string) => {
         placeholder="ID del Tipo"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-database fa-xl text-gray-500"></i>
+          <i class="i-heroicons-circle-stack  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -64,7 +64,7 @@ const updateParentField = (val: string) => {
         placeholder="Ingrese el Nombre del Tipo"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-ruler-combined fa-xl text-gray-500"></i>
+          <i class="i-heroicons-scale  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -83,7 +83,7 @@ const updateParentField = (val: string) => {
         :options="state.allTypes.filter(x => x.id !== state.invTypeData.id)"
         @update:modelValue="updateParentField">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-circle-user fa-xl text-gray-500"></i>
+          <i class="i-heroicons-user-circle  text-gray-500"></i>
         </template>
         <template #label>
           <span v-if="state.invTypeData.parent">{{ state.allTypes.find(x=> x.id === state.invTypeData.parent)?.name_es}}</span>

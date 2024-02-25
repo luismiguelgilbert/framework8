@@ -33,7 +33,7 @@ const state = useSecurityCompanies();
         placeholder="ID de la Compañía"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-database fa-xl text-gray-500"></i>
+          <i class="i-heroicons-circle-stack  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -51,7 +51,7 @@ const state = useSecurityCompanies();
         placeholder="Ingrese nombre de la compañía"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-building fa-xl text-gray-500"></i>
+          <i class="i-heroicons-building-office  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -69,7 +69,7 @@ const state = useSecurityCompanies();
         placeholder="Ingrese Razón Social de la compañía"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-building-columns fa-xl text-gray-500"></i>
+          <i class="i-heroicons-building-office-columns  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -87,7 +87,7 @@ const state = useSecurityCompanies();
         placeholder="Ingrese RUC de la compañía"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-hashtag fa-xl text-gray-500"></i>
+          <i class="i-heroicons-hashtag  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -105,7 +105,7 @@ const state = useSecurityCompanies();
         placeholder="Ingrese Teléfono de la compañía"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-phone fa-xl text-gray-500"></i>
+          <i class="i-heroicons-phone  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -123,7 +123,7 @@ const state = useSecurityCompanies();
         placeholder="Ingrese Dirección de la compañía"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-location-pin fa-xl text-gray-500"></i>
+          <i class="i-heroicons-map-pin  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>

@@ -38,7 +38,7 @@ const isCreating = computed<boolean>(() => recordID.value === 'new' );
         placeholder="ID de la Unidad"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-database fa-xl text-gray-500"></i>
+          <i class="i-heroicons-circle-stack  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -57,7 +57,7 @@ const isCreating = computed<boolean>(() => recordID.value === 'new' );
         placeholder="Ingrese el Nombre de la Unidad"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-ruler-combined fa-xl text-gray-500"></i>
+          <i class="i-heroicons-scale  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -75,7 +75,7 @@ const isCreating = computed<boolean>(() => recordID.value === 'new' );
         placeholder="Ingrese la Abreviatura de la Unidad"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fa-solid fa-ellipsis text-gray-500"></i>
+          <i class="i-heroicons-ellipsis-vertical text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>

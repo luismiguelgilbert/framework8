@@ -26,12 +26,12 @@ export const sys_users = z.object({
 export type type_sys_users = z.infer<typeof sys_users>;
 
 export const status_options = [
-  { label: 'Todos los Usuarios', value: 1, sqlValue: 'true', icon: 'fas fa-filter' },
+  { label: 'Todos los Usuarios', value: 1, sqlValue: 'true', icon: 'i-heroicons-funnel' },
 ];
 
 export const sort_options = [
-  { label: 'Ordenar por Apellidos', value: 1, sqlValue: 'b.user_lastname', icon: 'fas fa-arrow-up-short-wide' },
-  { label: 'Ordenar por Nombres', value: 2, sqlValue: 'b.user_name', icon: 'fas fa-arrow-up-short-wide' },
-  { label: 'Ordenar por Mail', value: 3, sqlValue: 'a.email', icon: 'fas fa-arrow-up-short-wide' },
-  { label: 'Ordenar por Perfil', value: 4, sqlValue: 'd.name_es', icon: 'fas fa-arrow-up-short-wide' }
+  { label: 'Ordenar por Apellidos', value: 1, sqlValue: 'b.user_lastname', icon: 'i-heroicons-bars-arrow-down' },
+  { label: 'Ordenar por Nombres', value: 2, sqlValue: 'b.user_name', icon: 'i-heroicons-bars-arrow-down' },
+  { label: 'Ordenar por Mail', value: 3, sqlValue: 'a.email', icon: 'i-heroicons-bars-arrow-down' },
+  { label: 'Ordenar por Perfil', value: 4, sqlValue: 'd.name_es', icon: 'i-heroicons-bars-arrow-down' }
 ];

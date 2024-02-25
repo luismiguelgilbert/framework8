@@ -27,7 +27,7 @@ const isCreating = computed<boolean>(() => recordID.value === 'new' );
         placeholder="ID del Usuario"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-database fa-xl text-gray-500"></i>
+          <i class="i-heroicons-circle-stack  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -47,7 +47,7 @@ const isCreating = computed<boolean>(() => recordID.value === 'new' );
         placeholder="Email del Usuario"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-envelope fa-xl text-gray-500"></i>
+          <i class="i-heroicons-envelope  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -65,7 +65,7 @@ const isCreating = computed<boolean>(() => recordID.value === 'new' );
         placeholder="Ingrese nombres del usuario"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="far fa-user fa-xl text-gray-500"></i>
+          <i class="i-heroicons-user text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -83,7 +83,7 @@ const isCreating = computed<boolean>(() => recordID.value === 'new' );
         placeholder="Ingrese apellidos del usuario"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-user fa-xl text-gray-500"></i>
+          <i class="i-heroicons-user  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -101,7 +101,7 @@ const isCreating = computed<boolean>(() => recordID.value === 'new' );
         searchable-placeholder="Buscar perfil..."
         :options="state.allProfiles">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-circle-user fa-xl text-gray-500"></i>
+          <i class="i-heroicons-user-circle  text-gray-500"></i>
         </template>
         <template #label>
           <span v-if="state.userData.sys_profile_id > 0">{{ state.allProfiles.find(x=> x.id === state.userData.sys_profile_id)?.name_es}}</span>

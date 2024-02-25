@@ -16,12 +16,9 @@ const state = useUser();
         type="text"
         name="email"
         aria-label="Email"
+        icon="i-heroicons-envelope"
         readonly
-        :loading="state.isLoadingUser">
-        <template #leading v-if="!state.isLoadingUser">
-          <i class="fas fa-envelope fa-xl text-gray-500"></i>
-        </template>
-      </UInput>
+        :loading="state.isLoadingUser" />
     </div>
     <div class="flex flex-row flex-wrap gap-4 justify-between content-between">
       <div>
@@ -35,12 +32,9 @@ const state = useUser();
         size="xl"
         type="text"
         name="user_name"
+        icon="i-heroicons-user"
         readonly
-        :loading="state.isLoadingUser">
-        <template #leading v-if="!state.isLoadingUser">
-          <i class="fas fa-user fa-xl text-gray-500"></i>
-        </template>
-      </UInput>
+        :loading="state.isLoadingUser" />
     </div>
     <div class="flex flex-row flex-wrap gap-4 justify-between content-between">
       <div>
@@ -54,12 +48,9 @@ const state = useUser();
         size="xl"
         type="text"
         name="user_lastname"
+        icon="i-heroicons-user"
         readonly
-        :loading="state.isLoadingUser">
-        <template #leading v-if="!state.isLoadingUser">
-          <i class="far fa-user fa-xl text-gray-500"></i>
-        </template>
-      </UInput>
+        :loading="state.isLoadingUser" />
     </div>
     <div class="flex flex-row flex-wrap gap-4 justify-between content-between">
       <div>
@@ -73,12 +64,9 @@ const state = useUser();
         size="xl"
         type="text"
         name="sys_profile_name"
+        icon="i-heroicons-user-circle"
         readonly
-        :loading="state.isLoadingUser">
-        <template #leading v-if="!state.isLoadingUser">
-          <i class="fas fa-circle-user fa-xl text-gray-500"></i>
-        </template>
-      </UInput>
+        :loading="state.isLoadingUser" />
     </div>
     <div class="flex flex-row flex-wrap gap-4 justify-between content-between">
       <div>
@@ -93,12 +81,9 @@ const state = useUser();
           type="text"
           name="id"
           label="Código"
+          icon="i-heroicons-circle-stack"
           readonly
-          :loading="state.isLoadingUser">
-          <template #leading v-if="!state.isLoadingUser">
-            <i class="fas fa-database fa-xl text-gray-500"></i>
-          </template>
-        </UInput>
+          :loading="state.isLoadingUser" />
     </div>
     <div class="flex flex-row flex-wrap gap-4 justify-between content-between">
       <div>
@@ -112,12 +97,9 @@ const state = useUser();
         size="xl"
         type="text"
         name="last_sign_in_at"
+        icon="i-heroicons-arrow-right-end-on-rectangle"
         readonly
-        :loading="state.isLoadingUser">
-        <template #leading v-if="!state.isLoadingUser">
-          <i class="fas fa-door-open fa-xl text-gray-500"></i>
-        </template>
-      </UInput>
+        :loading="state.isLoadingUser" />
     </div>
     <div class="flex flex-row flex-wrap gap-4 justify-between content-between">
       <div>
@@ -131,12 +113,9 @@ const state = useUser();
         size="xl"
         type="text"
         name="created_at"
+        icon="i-heroicons-calendar"
         readonly
-        :loading="state.isLoadingUser">
-        <template #leading v-if="!state.isLoadingUser">
-          <i class="fas fa-marker fa-xl text-gray-500"></i>
-        </template>
-      </UInput>
+        :loading="state.isLoadingUser" />
     </div>
     <div class="flex flex-row flex-wrap gap-4 justify-between content-between">
       <div>
@@ -150,12 +129,9 @@ const state = useUser();
         size="xl"
         type="text"
         name="updated_at"
+        icon="i-heroicons-pencil-square"
         readonly
-        :loading="state.isLoadingUser">
-        <template #leading v-if="!state.isLoadingUser">
-          <i class="fas fa-edit fa-xl text-gray-500"></i>
-        </template>
-      </UInput>
+        :loading="state.isLoadingUser" />
     </div>
   </div>
 </template>

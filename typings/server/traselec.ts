@@ -37,13 +37,13 @@ export const traselec_prj_master_budget_inv = z.object({
 export type type_traselec_prj_master_budget_inv = z.infer<typeof traselec_prj_master_budget_inv>;
 
 export const status_options = [
-  { label: 'Items Activos', value: 1, sqlValue: 1, icon: 'fas fa-filter' },
-  { label: 'Items Inactivos', value: 2, sqlValue: 0, icon: 'fas fa-filter' },
-  { label: 'Todos los Items', value: 3, sqlValue: 'a.estado', icon: 'fas fa-filter' },
+  { label: 'Items Activos', value: 1, sqlValue: 1, icon: 'i-heroicons-funnel' },
+  { label: 'Items Inactivos', value: 2, sqlValue: 0, icon: 'i-heroicons-funnel' },
+  { label: 'Todos los Items', value: 3, sqlValue: 'a.estado', icon: 'i-heroicons-funnel' },
 ];
 
 export const sort_options = [
-  { label: 'Ordenar por Nombre', value: 1, sqlValue: 'b.name', icon: 'fas fa-arrow-up-short-wide' },
-  { label: 'Ordenar por Cod int', value: 2, sqlValue: 'a.internal_code', icon: 'fas fa-arrow-up-short-wide' },
-  { label: 'Ordenar por Código', value: 3, sqlValue: 'a.Inventory_ID', icon: 'fas fa-arrow-up-short-wide' }
+  { label: 'Ordenar por Nombre', value: 1, sqlValue: 'b.name', icon: 'i-heroicons-bars-arrow-down' },
+  { label: 'Ordenar por Cod int', value: 2, sqlValue: 'a.internal_code', icon: 'i-heroicons-bars-arrow-down' },
+  { label: 'Ordenar por Código', value: 3, sqlValue: 'a.Inventory_ID', icon: 'i-heroicons-bars-arrow-down' }
 ];

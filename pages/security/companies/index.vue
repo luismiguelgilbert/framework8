@@ -47,9 +47,9 @@ const fixedOptions = [
 ];
 const dropdownOptions = computed(() => {
   let dynamicOptions = [];
-  if (allowCreate.value) { dynamicOptions.push({ label: 'Nuevo', icon: 'fas fa-plus-circle', click: () => { updatePayload(filter_keys_enum.ID, 'new', false, false) } }) };
-  if (allowExport.value) { dynamicOptions.push({ label: 'Descargar', icon: 'fas fa-file-excel', click: () => { downloadFile() } }) };
-  dynamicOptions.push({ label: 'Refrescar', icon: 'fas fa-arrows-rotate', click: () => { loadData() } });
+  if (allowCreate.value) { dynamicOptions.push({ label: 'Nuevo', icon: 'i-heroicons-plus-circle', click: () => { updatePayload(filter_keys_enum.ID, 'new', false, false) } }) };
+  if (allowExport.value) { dynamicOptions.push({ label: 'Descargar', icon: 'i-heroicons-arrow-down-on-square', click: () => { downloadFile() } }) };
+  dynamicOptions.push({ label: 'Refrescar', icon: 'i-heroicons-arrow-path', click: () => { loadData() } });
   return dynamicOptions.length > 0
     ? [ ...[dynamicOptions], ...fixedOptions ]
     : [ ...fixedOptions ];
@@ -229,11 +229,11 @@ onMounted(async () => {
           <template #name_es_short-data="{ row }: { row: type_sys_companies }">
             <div class="ps-3">
               <div class="flex items-center">
-                <i class="hidden sm:block fa-solid fa-phone text-gray-400 pr-2"></i>
+                <i class="hidden sm:block i-heroicons-phone text-gray-400 pr-2"></i>
                 <div class="font-normal text-gray-500">{{ `${row.billing_phone}` }}</div>
               </div>
               <div class="flex items-center w-15 whitespace-break-spaces">
-                <i class="hidden sm:block fa-solid fa-location-pin text-gray-400 pr-2"></i>
+                <i class="hidden sm:block i-heroicons-map-pin text-gray-400 pr-2"></i>
                 <div class="font-normal text-gray-500 ">{{ `${row.billing_address}` }}</div>
               </div>
             </div>

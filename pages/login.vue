@@ -137,7 +137,7 @@ onMounted(async () => {
         <UButton
           size="xl"
           block
-          label="Login"
+          label="Sign in"
           :loading="loading"
           @click="login" />
       </UFormGroup>

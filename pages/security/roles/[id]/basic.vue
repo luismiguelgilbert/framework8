@@ -32,7 +32,7 @@ const state = useSecurityRoles();
         placeholder="ID del Perfil"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-database fa-xl text-gray-500"></i>
+          <i class="i-heroicons-circle-stack  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>
@@ -50,7 +50,7 @@ const state = useSecurityRoles();
         placeholder="Ingrese nombre del perfil"
         :loading="state.isLoading">
         <template #leading v-if="!state.isLoading">
-          <i class="fas fa-circle-user fa-xl text-gray-500"></i>
+          <i class="i-heroicons-user-circle  text-gray-500"></i>
         </template>
       </UInput>
     </UFormGroup>

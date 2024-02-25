@@ -15,12 +15,12 @@ export const inv_types = z.object({
 export type type_inv_types = z.infer<typeof inv_types>;
 
 export const status_options = [
-  { label: 'Tipos Activos', value: 1, sqlValue: 'true', icon: 'fas fa-filter' },
-  { label: 'Tipos Inactivos', value: 2, sqlValue: 'false', icon: 'fas fa-filter' },
-  { label: 'Todos los Tipos', value: 3, sqlValue: 'a.is_active', icon: 'fas fa-filter' },
+  { label: 'Tipos Activos', value: 1, sqlValue: 'true', icon: 'i-heroicons-funnel' },
+  { label: 'Tipos Inactivos', value: 2, sqlValue: 'false', icon: 'i-heroicons-funnel' },
+  { label: 'Todos los Tipos', value: 3, sqlValue: 'a.is_active', icon: 'i-heroicons-funnel' },
 ];
 
 export const sort_options = [
-  { label: 'Ordenar por Nombre', value: 1, sqlValue: 'a.name_es', icon: 'fas fa-arrow-up-short-wide' },
-  { label: 'Ordenar por Código', value: 2, sqlValue: 'a.id', icon: 'fas fa-arrow-up-short-wide' }
+  { label: 'Ordenar por Nombre', value: 1, sqlValue: 'a.name_es', icon: 'i-heroicons-bars-arrow-down' },
+  { label: 'Ordenar por Código', value: 2, sqlValue: 'a.id', icon: 'i-heroicons-bars-arrow-down' }
 ];

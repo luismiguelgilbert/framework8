@@ -41,7 +41,7 @@ const isFlat = computed<boolean>(() => props.flat ? true : false );
     }">
     <i v-if="hasIcon"
       class="pr-2"
-      :class="`${props.icon} fa-xl`">
+      :class="`${props.icon} `">
     </i>
     {{ props.label }}
   </button>

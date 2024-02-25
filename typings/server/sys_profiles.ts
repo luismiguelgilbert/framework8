@@ -22,13 +22,13 @@ export const sys_profiles_lookup = z.object({
 export type type_sys_profiles_lookup = z.infer<typeof sys_profiles_lookup>;
 
 export const status_options = [
-  { label: 'Perfiles Activos', value: 1, sqlValue: 'true', icon: 'fas fa-filter' },
-  { label: 'Perfiles Inactivos', value: 2, sqlValue: 'false', icon: 'fas fa-filter' },
-  { label: 'Todos los Perfiles', value: 3, sqlValue: 'a.is_active', icon: 'fas fa-filter' },
+  { label: 'Perfiles Activos', value: 1, sqlValue: 'true', icon: 'i-heroicons-funnel' },
+  { label: 'Perfiles Inactivos', value: 2, sqlValue: 'false', icon: 'i-heroicons-funnel' },
+  { label: 'Todos los Perfiles', value: 3, sqlValue: 'a.is_active', icon: 'i-heroicons-funnel' },
 ];
 
 export const sort_options = [
-  { label: 'Ordenar por Nombre', value: 1, sqlValue: 'a.name_es', icon: 'fas fa-arrow-up-short-wide' },
-  { label: 'Ordenar por Estado', value: 2, sqlValue: 'a.is_active', icon: 'fas fa-arrow-up-short-wide' },
-  { label: 'Ordenar por Código', value: 3, sqlValue: 'a.id', icon: 'fas fa-arrow-up-short-wide' }
+  { label: 'Ordenar por Nombre', value: 1, sqlValue: 'a.name_es', icon: 'i-heroicons-bars-arrow-down' },
+  { label: 'Ordenar por Estado', value: 2, sqlValue: 'a.is_active', icon: 'i-heroicons-bars-arrow-down' },
+  { label: 'Ordenar por Código', value: 3, sqlValue: 'a.id', icon: 'i-heroicons-bars-arrow-down' }
 ];

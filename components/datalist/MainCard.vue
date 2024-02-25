@@ -57,9 +57,9 @@ const onScroll = (event: UIEvent) => emits('table-scroll', event);
         />
         <div class="flex items-center justify-between gap-3">
           <span>
-            <UIcon name="pl-1 fas fa-filter text-gray-400" />
+            <span class="pl-1 i-heroicons-funnel text-gray-400" />
             <span class="pl-2 font-bold">{{ selectedFilter }}</span>
-            <UIcon class="collapse lg:visible" name="pl-6 fas fa-arrow-up-short-wide text-gray-500" />
+            <span class="collapse lg:visible pl-6 i-heroicons-bars-arrow-up text-gray-500" />
             <span class="hidden lg:inline pl-2 font-bold">{{ selectedSort }}</span>
           </span>
           <span v-if="!isLoading" class="font-semibold pr-1 text-nowrap self-start">{{ rowsNumber }} registros</span>

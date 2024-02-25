@@ -31,7 +31,7 @@ const hasIcon = computed<boolean>(() => props.icon ? true : false );
       >
       <i
         class="text-gray-500 dark:text-gray-300"
-        :class="`${props.icon} fa-xl`">
+        :class="`${props.icon} `">
       </i>
     </div>
     <!--Input-->

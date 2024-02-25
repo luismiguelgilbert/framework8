@@ -16,13 +16,13 @@ export const inv_uom = z.object({
 export type type_inv_uom = z.infer<typeof inv_uom>;
 
 export const status_options = [
-  { label: 'Unidades Activas', value: 1, sqlValue: 'true', icon: 'fas fa-filter' },
-  { label: 'Unidades Inactivas', value: 2, sqlValue: 'false', icon: 'fas fa-filter' },
-  { label: 'Todas los Unidades', value: 3, sqlValue: 'a.is_active', icon: 'fas fa-filter' },
+  { label: 'Unidades Activas', value: 1, sqlValue: 'true', icon: 'i-heroicons-funnel' },
+  { label: 'Unidades Inactivas', value: 2, sqlValue: 'false', icon: 'i-heroicons-funnel' },
+  { label: 'Todas los Unidades', value: 3, sqlValue: 'a.is_active', icon: 'i-heroicons-funnel' },
 ];
 
 export const sort_options = [
-  { label: 'Ordenar por Nombre', value: 1, sqlValue: 'a.name_es', icon: 'fas fa-arrow-up-short-wide' },
-  { label: 'Ordenar por Abreviatura', value: 2, sqlValue: 'a.name_es_short', icon: 'fas fa-arrow-up-short-wide' },
-  { label: 'Ordenar por Código', value: 3, sqlValue: 'a.id', icon: 'fas fa-arrow-up-short-wide' }
+  { label: 'Ordenar por Nombre', value: 1, sqlValue: 'a.name_es', icon: 'i-heroicons-bars-arrow-down' },
+  { label: 'Ordenar por Abreviatura', value: 2, sqlValue: 'a.name_es_short', icon: 'i-heroicons-bars-arrow-down' },
+  { label: 'Ordenar por Código', value: 3, sqlValue: 'a.id', icon: 'i-heroicons-bars-arrow-down' }
 ];

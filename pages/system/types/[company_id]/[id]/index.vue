@@ -195,7 +195,7 @@ watch(
             variant="solid"
             @click="validateAndSave">
             <template #leading v-if="!state.isLoading">
-              <i class="fa-solid fa-save fa-xl"></i>
+              <i class="i-heroicons-check-circle"></i>
             </template>
           </UButton>
         </div>

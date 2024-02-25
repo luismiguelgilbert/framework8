@@ -88,23 +88,122 @@ const logout = async () => {
 </script>
 
 <template>
+  <!-- <div data-headlessui-state="close" class="relative flex-1 flex flex-col w-full focus:outline-none w-screen max-w-md bg-white dark:bg-gray-900">
+    <div class="fixed inset-0 transition-opacity bg-gray-200/75 dark:bg-gray-800/75">
+      <div class="relative flex-1 flex flex-col w-full focus:outline-none w-screen max-w-md bg-white dark:bg-gray-900">
+        <div class="h-[--header-height] flex-shrink-0 flex items-center border-b border-gray-200 dark:border-gray-800 px-4 gap-x-4 min-w-0 !border-transparent">
+          <div class="flex items-center justify-between flex-1 gap-x-1.5 min-w-0">
+            <div class="flex items-stretch gap-1.5 min-w-0 flex-1">
+              <UButton
+                class="justify-start"
+                truncate
+                size="xl"
+                variant="ghost"
+                @click="state.isMenuOpen = false">
+                <template #leading>
+                  <i class="i-heroicons-pencil-square"></i>
+                </template>
+              </UButton>
+              <USelectMenu
+                v-if="!menuPending && !menuError"
+                v-model="state.userCompany"
+                class="mb-5"
+                value-attribute="id"
+                option-attribute="name_es_short"
+                size="xl"
+                :options="state.userCompanies"
+                @update:model-value="setPreferedCompany" />
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col w-full flex-1 relative overflow-hidden">
+          <div class="flex-grow flex flex-col min-h-0 gap-y-2 py-2">
+            <div class="w-full flex flex-col px-4">
+              Searchbar
+            </div>
+            <div class="flex-1 px-4 flex flex-col gap-y-2 overflow-y-auto">
+              <div v-if="!menuPending && !menuError">
+                <div
+                  v-for="(rootMenu, index) in state.menuData?.filter((m) => m.parent === null)"
+                  :key="index">
+                  <ul 
+                    v-if="rootMenu.id !== '0' && state.menuData.filter(m => m.parent == rootMenu.id).length > 0" 
+                    class="pt-4 mt-4 space-y-2 font-medium text-gray-400 dark:text-gray-500 border-gray-200">
+                    {{ rootMenu.name_es }}
+                  </ul>
+                  <ul
+                    v-for="(menu, index) in state.menuData?.filter((m) => m.parent === rootMenu.id)"
+                    :key="index" 
+                    class="space-y-2 font-medium"
+                    @click="openMenu(menu)">
+                    <NuxtLink class="w-full pt-2">
+                      <UButton
+                        v-if="menu.id === state.menuSelected"
+                        class="justify-start"
+                        truncate
+                        :title="menu.name_es"
+                        block
+                        size="xl"
+                        variant="ghost"
+                        :label="menu.name_es"
+                        @click="openMenu(menu)">
+                        <template #leading>
+                          <i :class="`${menu.icon} `"></i>
+                        </template>
+                      </UButton>
+                      <UButton
+                        v-else
+                        class="justify-start"
+                        truncate
+                        :title="menu.name_es"
+                        block
+                        size="xl"
+                        color="gray"
+                        variant="ghost"
+                        :label="menu.name_es"
+                        @click="openMenu(menu)">
+                        <template #leading>
+                          <i :class="`${menu.icon} `"></i>
+                        </template>
+                      </UButton>
+                    </NuxtLink>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between gap-x-1.5 flex-shrink-0 px-4">
+              Footer
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
 <aside
   id="sidebar"
   class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform sm:translate-x-0 border-r dark:border-gray-800"
   :class="{ '-translate-x-full' : !state.isMenuOpen }"
   aria-label="Sidebar">
-  <div
-    v-if="!menuPending && !menuError"
-    class="h-full px-3 py-4 overflow-y-auto bg-white dark:bg-gray-900">
-    <USelectMenu
+
+
+  <div class="sticky top-0 left-0 z-50 w-full h-14 border-t bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-600">
+    <UDropdown class="w-full" :items="state.userCompanies" :popper="{ placement: 'bottom-start' }">
+      <UButton block size="xl" variant="ghost" square :label="state.userCompany" trailing-icon="i-heroicons-chevron-down-20-solid" />
+    </UDropdown>
+    <!-- <USelectMenu
       v-model="state.userCompany"
       class="mb-5"
       value-attribute="id"
       option-attribute="name_es_short"
       size="xl"
+      :ui="{ rounded: 'rounded-none', ring: 'ring-0'}"
       :options="state.userCompanies"
-      @update:model-value="setPreferedCompany" />
-  
+      @update:model-value="setPreferedCompany" /> -->
+   </div>
+
+  <div
+    v-if="!menuPending && !menuError"
+    class="h-full px-3 py-4 overflow-y-auto bg-white dark:bg-gray-900">
     <div
       v-for="(rootMenu, index) in state.menuData?.filter((m) => m.parent === null)"
       :key="index">
@@ -130,7 +229,7 @@ const logout = async () => {
             :label="menu.name_es"
             @click="openMenu(menu)">
             <template #leading>
-              <i :class="`${menu.icon} fa-xl`"></i>
+              <i :class="`${menu.icon} `"></i>
             </template>
           </UButton>
           <UButton
@@ -145,7 +244,7 @@ const logout = async () => {
             :label="menu.name_es"
             @click="openMenu(menu)">
             <template #leading>
-              <i :class="`${menu.icon} fa-xl`"></i>
+              <i :class="`${menu.icon} `"></i>
             </template>
           </UButton>
         </NuxtLink>
@@ -172,7 +271,7 @@ const logout = async () => {
       :disabled="isLoading"
       @click="logout">
       <template #leading v-if="!isLoading">
-        <i class="fa-solid fa-door-open fa-xl"></i>
+        <i class="i-heroicons-arrow-left-end-on-rectangle "></i>
       </template>
     </UButton>
    </div>

@@ -46,9 +46,9 @@ const fixedOptions = [
 ];
 const dropdownOptions = computed(() => {
   let dynamicOptions = [];
-  if (allowCreate.value) { dynamicOptions.push({ label: 'Nuevo', icon: 'fas fa-plus-circle', click: () => { updatePayload(filter_keys_enum.ID, 'new', false, false) } }) };
-  if (allowExport.value) { dynamicOptions.push({ label: 'Descargar', icon: 'fas fa-file-excel', click: () => { downloadFile() } }) };
-  dynamicOptions.push({ label: 'Refrescar', icon: 'fas fa-arrows-rotate', click: () => { loadData() } });
+  if (allowCreate.value) { dynamicOptions.push({ label: 'Nuevo', icon: 'i-heroicons-plus-circle', click: () => { updatePayload(filter_keys_enum.ID, 'new', false, false) } }) };
+  if (allowExport.value) { dynamicOptions.push({ label: 'Descargar', icon: 'i-heroicons-arrow-down-on-square', click: () => { downloadFile() } }) };
+  dynamicOptions.push({ label: 'Refrescar', icon: 'i-heroicons-arrow-path', click: () => { loadData() } });
   return dynamicOptions.length > 0
     ? [ ...[dynamicOptions], ...fixedOptions ]
     : [ ...fixedOptions ];
